@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.tool.table.mapper.GenTableMapper">
+
+	<update id="buildTable" statementType="STATEMENT">
+		${sql}
+	</update>
+
+	<select id="searchSql" resultType="map">
+		${sql}
+	</select>
+
+	<select id="searchOne" resultType="map">
+		${sql}
+	</select>
+
+	<select id="selectByTableName" resultType="GenTable">
+		SELECT t.table_name AS name,t.TABLE_COMMENT AS comments
+			FROM information_schema.`TABLES` t
+		WHERE t.TABLE_SCHEMA = (select database())
+		<if test="name != null and name != ''">
+			AND t.TABLE_NAME = upper(#{name})
+		</if>
+		ORDER BY t.TABLE_NAME
+	</select>
+
+	<select id="selectListWithCount" resultType="GenTable">
+		SELECT
+			g.*,
+			t.TABLE_ROWS AS totalCount
+		FROM
+			gen_table g
+				LEFT JOIN information_schema.`TABLES` t ON g.`name` = t.TABLE_NAME AND t.TABLE_SCHEMA = (select database())
+		     <if test="ew!=null">
+				${ew.customSqlSegment}
+			 </if>
+	</select>
+
+</mapper> 

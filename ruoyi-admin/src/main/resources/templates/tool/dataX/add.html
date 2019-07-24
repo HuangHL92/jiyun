@@ -1,0 +1,507 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-sysDataX-add" th:action="*{formAction}" th:object="${sysDataX}">
+        <input id="id" name="id" th:field="*{id}" type="hidden">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>作业信息 </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">配置文件名：</label>
+                            <div class="col-sm-8">
+                                <input id="fileName" name="fileName" th:field="*{fileName}"
+                                       class="form-control required" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>源数据表信息 </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">数据库类型：</label>
+                            <div class="col-sm-8">
+                                <select id="sqlType" name="sqlType" class="form-control required" th:field="*{sqlType}" th:with="type=${@dict.getType('datax_sql_type')}">
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">源数据库连接：</label>
+                            <div class="col-sm-8">
+                                <input style="display: inline;width: 85%" id="readerPort" name="readerPort"
+                                       th:field="*{readerPort}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入源数据数据库链接"/>
+                                <a onclick="testConnection('A')" class="btn btn-primary btn-sm" href="javaScript:;">
+                                    <i class="fa fa-check"></i>测试连接
+                                </a>
+                                <div id="sqlTypeReaderTips" class="layui-form-mid layui-word-aux">数据库链接示例：ip:port/database </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">用户名：</label>
+                            <div class="col-sm-8">
+                                <input id="readerUserName" name="readerUserName" th:field="*{readerUserName}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入数据库用户名">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">密码：</label>
+                            <div class="col-sm-8">
+                                <input id="readerPassword" name="readerPassword" th:field="*{readerPassword}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入数据库密码">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">源数据表名：</label>
+                            <div class="col-sm-8">
+                                <input id="readerTableName" name="readerTableName" th:field="*{readerTableName}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入源数据库数据表名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">源数据列名：</label>
+                            <div class="col-sm-8">
+                                <input id="readerColumn" name="readerColumn" th:field="*{readerColumn}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入源数据数据库列名,多列请用','隔开">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Sql条件：</label>
+                            <div class="col-sm-4">
+                                <textarea id="readerWhere" name="readerWhere" th:field="*{readerWhere}" rows="5"
+                                          class="form-control" placeholder="输入源数据增量Sql"></textarea>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">
+                                例:只想同步表中某几列数据只需写入：<br>
+                                SELECT column1, column2, column3 FROM table WHERE 1=1<br>
+                                填写该行同步更新时会忽略数据源列名及表名
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">源数据数据库主键：</label>
+                            <div class="col-sm-8">
+                                <input id="splitPk" name="splitPk" th:field="*{splitPk}" class="form-control required"
+                                       type="text" placeholder="输入源数据数据库主键">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>目标表信息 </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">数据库类型：</label>
+                            <div class="col-sm-8">
+                                <select id="sqlTypeWriter" name="sqlTypeWriter" class="form-control required" th:field="*{sqlTypeWriter}" th:with="type=${@dict.getType('datax_sql_type')}">
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">目标库链接：</label>
+                            <div class="col-sm-8">
+
+                                <input id="writerPort" style="display:inline;width: 85%" name="writerPort"
+                                       th:field="*{writerPort}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入写入数据库链接"/>
+
+                                <a onclick="testConnection('B')" class="btn btn-primary btn-sm" href="javaScript:;">
+                                    <i class="fa fa-check"></i>测试连接</a>
+                                <div id = "sqlTypeWriterTips"class="layui-form-mid layui-word-aux">数据库链接示例：ip:port/database </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">用户名：</label>
+                            <div class="col-sm-8">
+                                <input id="writerUserName" name="writerUserName" th:field="*{writerUserName}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入数据库用户名">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">密码：</label>
+                            <div class="col-sm-8">
+                                <input id="writerPassword" name="writerPassword" th:field="*{writerPassword}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入数据库密码">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">目标表名：</label>
+                            <div class="col-sm-8">
+                                <input id="writerTableName" name="writerTableName" th:field="*{writerTableName}"
+                                       class="form-control required"
+                                       type="text" placeholder="输入写入数据表名">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">执行模式：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control required" id="writerMode" name="writerMode"
+                                        th:field="*{writerMode}">
+                                    <option value="insert" label="insert">插入</option>
+                                    <option value="replace" label="replace">覆盖</option>
+                                    <option value="update" label="update">更新</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">执行前SQL：</label>
+                            <div class="col-sm-8">
+                                <textarea id="perSql" name="perSql" th:field="*{perSql}" class="form-control required"
+                                          rows="5" placeholder="输入执行前需要执行的SQL"></textarea>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>定时任务管理 </h5>
+                        <div class="ibox-tools">
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+
+                            <input type="hidden" name="isSchedule" id="isSchedule">
+                            <label class="col-sm-3 control-label">定时任务状态：</label>
+                            <div class="col-sm-8">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" th:checked="*{isSchedule == 1}? true : false"
+                                           class="onoffswitch-checkbox"
+                                           id="isSchedule_N" name="isSchedule_N">
+                                    <label class="onoffswitch-label" for="isSchedule_N">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">定时任务：</label>
+                            <div class="col-sm-8">
+                                <label class="radio-box"> <input id="scheduleTypeNew" type="radio" name="scheduleType"
+                                                                 th:checked="*{scheduleId == null}? true : false"
+                                                                 value="1"/>新建定时任务</label>
+                                <label class="radio-box"> <input type="radio" name="scheduleType"
+                                                                 th:checked="*{scheduleId == null}? false : true"
+                                                                 value="2"/>添加到现有定时任务</label>
+                                <div id="scheduleTypeTip" class="col-sm-12 alert alert-warning">新建定时任务会自动创建定时任务组</div>
+                            </div>
+                        </div>
+                        <!--<div class="form-group" >
+                            <label class="col-sm-3 control-label">定时任务名称：</label>
+                            <div class="col-sm-8">
+                                <input id="scheduleName" name="scheduleName" th:field="*{scheduleName}"
+                                       class="form-control required"
+                                       type="text">
+                            </div>
+                        </div>-->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">dataX定时任务组列表：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control required" id="scheduleId" name="scheduleId"
+                                        th:field="*{scheduleId}">
+                                    <option th:each="sysJob:${sysJobs}" th:value="${sysJob.jobId}"
+                                            th:text="${sysJob.jobGroup}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="scheduleCronDiv">
+                            <label class="col-sm-3 control-label">定时表达式：</label>
+                            <div class="col-sm-8">
+                                <input id="scheduleCron" name="scheduleCron" th:field="*{scheduleCron}"
+                                       class="form-control required"
+                                       type="text">
+                                <div style="margin-top: 10px;" class="alert alert-info alert-dismissable">
+                                    <strong>Cron示例：</strong>前后不要有空格<br>
+                                    &nbsp;*/5 * * * * ? 每隔5秒执行<br>
+                                    &nbsp;0 */1 * * * ? 每隔1分钟执行<br>
+                                    &nbsp;0 0 23 * * ? 每天23点执行<br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "tool/dataX";
+    var cronPrefix = ctx + "monitor/job"
+
+    $(function () {
+        var html=''
+        if ($('#sqlType').val() == 1) {
+            html = ' MySql数据库链接示例：ip:port/database';
+        } else if ($('#sqlType').val() == 2) {
+            html = ' Oracle数据库链接示例示例：&nbsp;@ip:port:database&nbsp;';
+        } else if ($('#sqlType').val() == 3) {
+            html = ' SQLServer数据库链接示例示例：&nbsp;ip:port;DatabaseName=database&nbsp;';
+        }
+        $("#sqlTypeReaderTIPS").html(html);
+        if ($('#sqlTypeWriter').val() == 1) {
+            html = ' MySql数据库链接示例：ip:port/database';
+        } else if ($('#sqlTypeWriter').val() == 2) {
+            html = ' Oracle数据库链接示例示例：&nbsp;@ip:port:database&nbsp;';
+        } else if ($('#sqlTypeWriter').val() == 3) {
+            html = ' SQLServer数据库链接示例示例：&nbsp;ip:port;DatabaseName=database&nbsp;';
+        }
+        $("#sqlTypeWriterTips").html(html);
+        $("#sqlType").change(function () {
+            var html=''
+            if ($(this).val() == 1) {
+                html = ' MySql数据库链接示例：ip:port/database';
+            } else if ($(this).val() == 2) {
+                html = ' Oracle数据库链接示例示例：&nbsp;@ip:port:database&nbsp;';
+            } else if ($(this).val() == 3) {
+                html = ' SQLServer数据库链接示例示例：&nbsp;ip:port;DatabaseName=database&nbsp;';
+            }
+            $("#sqlTypeReaderTips").html(html);
+        })
+        $("#sqlTypeWriter").change(function () {
+            var html=''
+            if ($(this).val() == 1) {
+                html = ' MySql数据库链接示例：ip:port/database';
+            } else if ($(this).val() == 2) {
+                html = ' Oracle数据库链接示例示例：&nbsp;@ip:port:database&nbsp;';
+            } else if ($(this).val() == 3) {
+                html = ' SQLServer数据库链接示例示例：&nbsp;ip:port;DatabaseName=database&nbsp;';
+            }
+            $("#sqlTypeWriterTips").html(html);
+        })
+        //页面加载时
+        if ([[${sysDataX.isSchedule==0}]] || [[${sysDataX.isSchedule==null}]]) {
+            $("#scheduleCron").parents(".form-group").hide();
+            $("#scheduleCron").attr("disabled", "disabled");
+            $("#scheduleName").parents(".form-group").hide();
+            $("#scheduleId").parents(".form-group").hide();
+            $("#scheduleTypeNew").parents(".form-group").hide();
+        } else {
+            if ([[${sysDataX.scheduleId==null}]]) {
+                $("#scheduleCron").parents(".form-group").show();
+                var boolCheck = $('input[name="scheduleType"]:checked').val();
+                menuVisible(boolCheck)
+            } else {
+                $("#scheduleId").parents(".form-group").show();
+                var boolCheck = $('input[name="scheduleType"]:checked').val();
+                menuVisible(boolCheck)
+            }
+        }
+
+        //点击开启定时任务按钮时
+        $("#form-sysDataX-add").click(function (event) {
+            if ($("#isSchedule_N").is(":checked") == false) {
+                $("#scheduleCron").parents(".form-group").hide();
+                $("#scheduleCron").attr("disabled", "disabled");
+                $("#scheduleName").parents(".form-group").hide();
+                $("#scheduleId").parents(".form-group").hide();
+                $("#scheduleTypeNew").parents(".form-group").hide();
+            } else {
+                $("#scheduleTypeNew").parents(".form-group").show();
+                $("#scheduleCron").parents(".form-group").show();
+                $("#scheduleCron").removeAttr("disabled");
+                var boolCheck = $('input[name="scheduleType"]:checked').val();
+                menuVisible(boolCheck);
+            }
+        })
+        //选择新增或者添加已有时
+        $('input[name=scheduleType]').on('ifChecked', function (event) {
+            var boolCheck = $(event.target).val();
+            menuVisible(boolCheck);
+        })
+    })
+
+
+    function menuVisible(boolCheck) {
+        if (boolCheck == 1) {
+            $("#scheduleId").parents(".form-group").hide();
+            $("#scheduleId").attr("disabled", "disabled");
+            $('#scheduleTypeTip').show();
+            $("#scheduleCron").parents(".form-group").show();
+            $("#scheduleCron").removeAttr("disabled");
+        } else if (boolCheck == 2) {
+            $('#scheduleTypeTip').hide();
+            $("#scheduleId").parents(".form-group").show();
+            $("#scheduleId").removeAttr("disabled");
+            $("#scheduleCron").parents(".form-group").hide();
+            $("#scheduleCron").attr("disabled", "disabled");
+        }
+    }
+
+
+    $("#form-sysDataX-add").validate({
+        rules: {
+            scheduleCron: {
+                required: true,
+                remote: {
+                    url: cronPrefix + "/checkCronExpressionIsValid",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "cronExpression": function () {
+                            return $.common.trim($("#scheduleCron").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return data;
+                    }
+                }
+            },
+            fileName: {
+                remote: {
+                    url: prefix + "/validateFileName",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "fileName": function () {
+                            return $.common.trim($("#fileName").val());
+                        },
+                        "oldFileName": function () {
+                            return $.common.trim([[${sysDataX.fileName}]]);
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            }
+        },
+        messages: {
+            "fileName": {
+                remote: "文件名已存在"
+            },
+            "scheduleCron": {
+                remote: "corn表达式不正确"
+            }
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $("#isSchedule").val($("#isSchedule_N").is(':checked') == true ? 1 : 0);
+            $("#scheduleCron").val($("#isSchedule_N").is(':checked') == true ? $("#scheduleCron").val() : '');
+            console.log($('#form-sysDataX-add').serialize())
+            $.operate.save(prefix + "/add", $('#form-sysDataX-add').serialize());
+        }
+    }
+
+    function testConnection(type) {
+        var sqlTypeReader = $("#sqlType").val();
+        var sqlTypeWriter = $("#sqlTypeWriter").val();
+        var readerUserName = $("#readerUserName").val();
+        var readerPassword = $("#readerPassword").val();
+        var writerUserName = $("#writerUserName").val();
+        var writerPassword = $("#writerPassword").val();
+        var readerPort = $("#readerPort").val();
+        var writerPort = $("#writerPort").val();
+        if (type == 'A') {
+            if(readerUserName=='' || readerUserName==null
+                || readerPassword=='' || readerPassword==null
+                || readerPort=='' || readerPort==null
+            ){
+                $.modal.msgWarning("数据源连接用户名和密码不能为空！")
+                return;
+            }
+        } else if (type == 'B') {
+            if(writerUserName=='' || writerUserName==null
+                || writerPassword=='' || writerPassword==null
+                || writerPort=='' || writerPort==null
+            ){
+                $.modal.msgWarning("目标库连接用户名和密码不能为空！")
+                return;
+            }
+        }
+        var sqlType = type=='A'?sqlTypeReader:sqlTypeWriter;
+        var name = type=='A' ? readerUserName:writerUserName;
+        var pwd = type=='A'?readerPassword:writerPassword;
+        var port =  type=='A' ? readerPort:writerPort;
+        $.modal.loading("正在测试连接。。。");
+        $.ajax({
+            url:prefix + "/checkConnection",
+            data:{
+                sqlType:sqlType,
+                name:name,
+                pwd:pwd,
+                port:port
+            },
+            success:function (rs) {
+                if(rs.code!=0){
+                    $.modal.closeLoading();
+                    $.modal.msgError("抱歉，数据库测试连接失败！请检查数据库连接信息是否正确");
+                    return;
+                }
+
+                $.modal.closeLoading();
+                $.modal.msgSuccess("恭喜！数据库测试连接成功！");
+            }
+        })
+    }
+</script>
+</body>
+</html>

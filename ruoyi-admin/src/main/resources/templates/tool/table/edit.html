@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<style>
+    table label.error{
+        top: 18px;
+    }
+</style>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal" id="form-table-edit" name="form-table-edit" th:object="${genTable}">
+        <!--表信息-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>表单信息
+                            <small></small>
+                        </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+                        <input type="hidden" name="id" th:value="*{id}" />
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="col-sm-2 control-label"><font color="red">*</font>表名：</label>
+                            <div class="col-sm-4">
+                                <input name="name" class="form-control required" type="text" th:value="*{name}" onblur="checkTableExist(this.value)" >
+                            </div>
+                            <label class="col-sm-2 control-label"><font color="red">*</font>说明：</label>
+                            <div class="col-sm-4">
+                                <input name="comments" class="form-control required" type="text" th:value="*{comments}" />
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label class="col-sm-2 control-label">主键策略：</label>-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<select class="form-control required" id="genIdTypeSelect">-->
+                                    <!--<option value="UUID" th:selected="*{genIdType == 'UUID'}">UUID</option>-->
+                                    <!--<option value="AUTO" th:selected="*{genIdType == 'AUTO'}">自增长</option>-->
+                                <!--</select>-->
+                                <!--<input type="hidden" name="genIdType" id="genIdType" th:value="*{genIdType}" />-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--字段信息-->
+        <div class="row" th:with="columnList = *{columnList}">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>字段属性
+                            <small style="margin-left: 10px">
+                                <span style="margin-right: 5px;">拖拽可排序</span>
+                                <button class="btn btn-primary btn-xs" type="button" onclick="addtr()">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </small>
+                        </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th th:width="50">序号</th>
+                                <th><font color="red">*</font>列名</th>
+                                <th><font color="red">*</font>说明</th>
+                                <th th:width="100">物理类型</th>
+                                <th th:width="80">长度</th>
+                                <th th:width="80" style="text-align: center;">主键</th>
+                                <th th:width="80">列表显示</th>
+                                <th th:width="80" style="text-align: center;">
+                                    <button class="btn btn-primary btn-xs" type="button" onclick="addtr()">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                            </thead>
+
+                            <template>
+                            </template>
+
+                            <tbody>
+
+                            <tr id="pktr">
+                                <td style="position: relative; text-align: center;">
+                                    <label class="label-index"></label>
+                                    <input type="hidden" value="" />
+                                </td>
+                                <td style="position: relative; text-align: center;">
+                                    <input type="text" class="form-control required" readonly value="id">
+                                </td>
+                                <td style="position: relative">
+                                    <input type="text" class="form-control required" readonly value="主键">
+                                </td>
+                                <td style="position: relative">
+                                    <select class="form-control required" disabled="disabled"></select>
+                                    <input type="hidden" value="varchar" />
+                                </td>
+                                <td style="position: relative">
+                                    <input type="text" class="form-control" readonly value="32" />
+                                </td>
+                                <td style="position: relative; text-align: center;">
+                                    <div class="checkbox i-checks">
+                                        <!--默认选中checked和value都要设置-->
+                                        <input type="checkbox" checked disabled >
+                                        <input type="hidden" value="1" >
+                                    </div>
+                                </td>
+                                <td style="position: relative; text-align: center;">
+                                    <div class="checkbox i-checks">
+                                        <input type="checkbox" >
+                                        <input type="hidden" value="0" >
+                                    </div>
+                                </td>
+                                <td style="position: relative; text-align: center;" class="pk">
+                                </td>
+                            </tr>
+
+                            <tr th:each="column:${columnList}">
+                                <td style="position: relative; text-align: center;">
+                                    <!--记录id-->
+                                    <input type="hidden" data-name="id" th:value="${column.id}" />
+                                    <label class="label-index" th:text="${column.orderNum}"></label>
+                                    <input type="hidden" data-name="orderNum" th:value="${column.orderNum}" />
+                                </td>
+                                <td style="position: relative">
+                                    <input type="text" class="form-control required" data-name="name" th:value="${column.name}" />
+                                </td>
+                                <td style="position: relative">
+                                    <input type="text" class="form-control required" data-name="comments" th:value="${column.comments}" />
+                                </td>
+                                <td style="position: relative">
+                                    <select class="form-control required" onchange="change(this)"></select>
+                                    <input type="hidden" data-name="viewJdbc" th:value="${column.viewJdbc}" />
+                                </td>
+                                <td style="position: relative">
+                                    <input type="text" class="form-control" data-name="length" th:value="${column.length}" />
+                                </td>
+                                <td style="position: relative; text-align: center;">
+                                    <div class="checkbox i-checks">
+                                        <input type="checkbox" value="" th:checked="${column.isPk == '1'}" th:disabled="${column.name == 'id'}" >
+                                        <input type="hidden" data-name="isPk" th:value="${column.isPk}" >
+                                    </div>
+                                </td>
+                                <td style="position: relative; text-align: center;">
+                                    <div class="checkbox i-checks">
+                                        <input type="checkbox" th:checked="${column.listshow == '1'}" >
+                                        <input type="hidden" data-name="listshow" th:value="${column.listshow}"  >
+                                    </div>
+                                </td>
+                                <td style="position: relative; text-align: center;">
+                                    <button th:class="${column.name == 'id'}?'hidden':'btn btn-danger btn-xs'" type="button" onclick="deltr(this)"><i class="fa fa-times"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:src="@{/js/jquery-ui-1.10.4.min.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "tool/table";
+    var tableId = [[${genTable.id}]];
+    var selectdata = [[${@dict.getType('sys_field_type')}]];
+    // 定义第一行tr副本
+    var copy = '<tr><td style="position: relative; text-align: center"><label class="label-index"></label><input type="hidden" data-name="orderNum" value="" /></td>' +
+        '<td style="position: relative"><input type="text" class="form-control required" data-name="name" value=""></td>' +
+        '<td style="position: relative"><input type="text" class="form-control required" data-name="comments" value=""></td>' +
+        '<td style="position: relative"><select class="form-control required" onchange="change(this)"></select><input type="hidden" data-name="viewJdbc" /></td>' +
+        '<td style="position: relative"><input type="text" class="form-control" data-name="length" th:value="${column.length}" /></td>' +
+        '<td style="position: relative; text-align: center;"><div class="checkbox i-checks"><input type="checkbox" ><input type="hidden" data-name="isPk" value="0" ></div></td>' +
+        '<td style="position: relative; text-align: center;"><div class="checkbox i-checks"><input type="checkbox" ><input type="hidden" data-name="listshow" value="0" ></div></td>'+
+        '<td style="position: relative; text-align: center;"><button class="btn btn-danger btn-xs" type="button" onclick="deltr(this)"><i class="fa fa-times"></i></button></td>' +
+        '</tr>';
+    // 定义操作栏的移除按钮
+    var rmbtn = '<button class="btn btn-danger btn-xs" type="button" onclick="deltr(this)"><i class="fa fa-times"></i></button>';
+
+    $(function () {
+        $("table tr").each(function (index, tr) {
+            initTableWidget(tr);
+        })
+        $('select').trigger('change');  // 赋值完触发change事件
+        $("table").sortable({items: "tbody tr", cursor: 'move', axis: "y",stop:function () {restIndex();}}); // 可拖拽排序
+        restIndex();
+    })
+
+    // 物理类型下拉change事件
+    function change(select) {
+        var $length = $(select).next().parent('td').next('td').find('input');
+        if (select.selectedOptions[0].value && (
+            select.selectedOptions[0].value.toUpperCase() == 'TEXT'
+            || select.selectedOptions[0].value.toUpperCase() == 'LONGTEXT'
+            || select.selectedOptions[0].value.toUpperCase() == 'LONGBLOB'
+            || select.selectedOptions[0].value.toUpperCase() == 'DATETIME'
+            || select.selectedOptions[0].value.toUpperCase() == 'TIMESTAMP'
+        )) {
+            $length.val('');
+            $length.attr('disabled', 'disabled');
+        } else {
+            $length.removeAttr('disabled');
+        }
+    }
+
+    function addtr(){
+        if(copy){
+            var _copy = $(copy).clone();
+            initTableWidget(_copy);
+            _copy.appendTo($('table'));
+
+            restIndex();
+        }
+    }
+
+    function deltr(obj){
+        var tr = obj.parentNode.parentNode;//obj.parentNode.parentNode是<tr>
+        tr.remove();
+        restIndex();
+    }
+
+    function bindSelect2($select) {
+        var $input = $select.parent().find('input[type="hidden"]'); // 初始化时检查对应的input是否有值
+        var isMatchedFlag = false;
+        var _data = $.map(selectdata, function (obj) {
+            var result = {};
+            result.id = obj.dictLabel;
+            result.text = obj.dictValue;
+            if ($input.val() == obj.dictValue) {
+                result.selected = true;
+                isMatchedFlag = true;
+            }
+            return result;
+        });
+        if (!isMatchedFlag && $input.val()) {
+            var tagData = {
+                id: $input.val(),
+                text: $input.val(),
+                selected: true
+            }
+            _data.unshift(tagData);
+        }
+        $select.select2({
+            data: _data
+        });
+    }
+
+    function bindCheckBox($checkbox) {
+        $checkbox.iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green'
+        });
+        // 绑定事件
+        $checkbox.find('input[type="checkbox"]').on('ifChecked', function () {
+            $(this).parent().next('input[data-name]').val('1');
+        });
+        $checkbox.find('input[type="checkbox"]').on('ifUnchecked', function () {
+            $(this).parent().next('input[data-name]').val('0');
+        });
+    }
+
+    // 初始化动态table控件
+    function initTableWidget(_tr) {
+        bindSelect2($(_tr).find('select'));
+        bindCheckBox($(_tr).find('.i-checks'));
+    }
+
+    function restIndex(){
+        $('table tr').each(function (index, tr) {
+            // 重建索引
+            var $label = $(tr).find('label.label-index');
+            $label.next('input[type="hidden"]').val(index); // 赋值orderNum
+            $label.html(index);
+        })
+    }
+
+    function checkTableExist(tableName) {
+        if (tableName)
+            $.ajax({
+                type: 'get',
+                url: prefix + '/checkTable?tableName=' + tableName + '&tableId=' + tableId,
+                success: function (result) {
+                    if (result.code == '1') {
+                        $.modal.alertError(tableName + ' 表已存在');
+                    }
+                }
+            })
+    }
+
+    function doBeforeSubmit() {
+        // $('#genIdType').val($('#genIdTypeSelect').val());
+        var colFieldName = 'columnList';
+        $('table tr').not('#pktr').each(function (index, tr) {
+            var $select = $(tr).find('select');
+            $select.parent().find('input').val($select.val());
+            var $input = $(tr).find('input[data-name]');
+            // 为每个input改名
+            $input.each(function (i, input) {
+                $(input).attr("name", colFieldName + '[' + parseInt(index - 1) + '].' + $(input).data("name"));
+            })
+        })
+    }
+
+    function submitHandler() {
+        doBeforeSubmit();  // 为动态table创建name，赋值数据
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-table-edit').serialize());
+        }
+    }
+
+</script>
+</body>
+</html>

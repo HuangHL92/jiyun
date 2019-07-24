@@ -1,0 +1,58 @@
+********************* 2019-02-14  修改人：俞菲 ************************
+1.hutool工具包集成
+2.邮件发送实现
+    ruoyi-admin\src\main\resources\config\mailAccount.setting
+    com/ruoyi/web/controller/system/DemoController.java
+3.二维码生成实现
+    com/ruoyi/web/controller/system/DemoController.java
+4.附件上传实现（部分）
+    com/ruoyi/web/controller/system/FileUploadController.java
+5.表单页面明细表格添加和删除行（部分）
+
+********************* 2019-02-15  修改人：俞菲 ************************
+1.echarts集成
+2.rouyi-web 加入（业务代码写在此model里面）
+
+
+********************* 2019-02-16  修改人：俞菲 ************************
+1.短信接口
+2.api、大屏目录结构
+com/ruoyi/framework/config/ShiroConfig.java
+
+********************* 2019-02-18  修改人：俞菲 ************************
+1.页面自定义按钮添加实现
+例子：templates/demo/all/add.html    <span class="toolbar-btn"></span>
+2、redis集成 修改人：梁涛
+配置文件：ruoyi-admin/src/mian/resources/config/redis.setting
+例子：DemoController.java，综合实例add画面里面
+********************* 2019-02-21  修改人：梁涛 ************************
+1、整合ehcache及redis缓存
+    开关：application-druid.yml中 spring.redis.enabled属性(true:redis；false:ehcache)
+    配置文件    ehcache：ehcache-shiro.xml
+                redis: RedisCacheManager.java->getCache()方法
+    获取缓存工具类: CacheUtils.java 注：注入的方式使用；新增缓存类型需要增加配置
+    目前实现缓存： session(30分钟)、shiro授权缓存(60分钟)、登录记录缓存(10分钟)、用户缓存（持久化）
+********************* 2019-02-26  修改人：梁涛 ************************
+1、websocket集成优化
+    demo:WebSocketController；触发刷新：DepartmentController、DemoController
+    websocket的url配置：application-druid.yml中jiyun.websocket.url
+    注：前台画面使用reconnecting-websocket.min.js，可以在websocket连接出错后重试连接
+2、微信开发demo：网页授权
+    demo：WechatController；授权分：snsapi_base、snsapi_userinfo（demo）
+    应用授权作用域  snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
+                    snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且， 即使在未关注的情况下，只要用户授权，也能获取其信息 ）
+    配置文件：application.yml下配置
+    注：项目需要内网穿透外网路径（配置文件中配置以及在公众号[网页授权获取用户基本信息]中设置该路径）；配置文件需要配置自己的微信公众号信息
+    访问路径：{内网穿透项目地址}/wap/wechat/authorize?returnUrl=/wap/wechat/index
+    效果：/doc/authorize.jpg
+3、集成weui+前端框架
+
+********************* 2019-03-02  修改人：俞菲 ************************
+增加两套登录页面样式
+
+********************* 2019-03-26  修改人：俞菲 ************************
+增加基于JustAuth的gitee第三方登录实例
+注：该插件暂未实现QQ、微信的登录功能，这两个实例稍后开发
+
+********************* 2019-04-02  修改人：俞菲 ************************
+api代码独立，支持独立部署

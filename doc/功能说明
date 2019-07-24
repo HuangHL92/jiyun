@@ -1,0 +1,137 @@
+代码结构：
+com.ruoyi
+├── common            // 工具类
+│       └── annotation                    // 自定义注解
+│       └── config                        // 全局配置
+│       └── constant                      // 通用常量
+│       └── enums                         // 通用枚举
+│       └── exception                     // 通用异常
+│       └── json                          // JSON数据处理
+│       └── support                       // 字符集处理
+│       └── utils                         // 通用类处理
+│       └── xss                           // XSS过滤处理
+├── framework         // 框架核心
+│       └── aspectj                       // 注解实现
+│       └── config                        // 系统配置
+│       └── datasource                    // 数据权限
+│       └── manager                       // 异步处理
+│       └── shiro                         // 权限控制
+│       └── util                          // 通用工具
+│       └── web                           // 前端控制
+├── ruoyi-generator   // 代码生成
+├── ruoyi-quartz      // 定时任务
+├── ruoyi-system      // 系统代码
+├── ruoyi-admin       // 后台服务
+├── ruoyi-xxxxxx      // 其他模块
+
+不能轻易覆盖的文件：
+static/ajax/libs/layui/plugin/formSelects/formSelects-v4.js
+static/ajax/libs/layer/layer.min.js
+
+
+注意：
+    pad、screen、api、wap  这几个关键字已做特殊路径排除在shiro监控范围之外，新建requestmapping不要使用这几个关键词
+    PAD页面地址：    http://localhost/pad
+    手机端地址：     http://localhost/wap
+    大屏幕地址：     http://localhost/screen
+    平台私有JS       ruoyi-admin/static/js/my.js
+    平台私有CSS      ruoyi-admin/static/css/my.css（由于框架采用iframe方式打开页面，所以需要在index页面引用）
+    项目私有JS       ruoyi-web/static/js/private.js
+    项目私有CSS      ruoyi-web/static/css/private.css
+
+功能规划：
+	1. word、excel、pdf 处理（ POI）
+	2.hutool等类似工具类集成
+	3.*菜单、权限、用户、部门、日志、安全等集成功能
+	4.RestfulAPI（接口验证）、分布式任务调度、全文搜索引擎（ Quartz、 ElasticSearch）
+	5.缓存框架（J2Cache、Redis)、seesion共享
+	6.条码、二维码相关（生成、导出）
+	7.可配置表单、流程
+	8.自定义注解（接口安全）
+	9.短信接入（API接口、发送服务）
+	10.异常提醒（邮件、短信）
+	11.定时任务（任务配置、提醒、日志）
+	12.*日志输出
+	13.*等保安全要求（连续出错后账号锁定）
+	14.mybatis-plus集成
+	15.百度地图
+	16.微信开发包
+	17.echart集成（饼图、柱状图、折线图、雷达图）
+	18.websocket
+	19.大屏管理模块（板块ID、名称、刷新频率、默认数据JSON）
+	20.select2、二级联动、标签
+	21.用户、部门选择（查找带回、select2）
+	22.树形下拉选择
+	23.treeGrid 树形表格 (http://demo.beijiyi.com)
+
+API接口说明：
+@RequestMapping("/api/*")  为api开头的请求方法不会进行shiro验证
+接口代码实现目录  com.ruoyi.api
+接口管理访问地址  http://localhost:81/swagger-ui.html
+接口验证，采用JWT实现。com/ruoyi/framework/aspectj/AuthenticationAspect.java
+
+登录页面修改说明：
+templates/login.html
+默认内置集成了3套不同风格的登录页面
+登录页面相关静态资源存放规则  static/ruoyi/login/1/* （1文件下存放一种风格的资源，如果新加请延续）
+
+系统名称：
+配置KEY，sys.config.systemName
+在系统管理->参数管理 中进行在线修改
+
+模板路径：
+static/docs/*  存放各类下载、文档生成等模板文件
+
+redis:
+redis使用Jedis做为底层(注意：hutool中的redis未使用)
+application-druid.yml 文件中prefix对应值就是本项目的前缀（每个项目请务必修为本项目名称）
+com/ruoyi/common/utils/JedisUtils.java
+key命名规则，XXXX:XXXX（例如：token:userid）
+
+wesocket:
+com/ruoyi/web/websocket/SocketServer.java
+static/js/websocket.js
+参考demo: templates/index.html
+
+jwt:
+自定义注解：@ValidateRequest
+请求头部加入key: x-access-token
+验证实现切面：ruoyi-web\src\main\java\com\ruoyi\framework\aspectj\AuthenticationAspect.java
+验证逻辑：
+1.在需要去验证的接口添加@ValidateRequest
+2.通过 /api/auth/login 接口 获得token
+3.将token写入请求头部进行请求
+
+微信：
+核心实现 ruoyi-wx
+demo实现 com/ruoyi/web/controller/wap/WechatController.java
+入口方法 /wap/wechat/access?appid=wx2b911f070115b89a
+
+SQL打印：
+ruoyi-framework/src/main/java/com/ruoyi/framework/config/MybatisPlusConfig.java
+
+数据库相关：
+com/ruoyi/framework/config/DruidConfig.java
+com/ruoyi/framework/datasource/DynamicDataSourceContextHolder.java
+
+多数据源切换：
+注解实现数据源切换
+@DataSource(value = DataSourceType.MASTER)
+public List<SysUser> selectUserList(SysUser user)
+{
+    return userMapper.selectUserList(user);
+}
+手动实现数据源切换
+public List<SysUser> selectUserList(SysUser user)
+{
+    DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.MASTER.name());
+    List<SysUser> userList = userMapper.selectUserList(user);
+    DynamicDataSourceContextHolder.clearDataSourceType();
+    return userList;
+}
+
+JustAuth：第三方登录
+1、插件文档：https://gitee.com/yadong.zhang/JustAuth
+2、demo：GiteeAuthController、AuthGiteeConfig
+3、QQ、微信的登录功能待实现
+4、逻辑:初次登录创建账号、再次访问可直接登录

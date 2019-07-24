@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysCalendarMapper">
+
+    <resultMap type="SysCalendar" id="SysCalendarResult">
+        <id     property="id"       column="id"      />
+        <result property="years"       column="years"      />
+        <result property="days"    column="days"   />
+        <result property="dayType"     column="day_type"    />
+    </resultMap>
+    <sql id="selectSysCalendarVo">
+        select id,years,days,day_type
+		from sys_calendar c
+    </sql>
+
+    <select id="selectCalendarByDays" parameterType="Integer" resultMap="SysCalendarResult">
+        <include refid="selectSysCalendarVo"/>
+        where c.days = #{days}
+    </select>
+
+    <insert id="insertCalendar" parameterType="SysCalendar" >
+        insert into sys_calendar(
+        <if test="years != null and years != 0">years,</if>
+        <if test="days != null and days != ''">days,</if>
+        <if test="dayType != null and dayType != ''">day_type,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="years != null and years != ''">#{years},</if>
+        <if test="days != null and days != ''">#{days},</if>
+        <if test="dayType != null and dayType != ''">#{dayType},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateCalendar" parameterType="SysCalendar">
+        update sys_calendar
+        <set>
+            <if test="years != null and years != 0">years = #{years},</if>
+            <if test="days != null and days != ''">days = #{days},</if>
+            <if test="dayType != null and dayType != ''">day_type = #{dayType},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

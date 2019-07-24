@@ -1,0 +1,41 @@
+package ${package}.domain;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.base.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+#foreach ($column in $columns)
+#if($column.attrType == 'Date')
+import java.util.Date;
+#break
+#end
+#end
+
+/**
+ * ${tableComment}表 ${tableName}
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@TableName("${tableName}")
+public class ${className} extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+#if ($column.attrname != 'createBy' && $column.attrname != 'createTime'
+    && $column.attrname != 'updateBy' && $column.attrname != 'updateTime'
+    && $column.attrname != 'remark' && $column.attrname != 'delFlag')
+	/** $column.columnComment */
+#if($column.columnName == $primaryKey.columnName)
+    @TableId
+#end
+	private $column.attrType $column.attrname;
+#end
+#end
+}

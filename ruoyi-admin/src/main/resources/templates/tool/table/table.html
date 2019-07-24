@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<style>
+    body > #alertContent{
+        display: none;
+    }
+    #alertContent{
+        position: relative;
+    }
+    #alertContent i {
+        position: absolute;
+        left: 20px;
+        top: 25px;
+    }
+    #alertContent .diy-content {
+        padding: 20px 20px 20px 70px;
+        text-align: left;
+    }
+    #alertContent .diy-content .radio.i-checks{
+        display: inline-block !important;
+    }
+    #alertContent .diy-content .radio.i-checks label:nth-child(1){
+        padding-left: 0 !important;
+    }
+    .totalCount{
+        min-width: 140px;
+    }
+    .isSync{
+        min-width: 160px;
+    }
+</style>
+<body class="gray-bg">
+<!--alert框内容-->
+<div id="alertContent">
+    <i class="layui-layer-ico layui-layer-ico0"></i>
+    <div class="diy-content">
+        <div>确认要同步数据库吗？请慎重选择同步方式，强制同步数据库将删除所有数据重新建表</div>
+        <span class="radio i-checks"><label><input type="radio" name="ck" checked value="0" > <i></i> 普通同步(保留数据)</label></span>
+        <span class="radio i-checks"><label><input type="radio" name="ck" value="1"><i></i>强制同步(重新建表)</label></span>
+    </div>
+</div>
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="table-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            表名：<input type="text" name="name"/>
+                        </li>
+                        <li>
+                            说明：<input type="text" name="comments"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addFull()" shiro:hasPermission="tool:table:add">
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary btn-edit disabled" onclick="$.operate.editFull()" shiro:hasPermission="tool:table:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-warning btn-del disabled" onclick="$.operate.removeAll()" shiro:hasPermission="tool:table:remove">
+                <i class="fa fa-minus"></i> 移除
+            </a>
+            <a class="btn btn-danger btn-del disabled" onclick="$.operate.deleteAll()" shiro:hasPermission="tool:table:delete">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('tool:table:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('tool:table:remove')}]];
+    var deleteFlag = [[${@permission.hasPermi('tool:table:delete')}]];
+    var synchFlag = [[${@permission.hasPermi('tool:table:synchDb')}]];
+    var prefix = ctx + "tool/table";
+
+    $(function() {
+        // 临时追加方法
+        $.operate.delete = function (id) {
+            $.modal.confirm("确定删除该条" + $.table._option.modalName + "信息并删除对应的数据库表吗？", function() {
+                var url = $.common.isEmpty(id) ? $.table._option.deleteUrl : $.table._option.deleteUrl.replace("{id}", id);
+                var data = { "ids": id };
+                $.operate.submit(url, "post", "json", data);
+            });
+        }
+        $.operate.deleteAll = function (id) {
+            var rows = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            $.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function() {
+                var url = $.table._option.deleteUrl;
+                var data = { "ids": rows.join() };
+                $.operate.submit(url, "post", "json", data);
+            });
+        }
+        $.operate.synchDb = function (id) {
+            var url = $.common.isEmpty(id) ? $.table._option.synchDbUrl : $.table._option.synchDbUrl.replace("{id}", id);
+            var data = { "id": id };
+            layer.open({
+                content: $('#alertContent'),
+                type: 1,
+                icon: 2,
+                area: ['450px', '220px'],
+                title: "系统提示",
+                btn: ['确认', '取消'],
+                btnclass: ['btn btn-primary', 'btn btn-danger'],
+                yes: function (index,layero) {
+                    var result = layero.find('input[name="ck"]:checked').val(); // 0普通同步，1强制同步
+                    if (result == '0') {
+                        data.isForce = false;
+                        $.operate.submit(url, "post", "json", data);
+                    } else if (result == '1') {
+                        data.isForce = true;
+                        $.operate.submit(url, "post", "json", data);
+                    }
+                    layer.close(index);
+                },
+                cancel: function () {
+                    return true;
+                }
+            });
+        }
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            deleteUrl: prefix + "/delete",
+            synchDbUrl: prefix + "/synchDb",
+            sortName: "createTime",
+            sortOrder: "desc",
+            modalName: "表单",
+            search: false,
+            showExport: false,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '表编号',
+                    visible: false
+                },
+                {
+                    field: 'name',
+                    title: '表名',
+                    width: '20%'
+                },
+                {
+                    field: 'comments',
+                    title: '说明',
+                    width: '25%'
+                },
+                {
+                    field: 'totalCount',
+                    title: '数据量',
+                    align: 'center',
+                    class: 'totalCount',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        if (value == null) {
+                            actions.push('<span>未生成表</span>');
+                        } else {
+                            actions.push('<span title="查看数据"><a href="#" style="color: #10AEFF;" onclick="toDataCount(\'' + row.id + '\'' + ",'" + row.name + '\')">' + value + '</a></span>');
+                        }
+                        return actions.join('');
+                    }
+                },
+                {
+                    field: 'isSync',
+                    title: '同步数据库',
+                    class: 'isSync',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        value == '1' ? actions.push('<span>已同步</span>') : actions.push('<span>未同步</span>')
+                        return actions.join('');
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    width: 260,
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs '+ editFlag +'" href="#" onclick="$.operate.editFull(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-warning btn-xs '+ removeFlag +'" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-minus"></i>移除</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs  '+ deleteFlag +'" href="#" onclick="$.operate.delete(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        actions.push('<a class="btn btn-primary btn-xs '+ synchFlag +'" href="#" onclick="$.operate.synchDb(\'' + row.id + '\')"><i class="fa fa-refresh"></i>同步数据库</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function toDataCount(id, name) {
+        var url = ctx + "tool/table/data/" + id;
+        createMenuItem(url, name + "-数据");
+    }
+</script>
+</body>
+</html>

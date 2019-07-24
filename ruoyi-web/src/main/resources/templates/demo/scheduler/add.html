@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<!--头部引用-->
+<head th:include="include :: header"></head>
+
+<body class="white-bg">
+
+<!--表单区域-->
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <!--如果页面有多个form（默认提交第一个），这种情况下想强制提交某一个请将id命名为****-MAIN-->
+    <form class="form-horizontal m" id="form-demo-add" th:action="*{formAction}" th:object="${demo}">
+
+        <input id="id" name="id" type="hidden" th:field="*{id}"/>
+
+        <input id="create_by" name="create_by" type="hidden" value=""/>
+        <!--非明细数据-->
+        <div class="alert alert-warning"> 注意：请按任务调度中心配置进行填写</div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">编号：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="name" class="form-control required"
+                                       th:field="*{name}">
+                            </div>
+                            <div col-sm-4>
+                                <div class="layui-form-mid layui-word-aux"> 必须保证唯一，且和任务调度中心配置一致。</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">任务类型：</label>
+                            <div class="col-sm-4">
+                                <select data-toggle="select" data-type="user" data-radio="true" id="reporter"
+                                        data-skin="warm">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">任务名称：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="rwmc" class="form-control required"
+                                       th:field="*{name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">功能描述：</label>
+                            <div class="col-sm-10">
+                                    <textarea id="remark" name="remark" class="form-control" rows="3"
+                                              th:field="*{remark}"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">执行周期：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="rwmc" class="form-control"
+                                       th:field="*{name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">最后执行时间：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="rwmc" class="form-control"
+                                       th:field="*{name}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!--底部引用-->
+<div th:include="include::footer"></div>
+
+</body>
+</html>

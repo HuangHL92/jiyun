@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<!--头部引用-->
+<head th:include="include :: header"></head>
+
+<body class="white-bg">
+
+<!--表单区域-->
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <!--如果页面有多个form（默认提交第一个），这种情况下想强制提交某一个请将id命名为****-MAIN-->
+    <form class="form-horizontal m" id="form-demo-add" th:action="*{formAction}" th:object="${demo}">
+
+        <input id="id" name="id" type="hidden" th:field="*{id}"/>
+
+        <input id="create_by" name="create_by" type="hidden" value=""/>
+        <!--非明细数据-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">系统名称：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="name" class="form-control required"
+                                       th:field="*{name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属单位：</label>
+                            <div class="col-sm-4">
+                                <select data-toggle="select" data-type="user" data-radio="true" id="reporter"
+                                        data-skin="warm">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="lxr" class="form-control required"
+                                       th:field="*{name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系电话：</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" id="lxdh" class="form-control required"
+                                       th:field="*{name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">数据分类：</label>
+                            <div class="col-sm-4">
+                                <select data-toggle="select" data-type="user" data-radio="true" id="sjfl"
+                                        data-skin="warm">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注：</label>
+                            <div class="col-sm-10">
+                                    <textarea id="remark" name="remark" class="form-control" rows="3"
+                                              th:field="*{remark}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!--底部引用-->
+<div th:include="include::footer"></div>
+
+</body>
+</html>

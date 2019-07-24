@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+
+<head th:include="include :: header"></head>
+
+<body class="gray-bg">
+<div class="row  border-bottom white-bg dashboard-header">
+    <div class="col-sm-12">
+        <blockquote class="text-warning" style="font-size:14px">
+            &nbsp;原websocket demo（模式调整无法正常演示：1、未排除服务断链接，所以在线人数会多一个；2、未对客户端发送的消息进行处理）
+            <br>
+            <br>
+            &nbsp;<a href="http://localhost/demo/websocket/client" target="_blank" style="color: blue;">打开客户端</a>
+            &nbsp;<a href="http://localhost/demo/websocket/server" target="_blank" style="color: blue;">打开服务端</a>
+        </blockquote>
+        <hr>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="alert alert-success" id="notice1">
+        </div>
+    </div>
+
+
+    <div class="col-sm-4">
+        <h2>WebSocket画面刷新Demo</h2>
+        <br/>
+        <p>模块一：主动刷新（使用定时器，每个10s主动刷新一次）</p>
+        <p>模块二：使用websocket刷新</p>
+        <p>模块三：使用websocket刷新</p>
+    </div>
+    <div class="col-sm-8">
+        <h4>本画面websocket url：ws://localhost/socketServer/${code}</h4>
+        <ol>
+            <li>code：未每个画面的唯一编码。</li>
+            <li>同一个code可以打开多个画面，都可以实现实时刷新</li>
+            <li>
+
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <input type="hidden" id="wsUrl" th:value="${@config.WebSocketAddress()}"/>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>模块一</h5>
+                </div>
+                <div class="ibox-content">
+                    <p id="model1">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>模块二（实时MybatisPlus实例数据）</h5>
+                </div>
+                <div class="ibox-content no-padding">
+                    <div class="panel-body">
+                        <div class="panel-group" id="version">
+                            <div class="panel panel-default">
+                                <div id="v32" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <ol id="model2">
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>模块三（实时综合实例的【修改】操作）</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="alert alert-warning" id="model3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<!--使用常链接的websocket.js 连接断开后会一直尝试连接-->
+<script th:src="@{/js/plugins/reconnecting-websocket/reconnecting-websocket.min.js}"></script>
+</body>
+
+<script type="text/javascript">
+    var ws = null;
+
+    $(function () {
+        // 链接websocket
+        WsConnect();
+        // 初始化模块一数据
+        model1();
+        // 初始化模块二数据
+        model2();
+        // 初始化模块三数据
+        model3(true)
+    })
+
+    function WsConnect(){
+        var wsUrl = $('#wsUrl').val();
+        if ('WebSocket' in window){
+            ws = new ReconnectingWebSocket(wsUrl + "/websocketDemo");
+        } else{
+            alert("该浏览器不支持websocket");
+            $('#notice1').css("alert alert-danger");
+            $('#notice1').html("该浏览器不支持websocket");
+        }
+
+        ws.onmessage = function(evt) {
+            var data = evt.data;
+            console.log("接收的websocket消息:" + data);
+            if (data == 'model2') {
+                // 重新获取模块二数据
+                model2();
+            } else if (data == 'model3') {
+                // 重新获取模块三
+                model3(false);
+            }
+        };
+
+        ws.onclose = function(evt) {
+            console.log("websocket连接中断...");
+            $('#notice1').css("alert alert-danger");
+            $('#notice1').html("websocket连接中断");
+        };
+
+        ws.onopen = function(evt) {
+            console.log("websocket连接成功...");
+            $('#notice1').css("alert alert-success");
+            $('#notice1').html("websocket连接成功");
+        };
+
+    }
+
+    window.onbeforeunload = function () {
+        //离开关闭websocket链接
+        if (ws != null) {
+            ws.close();
+        }
+    }
+
+    function model1() {
+        // 此处只是模拟刷新效果，实际项目中需要通过ajax请求后台数据
+        $('#model1').html(new Date().toLocaleTimeString());
+        //10秒后重复执行该函数
+        setTimeout('model1()', 10000);
+    }
+
+    function model2() {
+        // 通过ajax请求后台数据
+        $.ajax({
+            cache : false,
+            type : 'POST',
+            url : '/demo/department/list',// 请求的action路径
+            error : function() {// 请求失败处理函数
+                // alert("系统异常！请联系管理员")
+            },
+            success : function (data) {
+                $('#model2').html('');
+                // 请求成功
+                if (data.code == 0) {
+                    var htmls = '';
+                    $.each(data.rows, function (index, item) {
+                        var html= '<li>' + (index + 1) + ':' + item.name + '(' + item.establishmentDate + ')' + '</li>\n';
+                        htmls += html;
+                    })
+                    $('#model2').html(htmls);
+                }
+            }
+        });
+    }
+    
+    function model3(flag) {
+        // 实际开发中是通过ajax获取后台数据，model2中已展示，此处只是为了实现多个模块的功能
+        var html;
+        if (flag) {
+            html = "综合实例数据初始化！！！";
+        } else {
+            var date = new Date()
+            html = "综合实例数据最近一次修改时间：" + date.toLocaleTimeString();
+        }
+        $('#model3').html(html);
+    }
+
+</script>
+</body>
+
+<head th:include="include :: footer"></head>
+</html>

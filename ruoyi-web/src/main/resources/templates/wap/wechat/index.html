@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="../css/weui.css" th:href="@{/wap/css/weui.css}"/>
+    <link rel="stylesheet" href="../css/weuix.css" th:href="@{/wap/css/weuix.css}"/>
+
+    <script src="../js/zepto.min.js" th:src="@{/wap/js/zepto.min.js}"></script>
+    <script>
+        $(function () {
+
+
+        });
+
+    </script>
+</head>
+
+<body ontouchstart>
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        微信认证授权演示
+    </h1>
+    <p class="page-hd-desc">你好 <p th:text="${nickName}"></p> <br/>openId:<p th:text="${openId}"></p></p>
+</div>
+<div class="page-bd-15">
+    <div class="weui-cells__title">圆形头像</div>
+    <div class="weui-avatar-circle">
+        <img src="../favicon.png" th:src="${headImgUrl}">
+        <span class="weui-icon-success weui-icon-safe-warn"></span>
+    </div>
+    <div class="weui-cells__title">方形头像</div>
+    <div class="weui-avatar">
+        <img src="../favicon.png" th:src="${headImgUrl}">
+        <span class="weui-icon-success weui-icon-safe-warn"></span>
+    </div>
+</div>
+
+<br>
+<br>
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="../index.html" class="weui-footer__link">WeUI首页</a>
+    </p>
+    <p class="weui-footer__text">Copyright &copy; Yoby</p>
+</div>
+</body>
+</html>

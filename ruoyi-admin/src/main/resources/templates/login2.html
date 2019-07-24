@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title th:text="${@config.SystemName()}">吉运Java快速开发平台3.0</title>
+    <meta name="keywords" th:content="${@config.SystemName()}">
+    <meta name="description" th:content="${@config.SystemName()}">
+    <link href="../static/css/font-awesome.min.css" th:href="@{css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/style.css" th:href="@{css/style.css}" rel="stylesheet"/>
+    <link href="../static/css/login.min.css" th:href="@{css/login.min.css}" rel="stylesheet"/>
+    <link href="../static/ruoyi/css/ry-ui.css" th:href="@{/ruoyi/css/ry-ui.css?v=3.2.0}" rel="stylesheet"/>
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="../static/favicon.ico" th:href="@{favicon.ico}"/>
+    <style type="text/css">label.error { position:inherit;  }</style>
+    <script>
+        if(window.top!==window.self){window.top.location=window.location};
+    </script>
+    <link rel="stylesheet" href="../static/ruoyi/login/2/css/base.css" th:href="@{ruoyi/login/2/css/base.css}">
+</head>
+
+
+
+<body >
+
+
+<div class="header Cgreen">
+    <div class="wrapper clearfix">
+        <h1 th:text="${@config.SystemName()}">吉运Java快速开发平台3.0</h1>
+        <span class="QRspan">
+				<i class="iconfont">&#xe61b;</i>
+				<span>关注公众号</span>
+				<img class="QRimg" th:src="@{/ruoyi/login/2/img/qr.png}"/>
+			</span>
+    </div>
+</div>
+<div class="content">
+    <div class="wrapper">
+        <img class="bg1" th:src="@{/ruoyi/login/2/img/bg1.png}"/>
+        <div class="loginBox">
+            <div class="logo"></div>
+            <div class="formDiv">
+                <form id="signupForm" method="post">
+                    <label class="user">
+                        <input type="text" name="username" placeholder="请输入用户名"/>
+                        <i class="iconfont">&#xe614;</i>
+                    </label>
+                    <label class="pwd">
+                        <input type="password" name="password" placeholder="请输入密码"/>
+                        <i class="iconfont">&#xe615;</i>
+                    </label>
+
+                    <p th:if="${captchaEnabled==true}" style="display: inline">
+                        <label class="user">
+                            <input type="text" name="validateCode" placeholder="验证码" style="width: 180px"/>
+                            <a href="javascript:void(0);" title="点击更换验证码" style="float:right;width: 120px">
+                                <img th:src="@{captcha/captchaImage(type=${captchaType})}" class="imgcode" width="90%" style="float:right"/>
+                            </a>
+                        </label>
+
+                    </p>
+
+                    <div class="pwdOper">
+								<span class="remember">
+									<label>
+										<input type="checkbox" class="hide" name="rememberme"/>
+										<span class="checkbox"></span>
+										记住我
+									</label>
+								</span>
+                        <a class="forget Cred" href="javascript:;">忘记密码?</a>
+                    </div>
+                    <button class="submit" id="btnSubmit" data-loading="正在验证登录，请稍后...">登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="wrapper">
+        <span>Copyright © 2009-2019 www.51e.com.cn 版权所有 上海吉运软件技术有限公司</span>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        setContentHeight();
+        window.onresize = setContentHeight;
+        function setContentHeight () {
+            let windowHeight = document.documentElement.clientHeight;
+            document.getElementsByClassName('content')[0].style.height = windowHeight - 102 - 138 + 'px';
+        }
+    }
+</script>
+
+<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<!-- 全局js -->
+<script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<!-- 验证插件 -->
+<script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=3.2.0}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ruoyi/login.js}"></script>
+</body>
+</html>

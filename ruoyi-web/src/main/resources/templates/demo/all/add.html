@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<!--头部引用-->
+<head th:include="include :: header"></head>
+
+<body class="white-bg">
+
+    <!--表单区域-->
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <!--如果页面有多个form（默认提交第一个），这种情况下想强制提交某一个请将id命名为****-MAIN-->
+        <form class="form-horizontal m" id="form-demo-add" th:action="*{formAction}" th:object="${demo}">
+
+            <input id="id" name="id" type="hidden" th:field="*{id}"/>
+
+            <input id="create_by" name="create_by" type="hidden" value=""/>
+
+            <!--非明细数据-->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>表单主体 <small>包括自定义样式的复选和单选按钮</small></h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">-->
+                                    <!--<i class="fa fa-wrench"></i>-->
+                                <!--</a>-->
+                                <!--<ul class="dropdown-menu dropdown-user">-->
+                                    <!--<li><a href="form_basic.html#">选项1</a>-->
+                                    <!--</li>-->
+                                    <!--<li><a href="form_basic.html#">选项2</a>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                                <!--<a class="close-link">-->
+                                    <!--<i class="fa fa-times"></i>-->
+                                <!--</a>-->
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <form method="get" class="form-horizontal">
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">普通</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text"  name="Name" id="Name" class="form-control required" placeholder="提示信息" th:field="*{name}">
+                                        <span class="help-block m-b-none">帮助文本，可能会超过一行，以块级元素显示</span>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label class="col-sm-2 control-label">状态</label>
+                                    <div class="col-sm-10">
+                                        <select name="status" class="form-control" th:with="type=${@dict.getType('sys_normal_disable')}">
+                                            <option value="">所有</option>
+                                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">密码</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="password" id="pw"  class="form-control " name="password" >
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">禁用</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" name="name2" disabled="" placeholder="已被禁用" class="form-control">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">静态控制</label>
+
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static">i@zi-han.net</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">复选框&amp;单选框
+                                        <br/><small class="text-navy">自定义样式</small>
+                                    </label>
+
+                                    <div class="col-sm-10">
+                                        <div class="checkbox i-checks">
+                                            <label>
+                                                <input type="checkbox" name="ckb1" value=""> <i></i> 选项1</label>
+                                        </div>
+                                        <div class="checkbox i-checks">
+                                            <label>
+                                                <input type="checkbox" name="ckb1" value="" checked=""> <i></i> 选项2（选中）</label>
+                                        </div>
+                                        <div class="checkbox i-checks">
+                                            <label>
+                                                <input type="checkbox" name="ckb1" value="" disabled="" checked=""> <i></i> 选项3（选中并禁用）</label>
+                                        </div>
+                                        <div class="checkbox i-checks">
+                                            <label>
+                                                <input type="checkbox" name="ckb1" value="" disabled=""> <i></i> 选项4（禁用）</label>
+                                        </div>
+                                        <div class="radio i-checks">
+                                            <label>
+                                                <input type="radio" name="ckb2" value="option1"> <i></i> 选项1</label>
+                                        </div>
+                                        <div class="radio i-checks">
+                                            <label>
+                                                <input type="radio" name="ckb2" checked="" value="option2" > <i></i> 选项2（选中）</label>
+                                        </div>
+                                        <div class="radio i-checks">
+                                            <label>
+                                                <input type="radio" name="ckb2" disabled="" checked="" value="option2"> <i></i> 选项3（选中并禁用）</label>
+                                        </div>
+                                        <div class="radio i-checks">
+                                            <label>
+                                                <input type="radio" name="ckb2" disabled=""> <i></i> 选项4（禁用）</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">内联复选框</label>
+
+                                    <div class="col-sm-10">
+                                        <label class="checkbox-inline i-checks">
+                                            <input type="checkbox" value="option1">a</label>
+                                        <label class="checkbox-inline i-checks">
+                                            <input type="checkbox" value="option2">b</label>
+                                        <label class="checkbox-inline i-checks">
+                                            <input type="checkbox" value="option3">c</label>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">日期(YYYY)：</label>
+                                    <div class="col-sm-10">
+                                        <input data-toggle="date" data-type="year" id="years"  value="2019" class="required"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">日期(YYYY-MM)：</label>
+                                    <div class="col-sm-10">
+                                        <input data-toggle="date" data-type="month" id="months"  />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">日期(YYYY-MM-DD)：</label>
+                                    <div class="col-sm-10">
+                                        <input data-toggle="date" data-type="date" id="days" th:value="*{#dates.format(createTime, 'yyyy-MM-dd')}" />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">创建时间：</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static" th:text="*{#dates.format(createTime, 'yyyy-MM-dd HH:mm:ss')}"></p>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">suggest：</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="test">
+                                            <div class="input-group-btn">
+                                                <button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown">
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">用户(多选)：</label>
+                                    <div class="col-sm-10">
+                                        <select data-toggle="select"  data-type="user" id="st1" value="100" >
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">用户(单选)：</label>
+                                    <div class="col-sm-10">
+                                        <select data-toggle="select" data-type="user" data-radio="true" id="reporter" th:value="*{reporter}" data-class="required" data-skin="warm"  >
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">部门(分组、自定义回调)：</label>
+                                    <div class="col-sm-10">
+                                        <select data-toggle="select" data-type="dept-group" click="callback_select" id="st3"  >
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">部门（树形）：</label>
+                                    <div class="col-sm-10">
+                                        <select data-toggle="select" data-type="dept" id="depts"  th:value="*{depts}"  >
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">部门（树形,指定父级部门）：</label>
+                                    <div class="col-sm-10">
+                                        <select data-toggle="select" data-type="dept" id="st5" pid="102" radio="true">
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">本地搜索（原生）：</label>
+                                    <div class="col-sm-10">
+                                        <select name="city" data-id="city" xm-select="select7_1" xm-select-search="" th:with="users=${@user.getList()}" >
+                                            <!--<option value="1" disabled="disabled">北京</option>-->
+                                            <!--<option value="2" selected="selected">上海</option>-->
+                                            <!--<option value="3">广州</option>-->
+                                            <!--<option value="4" selected="selected">深圳</option>-->
+                                            <!--<option value="5">天津</option>-->
+                                            <option value="">请选择</option>
+                                            <option th:each="user:${users}" th:value="${user.userId}" th:text="${user.userName}" th:selected="${user.userId==100}" th:disabled="${user.userId==1}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">弹出框选人1：</label>
+
+                                    <div class="col-sm-10" data-toggle="lookup_user"  id="myuser1" th:value="*{userids1}" dispName="userNames1" hiddenName="userids1" width="760px" height="500px">
+                                    <!--<div class="col-sm-10" data-toggle="lookup_user"  id="myuser1" th:value="*{userids1}" dispName="userNames1" hiddenName="userids1" width="760px" height="500px" deptId="101">-->
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">弹出框选人2：</label>
+                                    <div class="col-sm-10" data-toggle="lookup_user"  id="myuser2"  th:value="*{userids2}" dispName="userNames2" hiddenName="userids2">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">备注：</label>
+                                    <div class="col-sm-10">
+                                        <textarea id="remark" name="remark" class="form-control" rows="10" th:field="*{remark}"></textarea>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label class="col-sm-2 control-label">单文件上传</label>
+                                        <div class="col-sm-10">
+                                        <input type="hidden" name="filePath1" data-toggle="fileupload" data-multiple="false" value="" data-back-type="no" data-btn-text="上传文件" />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">多文件上传</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" name="filePath" data-toggle="fileupload" data-multiple="true" th:value="*{filePath}" data-btn-text="上传文件（多个）"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">图片上传</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" name="imgPath" data-toggle="fileupload" data-multiple="false" th:value="*{imgPath}" data-back-type="no" data-btn-text="" data-accept="image"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">多图片上传</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" data-toggle="fileupload" data-multiple="true" value=""   data-back-type="no" data-btn-text="" data-accept="image"/>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--明细数据-->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>明细数据
+                                <small style="margin-left: 10px">
+                                    <button class="btn btn-primary btn-xs" type="button" onclick="addtr('mytable')"><i class="fa fa-plus"></i>
+                                    </button>
+                                </small>
+                            </h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <table class="table table-bordered" id="mytable">
+                                <thead>
+                                <tr>
+                                    <th>姓名</th>
+                                    <th>性别</th>
+                                    <th>年龄</th>
+                                    <th th:width="80" style="text-align: center">操作</th>
+                                </tr>
+                                </thead>
+                                <template>
+
+                                </template>
+                                <tbody>
+                                <tr>
+                                    <td><input type="text"  name="item_name"  class="form-control" placeholder="请输入姓名"></td>
+                                    <td>
+                                        <select name="status" class="form-control" th:with="type=${@dict.getType('sys_user_sex')}">
+                                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}">
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text"  name="item_age"  class="form-control"></td>
+                                    <td style="text-align: center">
+                                        <button class="btn btn-danger btn-xs" type="button" onclick="deltr(this)"><i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!--自定义按钮区域(仅适合弹窗模式)-->
+    <span class="toolbar-btn">
+        <button class="btn btn-primary" type="button" id="btn1">
+            <i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">暂存1</span>
+        </button>
+
+        <button class="btn btn-danger" type="button" onclick="alert('这是一个简单的Alert');">
+            <i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">暂存2</span>
+        </button>
+    </span>
+
+    <!--底部引用-->
+	<div th:include="include::footer"></div>
+
+
+    <!--页面JS-->
+	<script type="text/javascript">
+
+
+
+        //自定义按钮事件
+        $('#btn1', $.modal.currentWindow()).click(function(){
+            alert("这个是一个自定义按钮方法。记得需要动态绑定方法哦！");
+            console.log($("input[name='st1']").val());
+        });
+
+        //提交前表单验证
+        $("#form-demo-add").validate({
+            // onkeyup:true,
+            // onblur:true,
+            // onfocus:true,
+            // onkeydown:true,
+
+            rules:{
+
+                // Name:{
+                //     required:true,
+                //     minlength: 3,
+                //     maxlength: 10
+                // },
+                // email:{
+                //     required:true,
+                //     email:true,
+                //     remote: {
+                //         url: ctx + "system/user/checkEmailUnique",
+                //         type: "post",
+                //         dataType: "json",
+                //         data: {
+                //             name: function () {
+                //                 return $.common.trim($("#email").val());
+                //             }
+                //         },
+                //         dataFilter: function (data, type) {
+                //             return $.validate.unique(data);
+                //         }
+                //     }
+                // },
+
+            }
+		});
+
+
+        function addtr(tableid,refreshIndex){
+            var tr = $("#" + tableid +" tr").eq(1).clone();
+            tr.appendTo("#" + tableid);
+            //添加完成后索引刷新 todo
+            if(refreshIndex == true) {
+                $("#" + tableid).find("tr").each(function () {
+                    var rowIndex = parseInt(this.sectionRowIndex);
+                });
+            }
+
+        }
+
+        function deltr(obj) {
+            var tr=obj.parentNode.parentNode;//obj.parentNode.parentNode是<tr>
+            tr.remove();
+        }
+
+        $("#test").bsSuggest('init', {
+            clearable: true,
+            // showHeader: true, //显示 header
+            // showBtn: false, //不显示下拉按钮
+            url: "/json/data.json",
+            idField: "userId",
+            keyField: "userName"
+        }).on('onDataRequestSuccess', function (e, result) {
+            console.log('onDataRequestSuccess: ', result);
+        }).on('onSetSelectValue', function (e, keyword, data) {
+            console.log('onSetSelectValue: ', keyword, data);
+        }).on('onUnsetSelectValue', function () {
+            console.log('onUnsetSelectValue');
+        }).on('onShowDropdown', function (e, data) {
+            console.log('onShowDropdown', e.target.value, data);
+        }).on('onHideDropdown', function (e, data) {
+            console.log('onHideDropdown', e.target.value, data);
+        });
+
+
+        function  callback_select(val) {
+            alert("这里回调，点击了：" + val.value + "(" + val.name + ")");
+        }
+
+	</script>
+
+</body>
+</html>

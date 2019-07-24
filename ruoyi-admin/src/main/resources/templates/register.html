@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${@config.SystemName()}">吉运Java快速开发平台3.0</title>
+    <meta name="keywords" th:content="${@config.SystemName()}">
+    <meta name="description" th:content="${@config.SystemName()}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link th:href="@{/ruoyi/login/1/css/login.css}" rel="stylesheet"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+
+    <script type="text/javascript">
+        $(function(){
+            $(".name input").focus(function(){
+                $(this).prev("i").css({"background-image":"url(../ruoyi/login/1/img/user2.png)"});
+            });
+            $(".name input").blur(function(){
+                $(this).prev("i").css({"background-image":"url(../ruoyi/login/1/img/user1.png)"});
+            });
+            $(".password input").focus(function(){
+                $(this).prev("i").css({"background-image":"url(../ruoyi/login/1/img/password2.png)"});
+            });
+            $(".password input").blur(function(){
+                $(this).prev("i").css({"background-image":"url(../ruoyi/login/1/img/password1.png)"});
+            });
+        });
+    </script>
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="../favicon.ico" th:href="@{favicon.ico}"/>
+    <style type="text/css">
+        label.error { position:inherit; color:red;  }
+    </style>
+    <script>
+        if(window.top!==window.self){window.top.location=window.location};
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="wrap">
+        <header><em>用户注册</em><span th:text="${@config.SystemName()}">吉运Java快速开发平台3.0</span></header>
+        <article>
+            <section>
+                <aside>
+
+                    <form id="registerForm" method="post" >
+
+                        <p class="name"><i></i><input type="text" name="userName" class="userName" placeholder="用户名" onblur="clearMsg()"></p>
+                        <p class="name"><i></i><input type="text" name="loginName"  class="userName" placeholder="登录名" onblur="clearMsg()"></p>
+                        <p class="password"><i></i><input type="password" name="password" class="pwd" placeholder="密码" onblur="clearMsg()"></p>
+                        <!--<p class="name"><i></i><input type="text" name="phonenumber" class="userName" placeholder="请输入电话号"></p>-->
+
+                        <input type="text" name="validateCode" class=" code" placeholder="验证码" maxlength="5" style="width: 120px;font-size:14px;font-weight: bolder;">
+                        <a href="javascript:void(0);" title="点击更换验证码" style="margin-top:22px;float:right;height: 40px;width: 120px">
+                            <img th:src="@{captcha/captchaImage(type=${captchaType})}" class="imgcode" width="85%"/>
+                        </a>
+                        <button type="button" class="btn btn-success btn-block"  id="btnRegister" onclick="registerAction()">注册</button>
+
+                        <p class="regist"><span style="margin-right: 5px">有账号了!</span><a style="color:rebeccapurple" href="/login">登录</a></p>
+                        <p class="regist" id="errormsg" style="color:red;  float:right"></p>
+
+                        <div class="clear"></div>
+
+                    </form>
+
+
+                </aside>
+
+            </section>
+        </article>
+
+    </div>
+</div>
+
+<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<!-- 全局js -->
+<script  th:src="@{/js/jquery.min.js}"></script>
+<!-- 验证插件 -->
+<script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=3.2.0}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+
+<script>
+
+    //表单提交事件
+    function registerAction() {
+        var formobj = $("#registerForm");
+        var config = {
+            url: "/register",
+            type: "post",
+            dataType: "json",
+            data: formobj.serialize(),
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+                $.modal.disable();
+            },
+            success: function(r) {
+
+                if (r.code == 0) {
+                    $.modal.confirm("注册成功,点击[确认]进行登录.",gotoLogin);
+                } else {
+
+                    $('.imgcode').click();
+                    $(".code").val("");
+                    $("#errormsg").text(r.msg);
+                    $.modal.msg(r.msg);
+                }
+
+                $.modal.closeLoading();
+            }
+        };
+        $.ajax(config)
+
+    }
+
+    function  clearMsg() {
+        $("#errormsg").text("");
+    }
+
+    function gotoLogin() {
+       location.href = ctx + 'login';
+    }
+
+    $('.imgcode').click(function() {
+        var url = ctx + "captcha/captchaImage?type=" + captchaType + "&s=" + Math.random();
+        $(".imgcode").attr("src", url);
+    });
+
+</script>
+</body>
+</html>

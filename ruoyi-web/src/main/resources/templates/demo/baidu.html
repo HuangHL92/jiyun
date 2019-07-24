@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body>
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <div class="layui-tab layui-tab-brief">
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                                <form method="get" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">详细位置:</label>
+                                        <div class="col-sm-5">
+                                            <input type="text"  name="address" id="address" class="form-control" placeholder="请输入详细地址">
+                                        </div>
+                                        <div class="layui-form-mid layui-word-aux">
+                                            <i id="mapMaker" class="glyphicon glyphicon-map-marker" style="font-size: 135%;color: red"></i>
+                                        </div>
+                                        <div class="col-sm-2">
+                                        <div class="layui-form-mid layui-word-aux">X</div>
+                                        <div class="layui-input-inline" style="width: 150px;">
+                                             <input type="text" name="coordinateX"  id="longitude" value="" placeholder="纬度"  class="form-control" readonly="true">
+                                        </div></div>
+                                            <div class="col-sm-2">
+                                        <div class="layui-form-mid layui-word-aux">Y</div>
+                                        <div class="layui-input-inline" style="width: 150px;">
+                                             <input type="text" name="coordinateY"  id="latitude" value="" placeholder="纬度" class="form-control" readonly="true">
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="baidu_map" data-id="baidu_map" style="margin: auto;width: 95%;height:100%;" data-toggle="map" data-longitudeid="longitude" data-latitudeid="latitude" data-mark-type="markPoint"  data-makerid="mapMaker"/>
+
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dohAgcOnkdkg9H8hW9TK9tbz"></script>
+<!--加载鼠标绘制工具-->
+<script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+<link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+<script th:src="@{/js/map.js}"></script>
+<style>
+    /*取消显示百度地图版权标志*/
+    .BMap_cpyCtrl {display: none;}
+    .anchorBL {display: none;}
+</style>
+<script type="text/javascript">
+    //页面控件初始化
+    initMap();
+</script>
+</body>
+</html>

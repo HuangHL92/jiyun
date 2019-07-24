@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+
+<head th:include="include :: header"></head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <h1 >WebSocket服务端</h1>
+    <br/>
+    <p>在线人数: <span th:text="${num}" >0</span>. </p>
+
+    <label >在线人员:</label>
+    <div >
+        <input type="checkbox" th:each="user: ${users}"  name="check" th:title="${user}" th:text="${user}">
+
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">信息内容:</label>
+        <div class="layui-input-inline" style="width: 300px">
+            <input id="msg" type="text" name="title" required  lay-verify="required" placeholder="请输入要发送的内容" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <button class="layui-btn" onclick="sendMsg()">发送</button>
+    <button class="layui-btn" onclick="sendAll()">全部发送</button>
+
+
+    <div class="layui-card" style="margin-top: 100px">
+        <div class="layui-card-header">
+            <h1>操作详情</h1>
+        </div>
+
+        <div id="content" class="layui-card-body" placeholder="请输入要发送的内容">
+
+        </div>
+    </div>
+
+</div>
+
+
+
+   <script type="text/javascript">
+
+
+       function sendMsg(){
+           var user = [];
+           $("input[name='check']:checked").each(function(i){//把所有被选中的复选框的值存入数组
+               user =user+$(this).attr("title")+","
+           });
+           console.log(user)
+
+            if (user.length > 0) {
+                user = user.substr(0, user.length - 1);
+            } else {
+               console.log("未选中发送人")
+                var content = $("#content").html();
+                $("#content").html(content+'<div style="margin-bottom: 8px">\n' +
+                    '                        <p><q style="color: red">'+'系统提示:请在多选框中选择要发送的用户'+ '</span></p>\n' +
+                    '                    </div>\n' +
+                    '                    <br/>');
+                return
+            }
+
+           var msg = $("#msg").val();
+		   if(msg!=null){
+				$.ajax({
+                    method: 'get',
+                    url: '/demo/websocket/sendmsg',
+                    data: {
+                        "username": user,
+                        "msg": msg
+                    },
+                    success:function(data) {
+                        var content = $("#content").html();
+                        $("#content").html(content+'<div style="margin-bottom: 8px">\n' +
+                            '                        <p><q style="color: #eb7350">'+'服务器推送  '+msg+' -->'+user+ '</span></p>\n' +
+                            '                    </div>\n' +
+                            '                    <br/>');
+                        console.log(data);
+                    }
+                })
+		   }else{
+			   alert("请填写要发送的用户昵称或者发送内容");
+		   }
+	   }
+
+	   function sendAll(){
+		   var msg = $("#msg").val();
+		   if(msg!=null){
+               $.ajax({
+                   method: 'get',
+                   url: '/demo/websocket/sendAll',
+                   data:{
+                       msg:msg
+                   },
+                   success:function(data) {
+                       var content = $("#content").html();
+                       $("#content").html(content+'<div style="margin-bottom: 8px">\n' +
+                           '                        <p><q style="color: #eb7350">'+'服务器推送  '+msg+' --> 所有用户'+ '</span></p>\n' +
+                           '                    </div>\n' +
+                           '                    <br/>');
+                       console.log(data);
+                   }
+               })
+		   }else{
+			   alert("请填写要发送的内容");
+		   }
+	   }
+
+       function connect(){
+               if ('WebSocket' in window){
+                   ws = new WebSocket("ws://localhost/socketServer/niezhiliang9595");
+                   //ws = new WebSocket("ws://127.0.0.1:8086/socketServer/niezhiliang9595");
+               }
+               else if ('MozWebSocket' in window){
+                   ws = new MozWebSocket("ws://localhost/socketServer/niezhiliang9595");
+                   //ws = new MozWebSocket("ws://127.0.0.1:8086/socketServer/niezhiliang9595");
+               }
+               else{
+                   alert("该浏览器不支持websocket");
+               }
+               ws.onmessage = function(evt) {
+                   var content = $("#content").html();
+                   $("#content").html(content+'<div style="text-align: right;margin-bottom: 8px">\n' +
+                       '                        <p><q style="color: mediumorchid;text-align: right">'+evt.data+ '</span></p>\n' +
+                       '                    </div>\n' +
+                       '                    <br/>');
+                   console.log(msg)
+               };
+
+               ws.onclose = function(evt) {
+                  console.log('连接关闭')
+               };
+
+               ws.onopen = function(evt) {
+                   var content = $("#content").html();
+                   $("#content").html(content+'<div style="margin-bottom: 8px">\n' +
+                       '                        <p><q style="color: #eb7350">'+'服务器初始化成功...'+ '</span></p>\n' +
+                       '                    </div>\n' +
+                       '                    <br/>');
+                  console.log('连接成功')
+               };
+       }
+
+       connect()
+   </script>
+</body>
+
+<head th:include="include :: footer"></head>
+</html>

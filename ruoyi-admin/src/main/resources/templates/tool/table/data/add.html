@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<style>
+</style>
+<body class="white-bg">
+<!--表单区域-->
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-data-add" th:action="${formAction}">
+        <input type="hidden" name="id" th:if="${data!=null}" th:value="${data.id}"/>
+        <input type="hidden" name="id" th:unless="${data!=null}"/>
+        <input type="hidden" name="tableId" th:value="${tableId}"/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox-content">
+                    <div class="form-group" th:each="column:${columnList}">
+                        <label class="col-sm-2 control-label" th:text="${column.comments}"></label>
+                        <!--根据字段类型和长度动态设置输入框-->
+                        <div class="col-sm-6" th:if="(${column.lengthNumber}!=null and ${column.lengthNumber}>100) or ${column.viewJdbc}=='text' or ${column.viewJdbc}=='longtext'">
+                            <textarea th:unless="${data!=null}" th:name="${column.name}" class="form-control" rows="3" th:height="60px">
+                            </textarea>
+                            <textarea th:if="${data!=null}" th:name="${column.name}" class="form-control" rows="3"
+                                      th:text="${data[column.name]}" th:height="60px">
+                            </textarea>
+                        </div>
+                        <div class="col-sm-6" th:unless="(${column.lengthNumber}!=null and ${column.lengthNumber}>100) or ${column.viewJdbc}=='text' or ${column.viewJdbc}=='longtext'">
+                            <input th:unless="${data!=null}" type="text" th:name="${column.name}" class="form-control" th:maxlength="${column.viewJdbc=='datetime'?50:column.lengthNumber}" th:placeholder="${column.jdbcType}" />
+                            <input th:if="${data!=null}" type="text" th:name="${column.name}" class="form-control"
+                                   th:value="${data[column.name]}" th:maxlength="${column.jdbcType=='datetime'?50:column.lengthNumber}" th:placeholder="${column.jdbcType}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+
+</script>
+</body>
+</html>

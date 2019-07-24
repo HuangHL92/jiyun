@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/ajax/libs/jquery-layout/jquery.layout-latest.css}" rel="stylesheet"/>
+<link th:href="@{/ajax/libs/jquery-ztree/3.5/css/metro/zTreeStyle.css}" rel="stylesheet"/>
+
+<body class="gray-bg">
+
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="demo-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								名称：<input type="text" name="Name"/>
+
+							</li>
+
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                <!--<a class="btn btn-warning btn-rounded btn-sm" id="menuBtn" >下拉菜单</a>-->
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+
+			<div class="btn-group-sm hidden-xs" id="toolbar" demo="group">
+				<a class="btn btn-success" onclick="$.operate.addFull()" shiro:hasPermission="system:demo:add">
+	                <i class="fa fa-plus"></i> 新增
+	            </a>
+	            <a class="btn btn-primary btn-edit disabled" onclick="$.operate.editFull()" shiro:hasPermission="system:demo:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+				<a class="btn btn-danger btn-del disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:demo:remove">
+		            <i class="fa fa-remove"></i> 删除
+		        </a>
+		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:demo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+
+                <!--后添加按钮-->
+                <button class="btn btn-primary" type="button" onclick="batchData()">
+                    <i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">生成数据</span>
+                </button>
+
+				<button class="btn btn-primary" type="button" onclick="clearAll()">
+					<i class="fa fa-remove"></i>&nbsp;&nbsp;<span class="bold">清空表</span>
+				</button>
+
+	        </div>
+
+	        <div class="col-sm-12 select-table text-nowrap">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+
+
+    <!--<ul id="context-menu">-->
+        <!--<li data-item = "edit" onclick="$.operate.addFull()" shiro:hasPermission="system:demo:add">新增</li>-->
+        <!--<li data-item = "delete">修改</li>-->
+    <!--</ul>-->
+
+	<div th:include="include :: footer"></div>
+
+	<script th:inline="javascript">
+		var editFlag = [[${@permission.hasPermi('system:demo:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('system:demo:remove')}]];
+		var prefix = ctx + "demo/all";
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+                detailUrl: prefix + "/detail/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+                //sortOrder:"desc",
+		        //sortName: "id",
+		        modalName: "测试数据",
+		        search: true,
+		        showExport: true,
+                context_Menu: '#context-menu',
+                // fixedColumns: true,
+                // fixedNumber: 2,
+		        columns: [{
+		            checkbox: true
+		        },
+				{
+					title: '序号',
+					align: 'center',
+					valign: 'bottom',
+					widht:30,
+					formatter: function (value, row, index) {
+						return index + 1;
+					}
+				},
+		        {
+		            field: 'id',
+		            title: '编号',
+                    align : "left",
+                    valign : "middle",
+                    width:400,
+                    formatter:function (value, row, index) {
+                        return link_detail(row.id,value);
+                    }
+
+                },
+		        {
+		            field: 'name',
+		            title: '名称',
+		            sortable: true
+		        },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    width: 200,
+                    sortable: true
+                },
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						width: 200,
+						sortable: true
+					},
+		        {
+		            title: '操作',
+		            align: 'center',
+                    width:300,
+		            formatter: function(value, row, index) {
+		                var actions = [];
+		                actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.editFull(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+		                actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+
+		            }
+		        }]
+
+		    };
+		    $.table.init(options);
+
+
+            //下拉菜单绑定
+            /**
+             * 菜单使用的数据格式
+             * content  [string]   : 菜单项目显示文本，支持HTML格式（设置内容为“sm_divider”可生成分隔栏）
+             * header   [boolean]  : 是否为子标题栏
+             * url      [string]   : 需要跳转的链接
+             * callback [function] : 需要执行的回调函数
+             * disabled [boolean]  : 是否禁用菜单项目
+             */
+            // var menuData = [
+            //     //{content:'News Site',header: true},//定义子标题栏
+            //     //{content:'修改',url : 'http://www.163.com'},//链接跳转型菜单项目
+            //     {content:'新增',callback : function(){
+            //             $.operate.addFull();
+            //         }},
+            //     {content:'sm_divider'},//分隔栏
+            //     //点击后执行回调的菜单项目
+            //     {content:'修改',callback : function(){
+            //             alert('you can do anything in callback!');
+            //         }}
+            // ];
+            // $('#menuBtn').click(function(){
+            //     $(this).selectMenu({
+            //         //设置常规菜单模式
+            //         regular : true,
+            //         data : menuData
+            //     });
+            // });
+
+            // $('#bootstrap-table').bootstrapTable({
+            //     contextMenu: '#context-menu',
+            //     onContextMenuItem: function(row, $el){
+            //         if($el.data("item") == "edit"){
+            //             alert(row.itemid);
+            //         }
+            //     }
+            // });
+
+		});
+
+
+		function batchData() {
+			var url =ctx + "demo/all/batchData";
+			$.operate.post(url,$("#form-demo-redis").serialize());
+		}
+
+		function clearAll() {
+			var url =ctx + "demo/all/clearAll";
+			$.operate.post(url,$("#form-demo-redis").serialize());
+		}
+
+    </script>
+</body>
+</html>

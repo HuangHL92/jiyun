@@ -1,0 +1,54 @@
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<!--<li class="logo">-->
+    <!--<span class="logo-lg" th:text="${@config.SystemName()}">JiYun</span>-->
+<!--</li>-->
+<li>
+    <div class="user-panel">
+        <a class="menuItem" title="个人中心" th:href="@{/system/user/profile}">
+            <div class="hide" th:text="个人中心"></div>
+            <div class="pull-left image">
+                <img th:src="${user.avatar == ''} ? ( ${user.sex == '0'} ? @{/img/male.png} : (${user.sex == '1'} ? @{/img/female.png} : @{/img/profile.jpg}) ): ${@comm.getImgUrl(user.avatar)}" class="img-circle" alt="User Image">
+            </div>
+        </a>
+        <div class="pull-left info">
+            <p>[[${user.loginName}]]</p>
+            <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+            <a th:href="@{logout}" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i> 注销</a>
+        </div>
+    </div>
+</li>
+
+<li th:each="menu : ${menus}">
+
+    <a href="#">
+        <i class="fa fa fa-bar-chart-o" th:class="${menu.icon}"></i>
+        <span class="nav-label" th:text="${menu.menuName}">一级菜单</span>
+        <span class="fa arrow"></span>
+    </a>
+
+    <ul class="nav nav-second-level collapse in">
+
+        <li th:each="cmenu : ${menu.children}">
+
+            <a th:if="${#lists.isEmpty(cmenu.children)}" class="menuItem"  th:href="@{${cmenu.url}}">
+                <i class="fa fa fa-bar-chart-o" th:class="${cmenu.icon}"></i>
+                <span class="nav-label" th:text="${cmenu.menuName}">二级菜单</span>
+            </a>
+            <a th:if="${not #lists.isEmpty(cmenu.children)}" href="#">
+                <i class="fa fa fa-bar-chart-o" th:class="${cmenu.icon}"></i>
+                [[${cmenu.menuName}]]<span class="fa arrow"></span>
+            </a>
+
+            <ul th:if="${not #lists.isEmpty(cmenu.children)}" class="nav nav-third-level">
+                <li th:each="emenu : ${cmenu.children}">
+                    <a class="menuItem" th:text="${emenu.menuName}" th:href="@{${emenu.url}}">三级菜单</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+
+
+</li>
+</html>
