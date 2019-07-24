@@ -3,6 +3,7 @@ package com.ruoyi.system.service;
 import com.ruoyi.system.domain.SysUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户 业务层
@@ -171,4 +172,12 @@ public interface ISysUserService
      * @return
      */
     List<SysUser> selectUserListByDeptId(SysUser sysUser);
+
+    /**
+     * 验证登陆
+     * @param username
+     * @param password
+     * @return
+     */
+    Map<String,Object> checkLogin(String username, String password);
 }

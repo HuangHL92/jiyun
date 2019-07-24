@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Metric;
 import org.springframework.data.geo.Point;
 import org.springframework.data.geo.format.PointFormatter;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +24,9 @@ public class RedisServiceImpl implements RedisService {
 
 	@Autowired
 	private StringRedisTemplate template;
+
+	@Autowired
+	private RedisTemplate<String, Object> objectTemplate;
 
 	public RedisServiceImpl() {
 	}
@@ -68,6 +69,12 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
+	public <K> K getObj(String key) {
+		ValueOperations<String, Object> valueOperation = this.objectTemplate.opsForValue();
+		return (K) valueOperation.get(key);
+	}
+
+	@Override
 	public boolean set(String key, String value) {
 		boolean result = false;
 		try {
@@ -93,7 +100,14 @@ public class RedisServiceImpl implements RedisService {
 		}
 		return result;
 	}
-	
+
+	@Override
+	public void setWithExpire(String key, Object value, long time, TimeUnit timeUnit) {
+		BoundValueOperations<String, Object> boundValueOperations = this.objectTemplate.boundValueOps(key);
+		boundValueOperations.set(value);
+		boundValueOperations.expire(time,timeUnit);
+	}
+
 	@Override
 	public List<String> range(String key, Long start, Long end) {
 		ListOperations<String, String> operations =  this.template.opsForList();

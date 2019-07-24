@@ -17,7 +17,16 @@ public enum ResponseCode {
     ILLEGAL_ACCOUNT(4006, "账号信息不存在"),
     ERROR_LOGIN(4007, "账号或密码错误"),
     ILLEGAL_TOKEN(4008, "非法请求（token验证失败）"),
-    EXPIRE_TOKEN(4009, "非法请求（token失效）");
+    EXPIRE_TOKEN(4009, "非法请求（token失效）"),
+    INVALID_REQUEST(4010, "请求缺少某个必需参数，包含一个不支持的参数或参数值，或者格式不正确。"),
+    INVALID_CLIENT(4011, "请求的client_id或client_secret参数无效。"),
+    INVALID_GRANT(4012, "请求的Authorization Code、Access Token、Refresh Token等信息是无效的。"),
+    UNSUPPORTED_GRANT_TYPE(4013, "不支持的grant_type。"),
+    INVALID_SCOPE(4014, "请求的scope参数是无效的、未知的、格式不正确的，或所请求的权限范围超过了数据拥有者所授予的权限范围。"),
+    EXPIRED_TOKEN(4015, "请求的Access Token或Refresh Token已过期。"),
+    REDIRECT_URI_MISMATCH(4016, "请求的redirect_uri所在的域名与开发者注册应用时所填写的域名不匹配。"),
+    INVALID_REDIRECT_URI(4017, "请求的回调URL不在白名单中。"),
+    UNKNOWN_ERROR(4018, "程序发生未知异常，请联系管理员解决。");
 
     private long code;
     private String msg;

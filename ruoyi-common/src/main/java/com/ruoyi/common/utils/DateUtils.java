@@ -3,6 +3,8 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -176,4 +178,79 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return leaveDays;
     }
 
+
+    /**
+     * 返回当前的LocalDateTime
+     * @author zifangsky
+     * @date 2018/7/30 13:23
+     * @since 1.0.0
+     * @return java.time.LocalDateTime
+     */
+    public static LocalDateTime now(){
+        return LocalDateTime.now();
+    }
+
+
+    /**
+     * 将时间戳转换为LocalDateTime
+     * @author zifangsky
+     * @date 2018/7/30 13:23
+     * @since 1.0.0
+     * @param second Long类型的时间戳
+     * @param zoneOffset 时区，不填默认为+8
+     * @return java.time.LocalDateTime
+     */
+    public static LocalDateTime ofEpochSecond(Long second, ZoneOffset zoneOffset){
+        if(zoneOffset == null){
+            return LocalDateTime.ofEpochSecond(second,0,ZoneOffset.ofHours(8));
+        }else{
+            return LocalDateTime.ofEpochSecond(second,0,zoneOffset);
+        }
+    }
+
+
+    /**
+     * 返回几天之后的时间（精确到秒的时间戳）
+     * @param days
+     * @param zoneOffset
+     * @return
+     */
+    public static Long nextDaysSecond(Long days, ZoneOffset zoneOffset){
+        LocalDateTime dateTime = nextDays(days);
+
+        if(zoneOffset == null){
+            return dateTime.toEpochSecond(ZoneOffset.ofHours(8));
+        }else{
+            return dateTime.toEpochSecond(zoneOffset);
+        }
+    }
+
+    /**
+     * 返回当前精确到毫秒的时间戳
+     * @return
+     */
+    public static Long currentTimeMillis(){
+        return System.currentTimeMillis();
+    }
+
+    /**
+     * 返回几天之后的时间
+     * @param days
+     * @return
+     */
+    public static LocalDateTime nextDays(Long days){
+        return now().plusDays(days);
+    }
+
+    /**
+     * 将天数转化为秒数
+     * @author zifangsky
+     * @date 2018/8/18 17:45
+     * @since 1.0.0
+     * @param days 天数
+     * @return java.lang.Integer
+     */
+    public static Long dayToSecond(Long days){
+        return days * 86400;
+    }
 }

@@ -56,6 +56,16 @@ public interface RedisService {
 	*/ 
 	public String get(final String key);
 
+	/**
+	 * 从Redis中获取键值对
+	 * @author zifangsky
+	 * @date 2018/7/30 17:04
+	 * @since 1.0.0
+	 * @param key KEY
+	 * @return K
+	 */
+	<K> K getObj(String key);
+
 	/**  
 	* @Title: set  
 	* @Description: TODO(写入缓存，永久)  
@@ -79,7 +89,16 @@ public interface RedisService {
 	* @throws  
 	*/ 
 	public boolean set(final String key, String value, Long expireTime, TimeUnit timeUnit);
-	
+
+	/**
+	 * 向Redis中存储键值对，并设置过期时间
+	 * @since 1.0.0
+	 * @param key KEY
+	 * @param value VALUE
+	 * @param time 过期时间
+	 * @param timeUnit 时间单位
+	 */
+	void setWithExpire(String key, Object value, long time, TimeUnit timeUnit);
 	
 	//////////////////////////////////////////////LIST///////////////////////////////////////////////////
 	
