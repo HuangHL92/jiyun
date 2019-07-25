@@ -1,14 +1,15 @@
 package com.ruoyi.api;
 
+import cn.hutool.json.JSONUtil;
 import com.ruoyi.area.auth.domain.AuthAccessToken;
 import com.ruoyi.area.auth.service.IAuthAccessTokenService;
 import com.ruoyi.base.ApiBaseController;
-import com.ruoyi.common.base.ApiResult;
 import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,17 +30,17 @@ public class ApiController extends ApiBaseController {
     @Autowired
     private ISysUserService userService;
 
-    @RequestMapping(value = "/users/getInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ApiResult getUserInfo(HttpServletRequest request){
+    @GetMapping(value = "/users/getInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String getUserInfo(HttpServletRequest request){
         String accessToken = request.getParameter("access_token");
         //查询数据库中的Access Token
         AuthAccessToken authAccessToken = authAccessTokenService.selectByAccessToken(accessToken);
 
         if(authAccessToken != null){
             SysUser user = userService.selectUserById(authAccessToken.getUserId());
-            return success(user);
+            return JSONUtil.toJsonStr(user);
         }else{
-            return error(ResponseCode.INVALID_GRANT);
+            return JSONUtil.toJsonStr(generateErrorResponse(ResponseCode.INVALID_GRANT));
         }
     }
 

@@ -3,8 +3,10 @@ package com.ruoyi.interceptor;
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.area.auth.domain.AuthAccessToken;
 import com.ruoyi.area.auth.service.IAuthAccessTokenService;
+import com.ruoyi.area.auth.service.IAuthClientDetailsService;
 import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -23,9 +25,7 @@ import java.util.Map;
  */
 public class AuthAccessTokenInterceptor extends HandlerInterceptorAdapter {
 
-    @Autowired
-    private IAuthAccessTokenService authAccessTokenService;
-
+    private static final IAuthAccessTokenService authAccessTokenService = SpringUtils.getBean(IAuthAccessTokenService.class);
     /**
      * 检查Access Token是否已经失效
      */

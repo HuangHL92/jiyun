@@ -99,4 +99,23 @@ public class ApiBaseController {
         return ApiResult.error(ResponseCode.FAILED,e.getMessage());
     }
 
+    /**
+     * 组装错误请求的返回
+     */
+    protected void generateErrorResponse(Map<String,Object> result, ResponseCode responseCode) {
+        result.put("code", responseCode.getCode());
+        result.put("msg",responseCode.getMsg());
+    }
+
+    /**
+     * 组装错误请求的返回
+     */
+    protected Map<String,Object> generateErrorResponse(ResponseCode responseCode) {
+        Map<String,Object> result = new HashMap<>(2);
+        result.put("code", responseCode.getCode());
+        result.put("msg",responseCode.getMsg());
+        return result;
+    }
+
+
 }

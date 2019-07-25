@@ -5,9 +5,9 @@ import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.area.auth.service.IAuthClientDetailsService;
 import com.ruoyi.common.AuthConstants;
 import com.ruoyi.common.enums.ResponseCode;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.domain.SysUser;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +23,9 @@ import java.util.Map;
  * @date 2019/7/24
  */
 public class OauthInterceptor extends HandlerInterceptorAdapter {
-    @Autowired
-    private IAuthClientDetailsService authClientDetailsService;
+
+    private static final IAuthClientDetailsService authClientDetailsService = SpringUtils.getBean(IAuthClientDetailsService.class);
+
     // @Autowired
     // private AuthScopeMapper authScopeMapper;
 

@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -129,9 +130,9 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public ApiResult token(HttpServletRequest request) {
+    public Map<String,Object> token(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);
 
         //授权方式
@@ -147,19 +148,22 @@ public class OauthController extends ApiBaseController {
 
         //校验授权方式
         if (!GrantTypeEnum.AUTHORIZATION_CODE.getType().equals(grantType)) {
-            return error(ResponseCode.UNSUPPORTED_GRANT_TYPE);
+            generateErrorResponse(result, ResponseCode.UNSUPPORTED_GRANT_TYPE);
+            return result;
         }
 
         try {
             AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientIdStr);
             //校验请求的客户端秘钥和已保存的秘钥是否匹配
             if (!(savedClientDetails != null && savedClientDetails.getClientSecret().equals(clientSecret))) {
-                return error(ResponseCode.INVALID_CLIENT);
+                generateErrorResponse(result, ResponseCode.INVALID_CLIENT);
+                return result;
             }
 
             //校验回调URL
             if (!savedClientDetails.getRedirectUri().equals(redirectUri)) {
-                return error(ResponseCode.REDIRECT_URI_MISMATCH);
+                generateErrorResponse(result, ResponseCode.REDIRECT_URI_MISMATCH);
+                return result;
             }
 
             //从Redis获取允许访问的用户权限范围
@@ -183,12 +187,14 @@ public class OauthController extends ApiBaseController {
                 result.put("access_token", authAccessToken.getAccessToken());
                 result.put("refresh_token", refreshTokenStr);
                 result.put("expires_in", expiresIn);
-                return success(result);
+                return result;
             } else {
-                return error(ResponseCode.INVALID_GRANT);
+                generateErrorResponse(result, ResponseCode.INVALID_GRANT);
+                return result;
             }
         } catch (Exception e) {
-            return error(ResponseCode.UNKNOWN_ERROR);
+            generateErrorResponse(result, ResponseCode.UNKNOWN_ERROR);
+            return result;
         }
     }
 
@@ -198,9 +204,9 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/refreshToken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/refreshToken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public ApiResult refreshToken(HttpServletRequest request) {
+    public Map<String,Object> refreshToken(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);
 
         //获取Refresh Token
@@ -218,7 +224,8 @@ public class OauthController extends ApiBaseController {
 
                 //如果Refresh Token已经失效，则需要重新生成
                 if (expiresDateTime.isBefore(nowDateTime)) {
-                    return error(ResponseCode.EXPIRED_TOKEN);
+                    generateErrorResponse(result, ResponseCode.EXPIRED_TOKEN);
+                    return result;
                 } else {
                     //获取存储的Access Token
                     AuthAccessToken authAccessToken = authAccessTokenService.getById(authRefreshToken.getTokenId());
@@ -236,13 +243,15 @@ public class OauthController extends ApiBaseController {
                     result.put("access_token", newAccessTokenStr);
                     result.put("refresh_token", refreshTokenStr);
                     result.put("expires_in", expiresIn);
-                    return success(result);
+                    return result;
                 }
             } else {
-                return error(ResponseCode.INVALID_GRANT);
+                generateErrorResponse(result, ResponseCode.INVALID_GRANT);
+                return result;
             }
         } catch (Exception e) {
-            return error(ResponseCode.UNKNOWN_ERROR);
+            generateErrorResponse(result, ResponseCode.UNKNOWN_ERROR);
+            return result;
         }
     }
 

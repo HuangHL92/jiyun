@@ -1,14 +1,15 @@
 package com.ruoyi.framework.adapter;
 
+import com.ruoyi.interceptor.AuthAccessTokenInterceptor;
+import com.ruoyi.interceptor.LoginInterceptor;
+import com.ruoyi.interceptor.OauthInterceptor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class ConfigAdapter extends WebMvcConfigurationSupport {
     @Override
     public void addViewControllers(ViewControllerRegistry viewControllerRegistry) {
         viewControllerRegistry.addViewController("/").setViewName("index");
+
+        viewControllerRegistry.addViewController("/index").setViewName("index");
+
         //设置ViewController的优先级,将此处的优先级设为最高,当存在相同映射时依然优先执行
         viewControllerRegistry.setOrder(Ordered.HIGHEST_PRECEDENCE);
         super.addViewControllers(viewControllerRegistry);
@@ -75,5 +79,17 @@ public class ConfigAdapter extends WebMvcConfigurationSupport {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
     }
+
+    /**
+     * 添加拦截器
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/user/**","/oauth2.0/authorizePage","/oauth2.0/authorize","/sso/token");
+        registry.addInterceptor(new OauthInterceptor()).addPathPatterns("/oauth2.0/authorize");
+        registry.addInterceptor(new AuthAccessTokenInterceptor()).addPathPatterns("/api/**");
+    }
+
 }

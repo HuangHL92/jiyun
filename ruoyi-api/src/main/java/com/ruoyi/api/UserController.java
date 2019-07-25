@@ -7,8 +7,8 @@ import com.ruoyi.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,7 +34,7 @@ public class UserController extends ApiBaseController {
      * @param request
      * @return
      */
-    @RequestMapping("/login")
+    @GetMapping("/login")
     public ModelAndView loginPage(HttpServletRequest request) {
         String redirectUrl = request.getParameter("redirectUri");
         if (StringUtils.isNoneBlank(redirectUrl)) {
@@ -104,7 +104,7 @@ public class UserController extends ApiBaseController {
      * @date 2018/8/3 11:47
      * @since 1.0.0
      */
-    @RequestMapping("/logout")
+    @GetMapping("/logout")
     public ModelAndView logout(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.removeAttribute(AuthConstants.SESSION_USER);
@@ -120,7 +120,7 @@ public class UserController extends ApiBaseController {
      * @date 2018/8/3 11:13
      * @since 1.0.0
      */
-    @RequestMapping("/user/userIndex")
+    @GetMapping("/user/userIndex")
     public String userIndex() {
         return "userIndex";
     }

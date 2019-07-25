@@ -1,3 +1,4 @@
+/*
 package com.ruoyi.framework.aspectj;
 
 
@@ -30,11 +31,13 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
+*/
 /**
  * @Description RestfulApi 接口验证切面
  * @Author yufei
  * @Date 2019-03-08 10:45
- **/
+ **//*
+
 
 @Aspect
 @Component
@@ -55,23 +58,27 @@ public class AuthenticationAspect {
     }
 
 
-    /**
+    */
+/**
      * 前置通知 用于拦截操作
      *
      * @param joinPoint 切点
-     */
+     *//*
+
     @AfterReturning(pointcut = "apiPointCut()")
     public void doBefore(JoinPoint joinPoint) throws Exception {
         handleValidate(joinPoint, null);
     }
 
 
-    /**
+    */
+/**
      * 拦截异常操作
      *
      * @param joinPoint
      * @param e
-     */
+     *//*
+
     @AfterThrowing(value = "apiPointCut()", throwing = "e")
     public void doAfter(JoinPoint joinPoint, Exception e) throws Exception {
         handleValidate(joinPoint, e);
@@ -80,11 +87,13 @@ public class AuthenticationAspect {
 
 
 
-    /**
+    */
+/**
      * 请求验证处理
      * @param joinPoint
      * @param e
-     */
+     *//*
+
     protected void handleValidate(final JoinPoint joinPoint, final Exception e) throws Exception {
 
         try
@@ -152,9 +161,11 @@ public class AuthenticationAspect {
     }
 
 
-    /**
+    */
+/**
      * 是否存在注解，如果存在就获取
-     */
+     *//*
+
     private ValidateRequest getAnnotationLog(JoinPoint joinPoint) throws Exception
     {
         Signature signature = joinPoint.getSignature();
@@ -169,10 +180,12 @@ public class AuthenticationAspect {
     }
 
 
-    /**
+    */
+/**
      * 是否拒绝服务 (5秒内>5次)
      * @return
-     */
+     *//*
+
     private boolean validateRequest(String key){
         long count=JedisUtils.setIncr(key, 5);
         if(count>5){
@@ -183,3 +196,4 @@ public class AuthenticationAspect {
 
 
 }
+*/
