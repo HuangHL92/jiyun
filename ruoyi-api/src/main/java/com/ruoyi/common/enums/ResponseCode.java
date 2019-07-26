@@ -22,6 +22,7 @@ public enum ResponseCode {
     INVALID_CLIENT(4011, "请求的client_id或client_secret参数无效。"),
     INVALID_GRANT(4012, "请求的Authorization Code、Access Token、Refresh Token等信息是无效的。"),
     UNSUPPORTED_GRANT_TYPE(4013, "不支持的grant_type。"),
+    INVALID_USERNAME_PASSWORD(4014, "用户账号或密码错误。"),
     EXPIRED_TOKEN(4015, "请求的Access Token或Refresh Token已过期。"),
     REDIRECT_URI_MISMATCH(4016, "请求的redirect_uri所在的域名与开发者注册应用时所填写的域名不匹配。"),
     INVALID_REDIRECT_URI(4017, "请求的回调URL不在白名单中。"),
