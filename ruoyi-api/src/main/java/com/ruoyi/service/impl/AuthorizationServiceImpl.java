@@ -32,58 +32,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Autowired
     private IAuthRefreshTokenService authRefreshTokenService;
 
-    /*@Override
-    public boolean register(AuthClientDetails clientDetails) {
-        //客户端的名称和回调地址不能为空
-        if (StringUtils.isNoneBlank(clientDetails.getClientName()) && StringUtils.isNoneBlank(clientDetails.getRedirectUri())) {
-            //生成24位随机的clientId
-            String clientId = EncryptUtils.getRandomStr1(24);
-
-            AuthClientDetails savedClientDetails = authClientDetailsMapper.selectByClientId(clientId);
-            //生成的clientId必须是唯一的
-            for (int i = 0; i < 10; i++) {
-                if (savedClientDetails == null) {
-                    break;
-                } else {
-                    clientId = EncryptUtils.getRandomStr1(24);
-                    savedClientDetails = authClientDetailsMapper.selectByClientId(clientId);
-                }
-            }
-
-            //生成32位随机的clientSecret
-            String clientSecret = EncryptUtils.getRandomStr1(32);
-
-            Date current = new Date();
-            HttpSession session = SpringContextUtils.getSession();
-            User user = (User) session.getAttribute(Constants.SESSION_USER);
-
-            clientDetails.setClientId(clientId);
-            clientDetails.setClientSecret(clientSecret);
-            clientDetails.setCreateUser(user.getId());
-            clientDetails.setCreateTime(current);
-            clientDetails.setUpdateUser(user.getId());
-            clientDetails.setUpdateTime(current);
-            clientDetails.setStatus(1);
-
-            //保存到数据库
-            authClientDetailsMapper.insertSelective(clientDetails);
-
-            return true;
-        } else {
-            return false;
-        }
-    }*/
-
     @Override
-    public String createAuthorizationCode(String clientIdStr, String scopeStr, SysUser user) {
-        //1. 拼装待加密字符串（clientId + scope + 当前精确到毫秒的时间戳）
-        String str = clientIdStr + scopeStr + String.valueOf(DateUtils.currentTimeMillis());
+    public String createAuthorizationCode(String clientIdStr, SysUser user) {
+        //1. 拼装待加密字符串（clientId + loginName + 当前精确到毫秒的时间戳）
+        String str = clientIdStr + user.getLoginName() + String.valueOf(DateUtils.currentTimeMillis());
 
         //2. SHA1加密
         String encryptedStr = EncryptUtils.sha1Hex(str);
 
-        //3.1 保存本次请求的授权范围
-        redisService.setWithExpire(encryptedStr + ":scope", scopeStr, (ExpireEnum.AUTHORIZATION_CODE.getTime()), ExpireEnum.AUTHORIZATION_CODE.getTimeUnit());
         //3.2 保存本次请求所属的用户信息
         redisService.setWithExpire(encryptedStr + ":user", user, (ExpireEnum.AUTHORIZATION_CODE.getTime()), ExpireEnum.AUTHORIZATION_CODE.getTimeUnit());
 
@@ -105,7 +61,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         //3. 保存Access Token
         AuthAccessToken savedAccessToken = authAccessTokenService.selectByUserIdClientId(user.getUserId(), savedClientDetails.getId());
-        //如果存在userId + clientId + scope匹配的记录，则更新原记录，否则向数据库中插入新记录
+        //如果存在userId + clientId 匹配的记录，则更新原记录，否则向数据库中插入新记录
         if (savedAccessToken != null) {
             savedAccessToken.setAccessToken(accessTokenStr);
             savedAccessToken.setExpiresIn(expiresAt);

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,41 +56,6 @@ public class OauthController extends ApiBaseController {
     @Autowired
     private ISysUserService userService;
 
-
-    /**
-     * 授权页面
-     *
-     * @return org.springframework.web.servlet.ModelAndView
-     * @author zifangsky
-     * @date 2018/8/3 16:31
-     * @since 1.0.0
-     */
-    @RequestMapping("/authorizePage")
-    public ModelAndView authorizePage(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView("authorize");
-
-        //在页面同意授权后的回调地址
-        String redirectUrl = request.getParameter("redirectUri");
-        //客户端ID
-        String clientId = request.getParameter("client_id");
-        //权限范围
-        String scope = request.getParameter("scope");
-
-        if (StringUtils.isNoneBlank(redirectUrl)) {
-            HttpSession session = request.getSession();
-            //将回调地址添加到session中
-            session.setAttribute(AuthConstants.SESSION_AUTH_REDIRECT_URL, redirectUrl);
-        }
-
-        //查询请求授权的客户端信息
-        AuthClientDetails clientDetails = authClientDetailsService.selectByClientId(clientId);
-        modelAndView.addObject("clientId", clientId);
-        modelAndView.addObject("clientName", clientDetails.getClientName());
-        modelAndView.addObject("scope", scope);
-
-        return modelAndView;
-    }
-
     /**
      * 获取Authorization Code
      *
@@ -106,15 +72,13 @@ public class OauthController extends ApiBaseController {
 
         //客户端ID
         String clientIdStr = request.getParameter("client_id");
-        //权限范围
-        String scopeStr = request.getParameter("scope");
         //回调URL
         String redirectUri = request.getParameter("redirect_uri");
         //status，用于防止CSRF攻击（非必填）
         String status = request.getParameter("status");
 
         //生成Authorization Code
-        String authorizationCode = authorizationService.createAuthorizationCode(clientIdStr, scopeStr, user);
+        String authorizationCode = authorizationService.createAuthorizationCode(clientIdStr, user);
 
         String params = "?code=" + authorizationCode;
         if (StringUtils.isNoneBlank(status)) {
@@ -130,7 +94,7 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @GetMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public Map<String,Object> token(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);
@@ -166,13 +130,11 @@ public class OauthController extends ApiBaseController {
                 return result;
             }
 
-            //从Redis获取允许访问的用户权限范围
-            String scope = redisService.getObj(code + ":scope");
             //从Redis获取对应的用户信息
             SysUser user = redisService.getObj(code + ":user");
 
             //如果能够通过Authorization Code获取到对应的用户信息，则说明该Authorization Code有效
-            if (StringUtils.isNoneBlank(scope) && user != null) {
+            if (user != null) {
                 //过期时间
                 Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime());
 
@@ -204,7 +166,7 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @GetMapping(value = "/refreshToken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/refreshToken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public Map<String,Object> refreshToken(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);

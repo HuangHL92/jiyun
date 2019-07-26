@@ -163,6 +163,7 @@ shiro:
       ,/register anon#captchaValidate
       ,/swagger-ui.html anon
       ,/website/** anon
+      ,/oauth2/** anon
 
   cookie:
     # 设置Cookie的域名 默认空，即当前访问的域名
@@ -215,6 +216,15 @@ jiyun:
   #shorturl地址
   shortapi:
     url: http://api.t.sina.com.cn/short_url/shorten.json?source=3271760578&url_long=
+  oauth2:
+    client-id: x3qwrgrO1wYdz72joZ8YyIuD
+    client-secret: DPTyJsBv1xjzEgv0MEjBnIVigaVUm3cr
+    redirect-uri: http://192.168.4.35:81/oauth2/jiyun/login
+    authorization-uri: http://127.0.0.1:83/oauth2.0/authorize?response_type=code&client_id={0}&redirect_uri={1}
+    access-token-uri: http://127.0.0.1:83/oauth2.0/token?grant_type=authorization_code&client_id={0}&client_secret={1}&redirect_uri={2}&code={3}
+    refresh-token-uri: http://127.0.0.1:83/oauth2.0/refreshToken?grant_type=refresh_token&client_id={0}&client_secret={1}&redirect_uri={2}&refresh_token={3}
+    user-info-uri: http://127.0.0.1:83/api/users/getInfo?access_token={0}
+
 # 微信公众号配置
 wx:
   mp:

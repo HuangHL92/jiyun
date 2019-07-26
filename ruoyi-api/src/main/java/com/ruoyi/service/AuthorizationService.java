@@ -15,20 +15,12 @@ import com.ruoyi.system.domain.SysUser;
 public interface AuthorizationService {
 
     /**
-     * 注册需要接入的客户端信息
-     * @param clientDetails
-     * @return
-     */
-    // boolean register(AuthClientDetails clientDetails);
-
-    /**
-     * 根据clientId、scope以及当前时间戳生成AuthorizationCode（有效期为10分钟）
+     * 根据clientId以及当前时间戳生成AuthorizationCode（有效期为10分钟）
      * @param clientIdStr
-     * @param scopeStr
      * @param user
      * @return
      */
-    String createAuthorizationCode(String clientIdStr, String scopeStr, SysUser user);
+    String createAuthorizationCode(String clientIdStr, SysUser user);
 
     /**
      * 生成Access Token

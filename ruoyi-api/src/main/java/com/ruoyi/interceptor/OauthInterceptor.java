@@ -26,9 +26,6 @@ public class OauthInterceptor extends HandlerInterceptorAdapter {
 
     private static final IAuthClientDetailsService authClientDetailsService = SpringUtils.getBean(IAuthClientDetailsService.class);
 
-    // @Autowired
-    // private AuthScopeMapper authScopeMapper;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
@@ -37,8 +34,6 @@ public class OauthInterceptor extends HandlerInterceptorAdapter {
 
         //客户端ID
         String clientIdStr = request.getParameter("client_id");
-        //权限范围
-        // String scopeStr = request.getParameter("scope");
         //回调URL
         String redirectUri = request.getParameter("redirect_uri");
         //返回形式
@@ -48,31 +43,24 @@ public class OauthInterceptor extends HandlerInterceptorAdapter {
         SysUser user = (SysUser) session.getAttribute(AuthConstants.SESSION_USER);
 
         if (StringUtils.isNoneBlank(clientIdStr)
-                // && StringUtils.isNoneBlank(scopeStr)
                 && StringUtils.isNoneBlank(redirectUri)
                 && "code".equals(responseType)) {
-            // params = params + "&client_id=" + clientIdStr + "&scope=" + scopeStr;
 
             //1. 查询是否存在授权信息
             AuthClientDetails clientDetails = authClientDetailsService.selectByClientId(clientIdStr);
-            // AuthScope scope = authScopeMapper.selectByScopeName(scopeStr); 授权范围暂时不做
 
             if (clientDetails == null) {
                 return this.generateErrorResponse(response, ResponseCode.INVALID_CLIENT);
             }
-
-            // if (scope == null) {
-            //     return this.generateErrorResponse(response, ResponseCode.INVALID_SCOPE);
-            // }
 
             if (!clientDetails.getRedirectUri().equals(redirectUri)) {
                 return this.generateErrorResponse(response, ResponseCode.REDIRECT_URI_MISMATCH);
             }
 
             return true;
-            // 以下判断暂不实现
+            // TODO
             /*//2. 查询用户给接入的客户端是否已经授权
-            AuthClientUser clientUser = authClientUserMapper.selectByClientId(clientDetails.getId(), user.getId(), scope.getId());
+            AuthClientUser clientUser = authClientUserMapper.selectByClientId(clientDetails.getId(), user.getId();
             if (clientUser != null) {
                 return true;
             } else {

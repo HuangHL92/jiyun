@@ -3,7 +3,12 @@ package com.ruoyi.framework.shiro.realm;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.JedisUtils;
+import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.framework.manager.AsyncManager;
+import com.ruoyi.framework.manager.factory.AsyncFactory;
+import com.ruoyi.system.service.ISysUserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -51,6 +56,9 @@ public class UserRealm extends AuthorizingRealm
 
     @Autowired
     private SysLoginService loginService;
+
+    @Autowired
+    private ISysUserService userService;
 
     /**
      * 授权
@@ -101,7 +109,15 @@ public class UserRealm extends AuthorizingRealm
         SysUser user = null;
         try
         {
-            user = loginService.login(username, password);
+            // 此为第三方登录：暂时用host字段
+            if ("http://51e.com.cn".equals(upToken.getHost())) {
+                user = userService.selectUserByLoginName(username);
+                if (user == null){
+                    throw new UserNotExistsException();
+                }
+            } else {
+                user = loginService.login(username, password);
+            }
         }
         catch (CaptchaException e)
         {
