@@ -25,14 +25,15 @@
             //获取用户名、密码
             var username = $("#username").val();
             var password = $("#password").val();
+            var rememberMe = $("#rememberMe").is(':checked');
 
             if (username == null || username === "") {
-                $("#errMsg").text("请输入登陆用户名！");
+                $("#errMsg").text("请输入登录用户名！");
                 $("#errMsg").attr("style", "display:block");
                 return;
             }
             if (password == null || password === "") {
-                $("#errMsg").text("请输入登陆密码！");
+                $("#errMsg").text("请输入登录密码！");
                 $("#errMsg").attr("style", "display:block");
                 return;
             }
@@ -44,7 +45,8 @@
                 async: false,
                 data: {
                     "username": username,
-                    "password": password
+                    "password": password,
+                    "rememberMe": rememberMe
                 },
                 success: function (data) {
                     if (data.code == "200") {
@@ -82,6 +84,10 @@
                     <i class="fa fa-lock fa-lg"></i>
                     <input class="form-control required" type="password" placeholder="Password" id="password"
                            name="password" maxlength="8"/>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="rememberMe" name="rememberMe" value="true"/>
+                    <label for="rememberMe" style="font-weight: inherit;">记住我</label>
                 </div>
                 <div class="form-group">
                     <span class="errMsg" id="errMsg" style="display: none">错误提示</span>

@@ -21,4 +21,6 @@ public class AuthConstants {
      * 授权页面的回调地址在session中存储的变量名
      */
     public static final String SESSION_AUTH_REDIRECT_URL = "SESSION_AUTH_REDIRECT_URL";
+
+    public static final String AEC_KEY = "fCq+/xW818hJSJY+cmJ3aQ==";
 }
