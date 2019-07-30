@@ -1,5 +1,6 @@
 package com.ruoyi.api;
 
+import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.base.ApiBaseController;
 import com.ruoyi.common.AuthConstants;
 import com.ruoyi.system.domain.SysUser;
@@ -7,6 +8,7 @@ import com.ruoyi.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,7 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,7 +125,14 @@ public class UserController extends ApiBaseController {
      * @since 1.0.0
      */
     @GetMapping("/user/userIndex")
-    public String userIndex() {
+    public String userIndex(ModelMap modelMap) {
+        // TODO 查询当前用户可以访问的系统
+        List<AuthClientDetails> clientList = new ArrayList<>();
+        AuthClientDetails client1 = new AuthClientDetails();
+        client1.setClientId("x3qwrgrO1wYdz72joZ8YyIuD");
+        client1.setClientName("Ruoyi管理后台");
+        clientList.add(client1);
+        modelMap.put("clientList", clientList);
         return "userIndex";
     }
 }

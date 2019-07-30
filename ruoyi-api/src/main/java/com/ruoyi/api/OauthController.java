@@ -8,7 +8,6 @@ import com.ruoyi.area.auth.service.IAuthClientDetailsService;
 import com.ruoyi.area.auth.service.IAuthRefreshTokenService;
 import com.ruoyi.base.ApiBaseController;
 import com.ruoyi.common.AuthConstants;
-import com.ruoyi.common.base.ApiResult;
 import com.ruoyi.common.enums.ExpireEnum;
 import com.ruoyi.common.enums.GrantTypeEnum;
 import com.ruoyi.common.enums.ResponseCode;
@@ -22,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -59,12 +57,8 @@ public class OauthController extends ApiBaseController {
 
     /**
      * 获取Authorization Code
-     *
-     * @param request HttpServletRequest
-     * @return org.springframework.web.servlet.ModelAndView
-     * @author zifangsky
-     * @date 2018/8/6 17:40
-     * @since 1.0.0
+     * @param request
+     * @return
      */
     @RequestMapping("/authorize")
     public ModelAndView authorize(HttpServletRequest request) {
@@ -162,61 +156,6 @@ public class OauthController extends ApiBaseController {
     }
 
     /**
-     * 密码模式获取Access Token
-     *
-     * @param request
-     * @return
-     */
-    @PostMapping(value = "/auth_pw", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public Map<String, Object> auth_pw(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>(2);
-
-        // 用户账号
-        String username = request.getParameter("username");
-        // 用户密码
-        String password = request.getParameter("password");
-        // 客户端ID
-        String clientId = request.getParameter("client_id");
-        // 接入的客户端的密钥
-        String clientSecret = request.getParameter("client_secret");
-
-        // 1.参数验证
-        if (StrUtil.isBlank(username) || StrUtil.isBlank(password) || StrUtil.isBlank(clientId) || StrUtil.isBlank(clientSecret)) {
-            generateErrorResponse(result, ResponseCode.INVALID_REQUEST);
-            return result;
-        }
-
-        try {
-            // 2.验证账号密码
-            Map<String, Object> checkMap = userService.checkLogin(username, password);
-            Boolean loginResult = (Boolean) checkMap.get("result");
-            SysUser user = (SysUser) checkMap.get("user");
-            // 登录验证通过
-            if (loginResult != null && loginResult) {
-                // 3.校验请求的客户端秘钥和已保存的秘钥是否匹配
-                AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientId);
-                if (savedClientDetails == null || !savedClientDetails.getClientSecret().equals(clientSecret)) {
-                    generateErrorResponse(result, ResponseCode.INVALID_CLIENT);
-                }
-                // 4.校验客户端是否支持password授权模式
-                // TODO
-                // 5.生成accessToken
-                Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime()); // 过期时间
-                String accessToken = authorizationService.createAccessToken(user, savedClientDetails, "password", expiresIn);// 生成Access Token
-                result.put("access_token", accessToken);
-                result.put("expires_in", expiresIn);
-            } else {
-                generateErrorResponse(result, ResponseCode.INVALID_USERNAME_PASSWORD);
-            }
-        } catch (Exception e) {
-            generateErrorResponse(result, ResponseCode.UNKNOWN_ERROR);
-        }
-        return result;
-
-    }
-
-    /**
      * 通过Refresh Token刷新Access Token
      *
      * @param request
@@ -273,4 +212,89 @@ public class OauthController extends ApiBaseController {
         }
     }
 
+    /**
+     * 密码模式获取Access Token
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/auth_pw", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> auth_pw(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>(2);
+
+        // 用户账号
+        String username = request.getParameter("username");
+        // 用户密码
+        String password = request.getParameter("password");
+        // 客户端ID
+        String clientId = request.getParameter("client_id");
+        // 接入的客户端的密钥
+        String clientSecret = request.getParameter("client_secret");
+
+        // 1.参数验证
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password) || StrUtil.isBlank(clientId) || StrUtil.isBlank(clientSecret)) {
+            generateErrorResponse(result, ResponseCode.INVALID_REQUEST);
+            return result;
+        }
+
+        try {
+            // 2.验证账号密码
+            Map<String, Object> checkMap = userService.checkLogin(username, password);
+            Boolean loginResult = (Boolean) checkMap.get("result");
+            SysUser user = (SysUser) checkMap.get("user");
+            // 登录验证通过
+            if (loginResult != null && loginResult) {
+                // 3.校验请求的客户端秘钥和已保存的秘钥是否匹配
+                AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientId);
+                if (savedClientDetails == null || !savedClientDetails.getClientSecret().equals(clientSecret)) {
+                    generateErrorResponse(result, ResponseCode.INVALID_CLIENT);
+                }
+                // 4.校验客户端是否支持password授权模式
+                // TODO
+                // 5.生成accessToken
+                Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime()); // 过期时间
+                String accessToken = authorizationService.createAccessToken(user, savedClientDetails, "password", expiresIn);// 生成Access Token
+                result.put("access_token", accessToken);
+                result.put("expires_in", expiresIn);
+            } else {
+                generateErrorResponse(result, ResponseCode.INVALID_USERNAME_PASSWORD);
+            }
+        } catch (Exception e) {
+            generateErrorResponse(result, ResponseCode.UNKNOWN_ERROR);
+        }
+        return result;
+
+    }
+
+    /**
+     * 主动跳转到系统
+     * @param request
+     * @return
+     */
+    @PostMapping("/auth_direct")
+    @ResponseBody
+    public Map<String, Object> auth_direct(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>(2);
+
+        HttpSession session = request.getSession();
+        SysUser user = (SysUser) session.getAttribute(AuthConstants.SESSION_USER);
+
+        // 客户端ID
+        String clientId = request.getParameter("client_id");
+        AuthClientDetails authClientDetails = authClientDetailsService.selectByClientId(clientId);
+
+        // TODO 需要判断当前用户是否有该系统的访问权限
+
+        // 回调url
+        String redirectUri = authClientDetails.getRedirectUri();
+
+        //生成Authorization Code
+        String authorizationCode = authorizationService.createAuthorizationCode(clientId, user);
+
+        result.put("code", 200);
+        result.put("redirect_uri", redirectUri + "?code=" + authorizationCode);
+
+        return result;
+    }
 }

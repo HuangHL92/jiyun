@@ -87,7 +87,7 @@ public class ConfigAdapter extends WebMvcConfigurationSupport {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/user/**","/oauth2.0/authorize");
+        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/user/**","/oauth2.0/authorize","/oauth2.0/auth_direct");
         registry.addInterceptor(new OauthInterceptor()).addPathPatterns("/oauth2.0/authorize");
         registry.addInterceptor(new AuthAccessTokenInterceptor()).addPathPatterns("/api/**");
     }

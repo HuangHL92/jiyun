@@ -1,10 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 </head>
 <body>
     <h1>统一身份认证平台-userIndex</h1>
+    <ul>
+        <li th:each="client : ${clientList}" class="client" th:data-client-id="${client.clientId}"><a href="javascript:;">[[${client.clientName}]]</a> </li>
+    </ul>
+    <script>
+
+        $('.client').click(function () {
+            var clientId = $(this).data('client-id');
+
+            $.ajax({
+                url: "/oauth2.0/auth_direct",
+                type: "POST",
+                dataType: "json",
+                async: false,
+                data: {
+                    "client_id": clientId
+                },
+                success: function (data) {
+                    if (data.code == "200") {
+
+                        if (data.redirect_uri != null) {
+                            window.open(data.redirect_uri, "_blank");
+                        } else {
+                            alert('参数错误！请联系管理员');
+                        }
+                    } else {
+                        alert('参数错误！请联系管理员');
+                    }
+                }
+            });
+        })
+    </script>
 </body>
 </html>

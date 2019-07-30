@@ -49,9 +49,10 @@ public class JiYunOAuth2Controller {
     @RequestMapping("/login")
     public String login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 如果已经登录直接返回首页
-        if (ShiroUtils.getSysUser() != null) {
+        /*if (ShiroUtils.getSysUser() != null) {
             response.sendRedirect("/index");
-        }
+            return null;
+        }*/
 
         //当前系统请求认证服务器成功之后返回的Authorization Code
         String code = request.getParameter("code");
@@ -95,32 +96,6 @@ public class JiYunOAuth2Controller {
                 return "error";
             }
         }
-    }
-
-    /**
-     * 取消授权
-     *
-     * @param token
-     * @return
-     */
-    @RequestMapping("/revoke/{token}")
-    @ResponseBody
-    public Object revokeAuth(@PathVariable("token") String token) {
-        AuthRequest authRequest = getGiteeAuthRequest();
-        return authRequest.revoke(token);
-    }
-
-    /**
-     * 创建授权request
-     *
-     * @return
-     */
-    private AuthRequest getGiteeAuthRequest() {
-        return new AuthGiteeRequest(AuthConfig.builder()
-                .clientId(config.getClientId())
-                .clientSecret(config.getClientSecret())
-                .redirectUri(config.getRedirectUri())
-                .build());
     }
 
 }
