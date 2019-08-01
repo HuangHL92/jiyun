@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -60,7 +61,7 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @RequestMapping("/authorize")
+    @GetMapping("/authorize")
     public ModelAndView authorize(HttpServletRequest request) {
         HttpSession session = request.getSession();
         SysUser user = (SysUser) session.getAttribute(AuthConstants.SESSION_USER);
