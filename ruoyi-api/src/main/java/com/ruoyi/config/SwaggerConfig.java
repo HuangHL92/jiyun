@@ -72,14 +72,6 @@ public class SwaggerConfig
     public Docket createRestApi()
     {
 
-        //添加head参数start
-        ParameterBuilder tokenPar = new ParameterBuilder();
-        List<Parameter> pars = new ArrayList<Parameter>();
-        tokenPar.name("x-access-token").description("令牌").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
-        pars.add(tokenPar.build());
-        //添加head参数end
-
-
         return new Docket(DocumentationType.SWAGGER_2)
                 // 详细定制
                 .apiInfo(apiInfo())
@@ -88,8 +80,7 @@ public class SwaggerConfig
                 .apis(RequestHandlerSelectors.basePackage(basepackage))
                 // 扫描所有
                 .paths(PathSelectors.any())
-                .build()
-                .globalOperationParameters(pars);
+                .build();
     }
 
     /**
