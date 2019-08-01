@@ -1,20 +1,12 @@
 package com.ruoyi.framework.adapter;
 
-import com.ruoyi.interceptor.AuthAccessTokenInterceptor;
 import com.ruoyi.interceptor.LoginInterceptor;
 import com.ruoyi.interceptor.OauthInterceptor;
 import com.ruoyi.interceptor.RememberInterceptor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 public class ConfigAdapter extends WebMvcConfigurationSupport {
@@ -91,7 +83,7 @@ public class ConfigAdapter extends WebMvcConfigurationSupport {
         registry.addInterceptor(new RememberInterceptor()).addPathPatterns("/login");
         registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/user/**","/oauth2.0/authorize","/oauth2.0/auth_direct");
         registry.addInterceptor(new OauthInterceptor()).addPathPatterns("/oauth2.0/authorize");
-        registry.addInterceptor(new AuthAccessTokenInterceptor()).addPathPatterns("/api/**");
+        // registry.addInterceptor(new AuthAccessTokenInterceptor()).addPathPatterns("/api/**");
     }
 
 }

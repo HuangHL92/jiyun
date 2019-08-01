@@ -1,3 +1,4 @@
+/*
 package com.ruoyi.interceptor;
 
 import cn.hutool.json.JSONUtil;
@@ -17,18 +18,22 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+*/
 /**
  * 用于校验Access Token是否为空以及Access Token是否已经失效
  *
  * @author tao.liang
  * @date 2019/7/24
- */
+ *//*
+
 public class AuthAccessTokenInterceptor extends HandlerInterceptorAdapter {
 
     private static final IAuthAccessTokenService authAccessTokenService = SpringUtils.getBean(IAuthAccessTokenService.class);
-    /**
+    */
+/**
      * 检查Access Token是否已经失效
-     */
+     *//*
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String accessToken = request.getParameter("access_token");
@@ -54,9 +59,11 @@ public class AuthAccessTokenInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    /**
+    */
+/**
      * 组装错误请求的返回
-     */
+     *//*
+
     private boolean generateErrorResponse(HttpServletResponse response, ResponseCode responseCode) throws Exception {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-type", "application/json;charset=UTF-8");
@@ -69,3 +76,4 @@ public class AuthAccessTokenInterceptor extends HandlerInterceptorAdapter {
     }
 
 }
+*/

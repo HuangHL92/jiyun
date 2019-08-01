@@ -14,16 +14,10 @@ import java.lang.annotation.Target;
  **/
 @Target(ElementType.METHOD)//这个注解是应用在方法上
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidateRequest {
+public @interface ValidateAccessToken {
     /**
      * 是否需要验证权限
      * @return
      */
     boolean required() default true;
-
-    /**
-     * 验证内容(request参数 header头部)
-     * @return
-     */
-    String vtype() default "request";
 }

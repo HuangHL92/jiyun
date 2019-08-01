@@ -4,13 +4,17 @@ import cn.hutool.json.JSONUtil;
 import com.ruoyi.area.auth.domain.AuthAccessToken;
 import com.ruoyi.area.auth.service.IAuthAccessTokenService;
 import com.ruoyi.base.ApiBaseController;
+import com.ruoyi.common.annotation.ValidateAccessToken;
 import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author tao.liang
  * @date 2019/7/24
  */
+@Api(value = "/api", description = "API接口")
 @RestController
 @RequestMapping("/api")
 public class ApiController extends ApiBaseController {
@@ -30,9 +35,10 @@ public class ApiController extends ApiBaseController {
     @Autowired
     private ISysUserService userService;
 
-    @PostMapping(value = "/users/getInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String getUserInfo(HttpServletRequest request){
-        String accessToken = request.getParameter("access_token");
+    @ApiOperation("获取个人信息")
+    @ValidateAccessToken
+    @PostMapping(value = "/users/getInfo")
+    public String getUserInfo(@RequestParam(name="access_token") String accessToken){
         //查询数据库中的Access Token
         AuthAccessToken authAccessToken = authAccessTokenService.selectByAccessToken(accessToken);
 

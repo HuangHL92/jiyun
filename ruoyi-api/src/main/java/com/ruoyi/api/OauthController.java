@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,6 +40,7 @@ import java.util.Map;
  * @author tao.liang
  * @date 2019/7/24
  */
+@ApiIgnore()
 @Controller
 @RequestMapping("/oauth2.0")
 public class OauthController extends ApiBaseController {
