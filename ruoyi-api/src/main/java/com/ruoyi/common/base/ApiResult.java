@@ -34,6 +34,9 @@ public class ApiResult<T> implements Serializable {
 
     public static <T> ApiResult<T> success(T data) {
         ResponseCode aec = ResponseCode.SUCCESS;
+        if (data instanceof ResponseCode) {
+            return restResult(null, ((ResponseCode) data).getCode(), ((ResponseCode) data).getMsg());
+        }
         if (data instanceof Boolean && Boolean.FALSE.equals(data)) {
             aec = ResponseCode.FAILED;
         }

@@ -1,11 +1,16 @@
 package com.ruoyi.api;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.base.ApiBaseController;
 import com.ruoyi.common.AuthConstants;
+import com.ruoyi.common.base.ApiResult;
+import com.ruoyi.common.enums.QrCodeEnmu;
+import com.ruoyi.common.enums.ResponseCode;
+import com.ruoyi.framework.redis.RedisService;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -13,9 +18,7 @@ import org.apache.shiro.codec.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -23,10 +26,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户相关controller
@@ -34,16 +35,19 @@ import java.util.Map;
  * @author tao.liang
  * @date 2019/7/24
  */
-
 @ApiIgnore()
 @Controller
 public class UserController extends ApiBaseController {
 
+
+    @Autowired
+    private RedisService redisService;
     @Autowired
     private ISysUserService userService;
 
     /**
      * 登录页面
+     *
      * @param request
      * @return
      */
@@ -60,7 +64,105 @@ public class UserController extends ApiBaseController {
     }
 
     /**
+     * 登陆首页获取扫一扫登陆的二维码内容
+     * 1、二维码内容的有效时间是5分钟，生成的code是唯一码，存在redis缓存中，value里面带有该code的登陆状态
+     *
+     * @param oldContext
+     * @return
+     */
+    @PostMapping(value = "/getQrcodeContent")
+    @ResponseBody
+    public ApiResult getQrcodeContent(@RequestParam("context") String oldContext) {
+        //如果页面有旧的二维码，同时请求新的二维码内容，则直接删除旧内容
+        if (StrUtil.isNotEmpty(oldContext)) {
+            if (redisService.exists(AuthConstants.QRCODE_LOGIN + oldContext.replace(AuthConstants.QRCODE_HEADER, ""))) {
+                redisService.del(AuthConstants.QRCODE_LOGIN + oldContext.replace(AuthConstants.QRCODE_HEADER, ""));
+            }
+        }
+
+        String code = cn.hutool.core.codec.Base64.encode(UUID.randomUUID().toString());
+        String context = AuthConstants.QRCODE_HEADER + code;
+        //将生成的code存入redis，失效时间为120S
+        redisService.setWithExpire(AuthConstants.QRCODE_LOGIN + code, QrCodeEnmu.logout.toString(), 120, TimeUnit.SECONDS);
+        return success(context);
+    }
+
+    /**
+     * web端与服务器建立连接检查当前用户是否有做登陆动作
+     *
+     * @param context
+     * @param type
+     * @return
+     */
+    @PostMapping(value = "/qrcodeCheckLogin")
+    @ResponseBody
+    public ApiResult qrcodeCheckLogin(@RequestParam("context") String context,
+                                      @RequestParam("type") String type) throws Exception {
+        //参数判断
+        if (StrUtil.isEmpty(context)) {
+            return error(ResponseCode.INVALID_QRCODE);
+        }
+
+        //统一一个开始时间，每次请求超过10s时自动跳出循环结束
+        long startTime = System.currentTimeMillis();
+        String code = context.replace(AuthConstants.QRCODE_HEADER, "");
+        ApiResult result;
+        while (true) {
+            Thread.sleep(500);
+            //logger.info("retry check login...");
+            //检查redis是否中还存在二维码内容
+            if (!redisService.exists(AuthConstants.QRCODE_LOGIN + code)) {
+                return error(ResponseCode.INVALID_QRCODE);
+            } else {
+                String status = redisService.getObj(AuthConstants.QRCODE_LOGIN + code);
+                //如果status 的值是 scan，则表示该code已经被手机扫描，返回页面提示在手机上确认登陆
+                //如果status 的值是 login，则表示该code处于登录状态，则返回前端状态信息
+                //如果status 的值是 cancel，则表示该code为取消登录
+                //如果status 的值是 logout，则表示该code尚未被扫描
+                if (QrCodeEnmu.scan.toString().equals(status)) {
+                    //如果传入的type的状态值不为空，则表明已经扫描成功，在等待确认下一步操作
+                    if (QrCodeEnmu.scan.toString().equals(type)) {
+                        long endTime = System.currentTimeMillis();
+                        long exeTime = endTime - startTime;
+                        //请求大于10s，则跳出循环结束
+                        if (exeTime >= 10000) {
+                            result = error(ResponseCode.REQUEST_TIME_OUT);
+                            break;
+                        }
+                    } else {
+                        return success(ResponseCode.SCAN_SUCCESS);
+                    }
+                } else if (QrCodeEnmu.cancel.toString().equals(status)) {
+                    redisService.del(AuthConstants.QRCODE_LOGIN + code); //删除redis中该二维码的缓存信息
+                    return success(ResponseCode.CANCEL_SUCCESS);
+                } else if (status.startsWith("login_")) {
+                    redisService.del(AuthConstants.QRCODE_LOGIN + code);
+                    String userCode = status.replace("login_", "");
+
+                    SysUser sysUser = userService.selectUserByLoginName(userCode);
+
+                    //完成登录操作，返回access_token
+                    //TODO 此处demo返回给前台，生产环境中是返回给app
+
+//                    return success(JwtTokenUtil.TOKEN_TYPE_BEARER + " " + jwtToken);
+                    return success();
+                } else {
+                    long endTime = System.currentTimeMillis();
+                    long exeTime = endTime - startTime;
+                    //请求大于10s，则跳出循环结束
+                    if (exeTime >= 10000) {
+                        result = error(ResponseCode.REQUEST_TIME_OUT);
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * 登录验证
+     *
      * @param request
      * @return
      */
@@ -130,10 +232,9 @@ public class UserController extends ApiBaseController {
     /**
      * 注销
      *
-     * @return org.springframework.web.servlet.ModelAndView
-     * @author zifangsky
-     * @date 2018/8/3 11:47
-     * @since 1.0.0
+     * @param request
+     * @param response
+     * @return
      */
     @GetMapping("/logout")
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
@@ -157,10 +258,9 @@ public class UserController extends ApiBaseController {
     /**
      * 用户首页
      *
-     * @return java.lang.String
-     * @author zifangsky
-     * @date 2018/8/3 11:13
-     * @since 1.0.0
+     * @param request
+     * @param modelMap
+     * @return
      */
     @GetMapping("/user/userIndex")
     public String userIndex(HttpServletRequest request, ModelMap modelMap) {

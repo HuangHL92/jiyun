@@ -1,5 +1,393 @@
-.form{background: rgba(199, 196, 174, 0.2);width:400px;margin:120px auto;}
-/*阴影*/
-.fa{display: inline-block;top: 27px;left: 6px;position: relative;color: #ccc;}
-input[type="text"],input[type="password"]{padding-left:26px;}
-.errMsg{color: red;}
+@charset "utf-8";
+/* CSS Document */
+* {
+    margin: 0px auto;
+    pdding: 0px;
+}
+
+body, html {
+    margin: 0px auto;
+    padding: 0px;
+    background: url(../images/bg_keji5.jpg) no-repeat;
+    width: 100%;
+    height: 100%;
+    background-attachment: fixed;
+    background-size: cover;
+    -webkit-background-size: cover; /* 兼容Webkit内核浏览器如Chrome和Safari */
+    -o-background-size: cover; /* 兼容Opera */
+    zoom: 1;
+}
+
+#login_div {
+    margin: 0px auto;
+    width: auto;
+    height: 100%;
+    min-height: 668px;
+    min-width: 1366px;
+}
+
+#logo_nav {
+    width: 416px;
+    height: 152px;
+    position: absolute;
+    top: 29%;
+    left: 14.5%;
+}
+
+#content_nav {
+    text-align: left;
+    width: 352px;
+    height: 100px;
+    padding-top: 25px;
+    float: left;
+}
+
+#filter_div {
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    top: 24.3%;
+    right: 14.2%;
+    background-color: #EBF0FB;
+    filter: alpha(opacity=50); /*ie滤镜，透明度50%*/
+    -moz-opacity: 0.5; /*Firefox私有，透明度50%*/
+    opacity: 0.5; /*其他，透明度50%*/
+}
+
+#input_nav {
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    top: 24.3%;
+    right: 14.2%;
+    z-index: 999;
+    display: block;
+}
+
+#footer {
+    position: fixed;
+    height: 32px;
+    bottom: 9%;
+    right: 8%;
+}
+
+#content_nav p {
+    font-family: "华文细黑";
+    color: white;
+    font-size: 24px;
+    letter-spacing: 2.4px;
+}
+
+#footer p {
+    font-family: "华文细黑";
+    color: white;
+    font-size: 13px;
+    line-height: 18px;
+    margin-top: 8px;
+}
+
+/**底部样式*/
+#enter {
+    width: 100%;
+    height: 24px;
+}
+
+#enter ul {
+    height: 100%;
+    margin-left: 25px;
+}
+
+#enter ul li {
+    float: left;
+    margin: auto 3px;
+    text-align: center;
+    list-style: none;
+}
+
+#enter ul li a {
+    color: #FFFFFF;
+    font: 13px '华文细黑';
+    line-height: 20px;
+    margin: 10px auto;
+}
+
+#enter ul li a:hover {
+    color: #f60;
+    text-decoration: underline;
+    font: 13px '华文细黑';
+    line-height: 20px;
+    margin: 10px auto;
+}
+
+#input_head {
+    width: 100%;
+    height: 72px;
+}
+
+#head_p {
+    position: absolute;
+    width: 108px;
+    height: 10px;
+    margin-top: 24px;
+    margin-left: 164px;
+}
+
+#input_head, #qrcode_head p {
+    font-size: 12px;
+    font-family: "华文细黑";
+    line-height: 10px;
+    color: #576071;
+}
+
+#input_content {
+    position: absolute;
+    width: 100%;
+    height: 304px;
+    margin-left: 0px;
+}
+
+.p_div {
+    width: 242px;
+    height: 46px;
+    margin-left: 60px;
+    margin-bottom: 12px;
+    background-color: #576071;
+    border: none;
+}
+
+.p_div .p_div_refresh {
+    width: 24px;
+    height: 22px;
+    padding-bottom: 2px;
+}
+
+.p_div .p_div_refresh:hover {
+    width: 24px;
+    height: 22px;
+    padding-bottom: 2px;
+    cursor: pointer;
+}
+
+.p_button {
+    width: 242px;
+    height: 44px;
+    margin-left: 60px;
+    margin-top: 24px;
+}
+
+.p_input {
+    width: 240px;
+    height: 44px;
+    background-color: #576071;
+    border: none;
+    text-indent: 12px;
+    color: #FFFFFF;
+}
+
+.p_rand {
+    float: left;
+    width: 240px;
+    height: 44px;
+    background-color: #576071;
+    border: none;
+    text-indent: 12px;
+    color: #FFFFFF;
+}
+
+.p_bt {
+    width: 242px;
+    height: 44px;
+    background-color: #265DF6;
+    color: #FFFFFF;
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "华文细黑";
+    border: none;
+}
+
+.a_div {
+    float: right;
+}
+
+.a_div a {
+    text-decoration: none;
+    font-size: 12px;
+    color: #FFFFFF;
+    line-height: 16px;
+    display: inherit;
+}
+
+.p_bt:hover {
+    background: #4876FF repeat-x scroll 0 0;
+    cursor: pointer;
+}
+
+.p_div_text {
+    width: 242px;
+    height: 16px;
+    margin-left: 60px;
+}
+
+.p_checkbox {
+    float: left;
+    display: flex;
+}
+
+.login_checkbox {
+    height: 16px;
+    width: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.unchecked {
+    background: url('../images/uncheck@2x.png') no-repeat center/cover;
+}
+
+.checked {
+    background: url('../images/checked@2x.png') no-repeat center/cover;
+}
+
+.login_text {
+    font-size: 12px;
+    color: #ffffff;
+    line-height: 16px;
+    margin-left: 3px;
+}
+
+.login_text label {
+    line-height: 16px;
+}
+
+/*placeholder 样式*/
+/* WebKit browsers */
+::-webkit-input-placeholder {
+    color: #CCCCCC;
+    font-size: 11px;
+    line-height: normal;
+}
+
+/* Mozilla Firefox 4 to 18 */
+:-moz-placeholder {
+    color: #CCCCCC;
+    font-size: 11px;
+    line-height: 44px;
+    opacity: 1;
+}
+
+/* Mozilla Firefox 19+ */
+::-moz-placeholder {
+    color: #CCCCCC;
+    font-size: 11px;
+    line-height: 44px;
+    opacity: 1;
+}
+
+/* Internet Explorer 10+ */
+:-ms-input-placeholder {
+    color: #CCCCCC;
+    font-size: 11px;
+    line-height: 44px;
+}
+
+/*二维码div*/
+#qrcode_nav {
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    top: 24.3%;
+    right: 14.2%;
+    z-index: 999;
+    display: none;
+}
+
+#qrcode_head {
+    width: 100%;
+    height: 72px;
+}
+
+#qrcode_content {
+    position: absolute;
+    width: 100%;
+    height: 304px;
+    margin-left: 0px;
+}
+
+#qr_code {
+    width: 223px;
+    height: 223px;
+    position: absolute;
+    margin-left: 69px;
+}
+
+#mask_qrcode {
+    width: 223px;
+    height: 223px;
+    position: absolute;
+    margin-left: 69px;
+    display: none;
+}
+
+#mask_confirm {
+    width: 223px;
+    height: 223px;
+    position: absolute;
+    margin-left: 69px;
+    display: none;
+}
+
+.retry_qrcode {
+    width: 223px;
+    height: 223px;
+    z-index: 999;
+    background-color: #FFFFFF;
+    position: absolute;
+    filter: alpha(opacity=95); /*ie滤镜，透明度95%*/
+    -moz-opacity: 0.95; /*Firefox私有，透明度95%*/
+    opacity: 0.95; /*其他，透明度95%*/
+}
+
+#scan_icon {
+    width: 223px;
+    height: 20px;
+    position: absolute;
+    margin-left: 69px;
+    margin-top: 234px;
+}
+
+#scan_icon p {
+    font-size: 14px;
+    color: #FFFFFF;
+    line-height: 20px;
+    font-family: "华文细黑";
+}
+
+#scan_icon a {
+    color: #275FF4;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: "华文细黑";
+    text-decoration: none;
+}
+
+/*大写提示框*/
+.capslock {
+    padding: 0 2px 2px 26px;
+    position: absolute;
+    margin: 0 0 0 60px;
+    width: 130px;
+    height: 30px;
+    line-height: 30px;
+    display: none;
+    overflow: hidden;
+    z-index: 4;
+    color: #124fed;
+    background: url(../images/capslock.png) no-repeat;
+    background-size: cover;
+}
+
+.capslock {
+    font-size: 14px;
+    color: red;
+    padding-top: 6px;
+}

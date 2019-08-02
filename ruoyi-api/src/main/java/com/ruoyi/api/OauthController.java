@@ -42,7 +42,6 @@ import java.util.Map;
  */
 @ApiIgnore()
 @Controller
-@RequestMapping("/oauth2.0")
 public class OauthController extends ApiBaseController {
 
     @Autowired
@@ -63,8 +62,8 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @GetMapping("/authorize")
-    public ModelAndView authorize(HttpServletRequest request) {
+    @GetMapping("/auth")
+    public ModelAndView auth(HttpServletRequest request) {
         HttpSession session = request.getSession();
         SysUser user = (SysUser) session.getAttribute(AuthConstants.SESSION_USER);
 
@@ -92,9 +91,9 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/access_token")
     @ResponseBody
-    public Map<String, Object> token(HttpServletRequest request) {
+    public Map<String, Object> accessToken(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);
 
         //授权方式
@@ -164,7 +163,7 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
-    @PostMapping(value = "/refreshToken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/refresh_token")
     @ResponseBody
     public Map<String, Object> refreshToken(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);
@@ -223,7 +222,7 @@ public class OauthController extends ApiBaseController {
      */
     @PostMapping(value = "/auth_pw", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public Map<String, Object> auth_pw(HttpServletRequest request) {
+    public Map<String, Object> authPw(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(2);
 
         // 用户账号
@@ -277,7 +276,7 @@ public class OauthController extends ApiBaseController {
      */
     @PostMapping("/auth_direct")
     @ResponseBody
-    public Map<String, Object> auth_direct(HttpServletRequest request) {
+    public Map<String, Object> authDirect(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(2);
 
         HttpSession session = request.getSession();

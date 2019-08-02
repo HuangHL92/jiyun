@@ -64,7 +64,7 @@ public interface RedisService {
 	 * @param key KEY
 	 * @return K
 	 */
-	<K> K getObj(String key);
+	<K> K getObj(final String key);
 
 	/**  
 	* @Title: set  
@@ -386,5 +386,11 @@ public interface RedisService {
 	* @throws  
 	*/ 
 	public Double geoDist(String key, String member1, String member2, Metric metric);
-	
+
+	/**
+	 * 删除key
+	 * @param keys
+	 * @return
+	 */
+	public long del(final String... keys);
 }

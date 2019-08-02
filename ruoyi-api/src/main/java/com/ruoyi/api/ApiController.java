@@ -25,9 +25,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author tao.liang
  * @date 2019/7/24
  */
-@Api(value = "/api", description = "API接口")
+@Api(value = "/", description = "API接口")
 @RestController
-@RequestMapping("/api")
 public class ApiController extends ApiBaseController {
     @Autowired
     private IAuthAccessTokenService authAccessTokenService;
@@ -37,7 +36,7 @@ public class ApiController extends ApiBaseController {
 
     @ApiOperation("获取个人信息")
     @ValidateAccessToken
-    @PostMapping(value = "/users/getInfo")
+    @PostMapping(value = "/me")
     public String getUserInfo(@RequestParam(name="access_token") String accessToken){
         //查询数据库中的Access Token
         AuthAccessToken authAccessToken = authAccessTokenService.selectByAccessToken(accessToken);

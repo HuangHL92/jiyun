@@ -7,6 +7,7 @@ import org.springframework.data.geo.format.PointFormatter;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class RedisServiceImpl implements RedisService {
+
+	/**
+	 * 默认编码
+	 */
+	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	@Autowired
 	private StringRedisTemplate template;
@@ -65,7 +71,7 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public String get(String key) {
 		ValueOperations<String, String> operations = this.template.opsForValue();
-		return (String) operations.get(key);
+		return operations.get(key);
 	}
 
 	@Override
@@ -257,6 +263,17 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public Double geoDist(String key, String member1, String member2, Metric metric) {
 		return this.template.opsForGeo().distance(key, member1, member2, metric).getValue();
+	}
+
+	@Override
+	public long del(String... keys) {
+		return template.execute((RedisCallback<Long>) connection -> {
+			long result = 0;
+			for (String key : keys) {
+				result = connection.del(key.getBytes(DEFAULT_CHARSET));
+			}
+			return result;
+		});
 	}
 
 
