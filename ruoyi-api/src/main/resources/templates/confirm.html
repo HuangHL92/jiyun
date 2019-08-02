@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>APP扫描之后的页面</title>
+	<meta http-equiv="expires" content="0">
+</head>
+<body>
+	<h3>APP扫码登录模拟页面</h3>
+	<h5>1、该页面用于代替APP端的扫一扫功能；</h5>
+	<h5>2、如下模拟获取AccessToken；</h5>
+		<input type="text" id="username" value="" placeholder="用户账号"/><br/>
+		<input type="password" id="password" value="" placeholder="用户密码"/><br/>
+		<input type="text" id="client_id" value="pbAjLKuogxziSF2hGlRdl066" placeholder="客户端ID" style="width: 300px;"/><br/>
+		<input type="text" id="client_secret" value="xUkqZSQQgY5SqfD9qqYXCquWRpiHTbTp" placeholder="客户端密钥" style="width: 300px;"/><br/><br/>
+		<button type="button" onclick="getAccessToken()">获取AccessToken</button>
+		<input type="text" id="accessToken" style="width: 480px;"/>
+	<h5>3、在登录页面F12，打开console后，点击切换成二维码登录；</h5>
+	<h5>4、将console中打印的二维码内容贴入下面的输入框中，点击OK按钮，登录页面的二维码状态会发生变化，变成扫描成功，请在手机上确认登录；</h5>
+	<h5>5、下方会出现2个按钮，确认登录和取消登录，可以进行操作；</h5>
+	<h5>6、确认登录后，登录页面完成的登录操作，并跳转到登录成功的页面；</h5>
+	<h5>7、取消登录后，登录页面的二维码状态会刷新成已失效状态；</h5>
+	<input type="text" id="message" placeholder="请输入二维码内容" style="width: 650px;"/>
+	<button type="button"  onclick="scanService()">OK</button><br/>
+	<button type="button" id="sure" onclick="scanLogin('login')" style="display:none;">确认登录</button>&nbsp;&nbsp;
+	<button type="button" id="cancel" onclick="scanLogin('cancel')" style="display:none;">取消登录</button>
+</body>
+<script th:src="@{/js/jquery-1.9.1.min.js}" type="text/javascript"></script>
+<script type="text/javascript">
+
+	//调用获取accessToken
+	function getAccessToken(){
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var client_id = $("#client_id").val();
+        var client_secret = $("#client_secret").val();
+        if (username == '' || password == '' || client_id == '' || client_secret == '') {
+            alert('参数请填写完整！');
+            return;
+		}
+		$.ajax({
+	         type: 'POST',
+	         url: '/auth_pw',
+	         dataType: "json",
+	         data: {
+                 username: username,
+                 password: password,
+                 client_id: client_id,
+                 client_secret: client_secret
+			 },
+	         success:function(data){
+	             console.log(data)
+		        if( data.code == 200 ){
+					$('#accessToken').val(data.access_token);
+		        }else{
+		        	alert(data.msg);
+		        }
+		     }
+	     });
+	}
+
+	//调用扫一扫接口，传入扫描到的二维码内容
+	function scanService(){
+        var message = $("#message").val();
+        var accessToken = $("#accessToken").val();
+        if (accessToken == '') {
+            alert('请先获取accessToken！');
+            return;
+		}
+        if (message == '') {
+            alert('请输入二维码内容！');
+            return;
+		}
+		$.ajax({
+	         type: 'POST',
+	         url: '/scan/scanService',
+	         dataType: "json",
+	         data: {
+	             message: message,
+                 access_token: accessToken
+			 },
+	         success:function(data){
+		        if( data.code == '200' ){
+		        	$("#sure").css('display','block');
+		        	$("#cancel").css('display','block');
+		        }else{
+		        	alert(data.msg);
+		        }
+		     }
+	     });
+	}
+	
+	//确认登录
+	function scanLogin(type){
+	    var accessToken = $("#accessToken").val();
+	    if (accessToken == '') {
+	        alert('请先获取accessToken！');
+	        return;
+		}
+		$.ajax({
+	         type: 'POST',
+	         url: '/scan/scanLogin',
+	         dataType: "json",
+	         data: {
+	             type: type,
+				 access_token: accessToken
+			 },
+	         success:function(data){
+		        if( data.code == true ){
+		        	alert(data.msg);
+		        }else{
+		        	alert(data.msg);
+		        }
+		     }
+	     });
+	}
+</script>
+</html>

@@ -7,7 +7,10 @@
 </head>
 <body>
     <h1>统一身份认证平台-userIndex</h1>
-    <h3>[[${currentUser.userName}]]，你好 <a href="/logout" style="margin-left: 30px;">退出</a></h3>
+    <h3>[[${currentUser.userName}]]，你好
+        <a href="/confirm" target="_blank" style="margin-left: 30px;">模拟APP扫码登录</a>
+        <a href="/logout" style="margin-left: 30px;">退出</a>
+    </h3>
     <ul>
         <li th:each="client : ${clientList}" class="client" th:data-client-id="${client.clientId}"><a href="javascript:;">[[${client.clientName}]]</a> </li>
     </ul>

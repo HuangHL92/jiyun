@@ -268,6 +268,7 @@
             },
             timeout: 10000,
             error: function (XMLHttpRequest, textStatus) {
+                console.log(textStatus)
                 if (textStatus == "timeout") { // 请求超时
                     longPolling(text, type); // 递归调用
                     // 其他错误，如网络错误等
@@ -276,6 +277,8 @@
                 }
             },
             success: function (data, textStatus) {
+                console.log(data)
+                console.log(textStatus)
                 if (textStatus == "success") { // 请求成功
                     var resCode = data.code;
                     if (resCode == 4200) {
@@ -289,15 +292,15 @@
                         //取消登录，二维码失效，添加遮罩
                         $("#mask_confirm").hide();
                         $("#mask_qrcode").show();
-                    } else if (resCode == 4203) {
+                    } else if (resCode == 4204) {
                         //扫描成功，请在手机上确认登录
                         type = "scan";
                         longPolling(text, type);
                         $("#mask_confirm").show();
-                    } else if (resCode == 0) {
+                    } else if (resCode == 200) {
                         //登录成功
                         //TODO 跳转redirectUri
-                        window.location.href = "index.html";
+                        window.location.href = '/user/userIndex';
                     }
                 }
             }

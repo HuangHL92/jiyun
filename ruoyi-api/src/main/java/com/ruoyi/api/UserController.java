@@ -97,7 +97,8 @@ public class UserController extends ApiBaseController {
     @PostMapping(value = "/qrcodeCheckLogin")
     @ResponseBody
     public ApiResult qrcodeCheckLogin(@RequestParam("context") String context,
-                                      @RequestParam("type") String type) throws Exception {
+                                      @RequestParam("type") String type,
+                                      HttpServletRequest request) throws Exception {
         //参数判断
         if (StrUtil.isEmpty(context)) {
             return error(ResponseCode.INVALID_QRCODE);
@@ -141,10 +142,11 @@ public class UserController extends ApiBaseController {
 
                     SysUser sysUser = userService.selectUserByLoginName(userCode);
 
-                    //完成登录操作，返回access_token
-                    //TODO 此处demo返回给前台，生产环境中是返回给app
+                    // 登录操作
+                    // session中添加用户信息
+                    HttpSession session = request.getSession();
+                    session.setAttribute(AuthConstants.SESSION_USER, sysUser);
 
-//                    return success(JwtTokenUtil.TOKEN_TYPE_BEARER + " " + jwtToken);
                     return success();
                 } else {
                     long endTime = System.currentTimeMillis();
@@ -216,7 +218,7 @@ public class UserController extends ApiBaseController {
                     result.put("redirect_uri", redirectUrl);
                 }
             } else {
-                if ("1".equals(correctUser.getStatus())) {
+                if (correctUser != null && "1".equals(correctUser.getStatus())) {
                     result.put("msg", "该用户已被管理员禁用！");
                 } else {
                     result.put("msg", "用户名或密码错误！");
@@ -276,5 +278,18 @@ public class UserController extends ApiBaseController {
         // 返回当前用户
         modelMap.put("currentUser", session.getAttribute(AuthConstants.SESSION_USER));
         return "userIndex";
+    }
+
+    /**
+     * 模拟APP登录
+     *
+     * @param request
+     * @param modelMap
+     * @return
+     */
+    @GetMapping("/confirm")
+    public String confirm(HttpServletRequest request, ModelMap modelMap) {
+
+        return "confirm";
     }
 }

@@ -95,7 +95,7 @@ public class AuthenticationAspect {
                     LocalDateTime nowDateTime = DateUtils.now();
 
                     //如果Access Token已经失效，则返回错误提示
-                    if (expiresDateTime.isAfter(nowDateTime)) {
+                    if (expiresDateTime.isBefore(nowDateTime)) {
                         throw new ApiRuntimeException(ResponseCode.EXPIRED_TOKEN);
                     }
                     return;

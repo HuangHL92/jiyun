@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import springfox.documentation.annotations.ApiIgnore;
@@ -250,13 +249,14 @@ public class OauthController extends ApiBaseController {
                 // 3.校验请求的客户端秘钥和已保存的秘钥是否匹配
                 AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientId);
                 if (savedClientDetails == null || !savedClientDetails.getClientSecret().equals(clientSecret)) {
-                    generateErrorResponse(result, ResponseCode.INVALID_CLIENT);
+                    return generateErrorResponse(ResponseCode.INVALID_CLIENT);
                 }
                 // 4.校验客户端是否支持password授权模式
                 // TODO
                 // 5.生成accessToken
                 Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime()); // 过期时间
                 String accessToken = authorizationService.createAccessToken(user, savedClientDetails, "password", expiresIn);// 生成Access Token
+                result.put("code", 200);
                 result.put("access_token", accessToken);
                 result.put("expires_in", expiresIn);
             } else {
