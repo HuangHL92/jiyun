@@ -45,6 +45,23 @@ public class UserController extends ApiBaseController {
     @Autowired
     private ISysUserService userService;
 
+
+    /**
+     * 首页
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping(value = {"/", "/index"})
+    public ModelAndView index(HttpServletRequest request, ModelMap modelMap) {
+        // session共享测试
+        HttpSession session = request.getSession();
+        //将回调地址添加到session中
+        modelMap.put("sessionId", session.getId());
+
+        return new ModelAndView("index");
+    }
+
     /**
      * 登录页面
      *

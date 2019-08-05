@@ -84,7 +84,10 @@ spring:
         max-wait: 6000ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
     timeout: 3000ms
     prefix: tysfrz_jsjy  #前缀（TODO 重要：用于区分不同项目的空间，根据项目情况自行更换）
-
+  session:
+    store-type: redis
+    redis:
+      namespace: tysfrz_jsjy:session
   main:
     allow-bean-definition-overriding: true #遇到相同名字，是否进行覆盖
 

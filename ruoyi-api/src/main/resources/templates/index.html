@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
@@ -7,5 +7,6 @@
 <body>
     <h1>统一身份认证平台-index</h1>
     <a href="/login">登录</a>
+    <h3>sessionId: [[${sessionId}]]</h3>
 </body>
 </html>

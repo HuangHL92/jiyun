@@ -12,9 +12,9 @@ import org.springframework.web.servlet.config.annotation.*;
 public class ConfigAdapter extends WebMvcConfigurationSupport {
     @Override
     public void addViewControllers(ViewControllerRegistry viewControllerRegistry) {
-        viewControllerRegistry.addViewController("/").setViewName("index");
+//        viewControllerRegistry.addViewController("/").setViewName("index");
 
-        viewControllerRegistry.addViewController("/index").setViewName("index");
+//        viewControllerRegistry.addViewController("/index").setViewName("index");
 
         //设置ViewController的优先级,将此处的优先级设为最高,当存在相同映射时依然优先执行
         viewControllerRegistry.setOrder(Ordered.HIGHEST_PRECEDENCE);
