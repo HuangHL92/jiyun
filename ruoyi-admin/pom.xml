@@ -64,14 +64,14 @@
 					<fork>true</fork> <!-- 如果没有该配置，devtools不会生效 -->
 
                     <!--只打包当前model,排除其他引用（需要瘦身部署时使用）-->
-                    <mainClass>com.ruoyi.RuoYiApplication</mainClass>
+                    <!--<mainClass>com.ruoyi.RuoYiApplication</mainClass>
                     <layout>ZIP</layout>
                     <includes>
                         <include>
                             <groupId>nothing</groupId>
                             <artifactId>nothing</artifactId>
                         </include>
-                    </includes>
+                    </includes>-->
 
 				</configuration>
                 <executions>
@@ -92,7 +92,7 @@
                 </configuration>   
 		   </plugin>   
         </plugins>
-        <finalName>${artifactId}</finalName>
+        <finalName>tysfrzpt-admin</finalName>
     </build>
 	
 </project>

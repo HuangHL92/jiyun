@@ -1,3 +1,50 @@
+# 开发环境配置
+server:
+  # 服务端口 （TODO 根据项目情况自行更换）
+  port: 8080
+  servlet:
+    # 项目contextPath
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 1000
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
+
+# 微信公众号配置
+wx:
+  mp:
+    configs:
+    - appId: wx2b911f070115b89a #（一个公众号的appid  微驱动）
+      secret: a6d343b9592121b3c215c8301b0c3d75 #（公众号的appsecret 微驱动）
+      token: 111 #（接口配置里的Token值）
+      aesKey: 111 #（接口配置里的EncodingAESKey值）
+      webPath: http://hahayu.natapp1.cc
+      thirdurl: http://wx.51e.com.cn/get-weixin-code.html
+      ##      - appId: 2222 （另一个公众号的appid，以下同上）
+#        secret: 1111
+#        token: 111
+#        aesKey: 111
+
+# restful、jwt配置
+api:
+  overtime: 15    #接口请求失效时间
+  nonceovertime: 15
+  basepackage: com.ruoyi.api #restful接口扫描路径
+  appsecret: 1q2w3e4r # （TODO token验证用密钥，根据项目情况自行更换）
+  token:
+    expires: 1 #jwt token过期时间（单位：分钟）
+    secretKey: 1q2w3e4r
+
+# 第三方认证配置
+auth:
+  gitee:
+    client-id: 716db1779087e1241dd1f3fec0eb4f88619c146de42b26eb493399e4973137e2
+    client-secret: 5a9e0552e6eb2a06758f484ceab49b51d4d7260c58eb9b6c904351d5d6ddd215
+    redirect-uri: http://localhost:81/oauth/gitee/login
+
 # 数据源配置
 spring:
     datasource:
@@ -54,6 +101,21 @@ spring:
                 wall:   #SQL防注入
                     config:
                         multi-statement-allow: true
+    #redis
+    redis:
+      enabled: true # Redis开关/默认关闭
+      database: 0
+      password: jiyun
+      host: 192.172.18.242
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 5000 # 连接池最大连接数（使用负值表示没有限制）
+          max-idle: 1000 # 连接池中的最大空闲连接
+          min-idle: 500 # 连接池中的最小空闲连接
+          max-wait: 6000ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      timeout: 3000ms
+      prefix: tysfrz_jsjy  #前缀（TODO 重要：用于区分不同项目的空间，根据项目情况自行更换）
             # Mycat中server.xml中配置账号密码
 #            username: jiyun
 #            password: develop

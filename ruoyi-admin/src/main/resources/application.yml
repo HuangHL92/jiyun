@@ -1,7 +1,7 @@
 # 项目相关配置
 ruoyi:
   # 名称（TODO 显示在首页等位置，根据项目情况自行更换）
-  name: 吉运Java开发平台3.0
+  name: 统一身份认证平台管理后台
   # 版本
   version: 3.2.0
   # 版权年份
@@ -13,21 +13,6 @@ ruoyi:
   # dataX插件路径 (项目部署所在盘符的根本目录)
   dataX: C:/java/dataX/bin/
 
-# 开发环境配置
-server:
-  # 服务端口 （TODO 根据项目情况自行更换）
-  port: 81
-  servlet:
-    # 项目contextPath
-    context-path: /
-  tomcat:
-    # tomcat的URI编码
-    uri-encoding: UTF-8
-    # tomcat最大线程数，默认为200
-    max-threads: 1000
-    # Tomcat启动初始化的线程数，默认值25
-    min-spare-threads: 30
- 
 # 日志配置
 logging:
   level:
@@ -59,7 +44,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   #profiles
   profiles: 
-    active: druid
+    active: dev
   # 文件上传
   servlet:
      multipart:
@@ -70,22 +55,6 @@ spring:
     restart:
       # 热部署开关
       enabled: true
-  #redis
-  redis:
-    enabled: true # Redis开关/默认关闭
-    database: 0
-    password:
-    host: 127.0.0.1
-    port: 6379
-    lettuce:
-      pool:
-        max-active: 5000 # 连接池最大连接数（使用负值表示没有限制）
-        max-idle: 1000 # 连接池中的最大空闲连接
-        min-idle: 500 # 连接池中的最小空闲连接
-        max-wait: 6000ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
-    timeout: 3000ms
-    prefix: tysfrz_jsjy  #前缀（TODO 重要：用于区分不同项目的空间，根据项目情况自行更换）
-
   main:
       allow-bean-definition-overriding: true #遇到相同名字，是否进行覆盖
 
@@ -206,49 +175,6 @@ gen:
   # 表前缀(类名不会包含表前缀)
   tablePrefix: biz_
 
-#
-jiyun:
-  notice:
-    mailto: fei.yu@51e.com.cn   #（TODO 用于接收异常通知等信息的邮件地址，根据项目情况自行更换）
-    isopen: false #是否开启邮件通知
-  websocket:
-    url: ws://localhost:81/socketServer #（TODO websocket服务地址，根据项目情况自行更换）
-  #shorturl地址
-  shortapi:
-    url: http://api.t.sina.com.cn/short_url/shorten.json?source=3271760578&url_long=
-  oauth2:
-    client-id: x3qwrgrO1wYdz72joZ8YyIuD
-    client-secret: DPTyJsBv1xjzEgv0MEjBnIVigaVUm3cr
-    redirect-uri: http://192.168.4.35:81/oauth2/jiyun/login
-    authorization-uri: http://127.0.0.1:83/auth?response_type=code&client_id={0}&redirect_uri={1}
-    access-token-uri: http://127.0.0.1:83/access_token?grant_type=authorization_code&client_id={0}&client_secret={1}&redirect_uri={2}&code={3}
-    refresh-token-uri: http://127.0.0.1:83/refresh_token?grant_type=refresh_token&client_id={0}&client_secret={1}&redirect_uri={2}&refresh_token={3}
-    user-info-uri: http://127.0.0.1:83/me?access_token={0}
-
-# 微信公众号配置
-wx:
-  mp:
-    configs:
-      - appId: wx2b911f070115b89a #（一个公众号的appid  微驱动）
-        secret: a6d343b9592121b3c215c8301b0c3d75 #（公众号的appsecret 微驱动）
-        token: 111 #（接口配置里的Token值）
-        aesKey: 111 #（接口配置里的EncodingAESKey值）
-        webPath: http://hahayu.natapp1.cc
-        thirdurl: http://wx.51e.com.cn/get-weixin-code.html
-        ##      - appId: 2222 （另一个公众号的appid，以下同上）
-#        secret: 1111
-#        token: 111
-#        aesKey: 111
-
-# restful、jwt配置
-api:
-  overtime: 15    #接口请求失效时间
-  nonceovertime: 15
-  basepackage: com.ruoyi.api #restful接口扫描路径
-  appsecret: 1q2w3e4r # （TODO token验证用密钥，根据项目情况自行更换）
-  token:
-    expires: 10 #jwt token过期时间（单位：分钟）
-
 #Actuator相关配置
 management:
   endpoints:
@@ -265,12 +191,6 @@ management:
     health:
       show-details: always
 
-# 第三方认证配置
-auth:
-  gitee:
-    client-id: 716db1779087e1241dd1f3fec0eb4f88619c146de42b26eb493399e4973137e2
-    client-secret: 5a9e0552e6eb2a06758f484ceab49b51d4d7260c58eb9b6c904351d5d6ddd215
-    redirect-uri: http://localhost:81/oauth/gitee/login
 
 
 # 正则表达式(未启用)

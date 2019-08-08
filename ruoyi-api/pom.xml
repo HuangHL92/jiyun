@@ -161,7 +161,7 @@
                 <!--</configuration>-->
             <!--</plugin>-->
         </plugins>
-        <finalName>${artifactId}</finalName>
+        <finalName>tysfrzpt-api</finalName>
     </build>
 
 
