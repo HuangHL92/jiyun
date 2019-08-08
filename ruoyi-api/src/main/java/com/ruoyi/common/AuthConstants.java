@@ -28,6 +28,11 @@ public class AuthConstants {
     public static final String AEC_KEY = "fCq+/xW818hJSJY+cmJ3aQ==";
 
     /**
+     * 密码重试次数前缀
+     */
+    public static final String RETRY_COUNT_PREFIX = "retry_count:";
+
+    /**
      * 二维码内容头
      */
     public static final String QRCODE_HEADER = "BM_ANGEL:qrcode_scan_login#";

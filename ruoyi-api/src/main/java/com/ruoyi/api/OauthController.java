@@ -14,6 +14,7 @@ import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.framework.redis.RedisService;
 import com.ruoyi.service.AuthorizationService;
+import com.ruoyi.service.PasswordService;
 import com.ruoyi.system.domain.AuthRefreshToken;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
@@ -55,6 +56,8 @@ public class OauthController extends ApiBaseController {
     private IAuthRefreshTokenService authRefreshTokenService;
     @Autowired
     private ISysUserService userService;
+    @Autowired
+    private PasswordService passwordService;
 
     /**
      * 获取Authorization Code
@@ -241,7 +244,7 @@ public class OauthController extends ApiBaseController {
 
         try {
             // 2.验证账号密码
-            Map<String, Object> checkMap = userService.checkLogin(username, password);
+            Map<String, Object> checkMap = passwordService.checkLogin(username, password);
             Boolean loginResult = (Boolean) checkMap.get("result");
             SysUser user = (SysUser) checkMap.get("user");
             // 登录验证通过

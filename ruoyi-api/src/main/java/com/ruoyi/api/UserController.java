@@ -11,6 +11,7 @@ import com.ruoyi.common.base.ApiResult;
 import com.ruoyi.common.enums.QrCodeEnmu;
 import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.framework.redis.RedisService;
+import com.ruoyi.service.PasswordService;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,8 @@ public class UserController extends ApiBaseController {
     private RedisService redisService;
     @Autowired
     private ISysUserService userService;
-
+    @Autowired
+    private PasswordService passwordService;
 
     /**
      * 首页
@@ -199,7 +201,7 @@ public class UserController extends ApiBaseController {
 
         if (StringUtils.isNoneBlank(username) && StringUtils.isNoneBlank(password)) {
             //1. 登录验证
-            Map<String, Object> checkMap = userService.checkLogin(username, password);
+            Map<String, Object> checkMap = passwordService.checkLogin(username, password);
             Boolean loginResult = (Boolean) checkMap.get("result");
             SysUser correctUser = (SysUser) checkMap.get("user");
 
@@ -214,8 +216,8 @@ public class UserController extends ApiBaseController {
                     // 写Cookie的套路：先new一个cookie，然后调用response的addCookie方法就可以写cookie了
                     AES aes = SecureUtil.aes(Base64.decode(AuthConstants.AEC_KEY));
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("username", "admin");
-                    jsonObject.put("password", "1q2w3e4r");
+                    jsonObject.put("username", username);
+                    jsonObject.put("password", password);
                     System.out.println(jsonObject.toString());
                     String encryptHex = aes.encryptHex(jsonObject.toString());
                     Cookie rememberMeCookie = new Cookie("rememberMe", encryptHex);

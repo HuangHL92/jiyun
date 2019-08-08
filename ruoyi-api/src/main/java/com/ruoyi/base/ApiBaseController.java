@@ -3,11 +3,13 @@ package com.ruoyi.base;
 import com.ruoyi.common.base.ApiResult;
 import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.common.exception.ApiRuntimeException;
+import com.ruoyi.common.exception.user.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +60,8 @@ public class ApiBaseController {
      * @return
      */
     @ExceptionHandler(value = Exception.class)
+    @ResponseBody
     public ApiResult<Object> handleBadRequest(Exception e) {
-
 
         /*
          * 业务逻辑异常
@@ -70,6 +72,14 @@ public class ApiBaseController {
                 logger.debug("Rest request error, {}", errorCode.toString());
                 return ApiResult.error(errorCode);
             }
+            logger.debug("Rest request error, {}", e.getMessage());
+            return ApiResult.error(e.getMessage());
+        }
+
+        /*
+         * 用户信息异常
+         */
+        if (e instanceof UserException) {
             logger.debug("Rest request error, {}", e.getMessage());
             return ApiResult.error(e.getMessage());
         }

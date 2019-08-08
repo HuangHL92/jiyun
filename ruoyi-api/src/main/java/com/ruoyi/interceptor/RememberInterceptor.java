@@ -7,6 +7,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.AuthConstants;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.service.PasswordService;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,7 @@ import java.util.Map;
  */
 public class RememberInterceptor extends HandlerInterceptorAdapter {
 
-    private static ISysUserService userService = SpringUtils.getBean(ISysUserService.class);
+    private static PasswordService passwordService = SpringUtils.getBean(PasswordService.class);
 
     /**
      * 检查是否记住我，自动登录
@@ -59,7 +60,7 @@ public class RememberInterceptor extends HandlerInterceptorAdapter {
             String username= jsonObject.getStr("username");
             String password= jsonObject.getStr("password");
             //1. 登录验证
-            Map<String, Object> checkMap = userService.checkLogin(username, password);
+            Map<String, Object> checkMap = passwordService.checkLogin(username, password);
             Boolean loginResult = (Boolean) checkMap.get("result");
             SysUser correctUser = (SysUser) checkMap.get("user");
             //登录验证通过

@@ -15,6 +15,7 @@ public enum ResponseCode {
     ILLEGAL_REQUEST(4003, "非法请求"),
     ILLEGAL_ACCOUNT(4004, "账号信息不存在"),
     ERROR_LOGIN(4005, "账号或密码错误"),
+    PASSWORD_RETRY_LIMIT_EXCEED(4006, "密码输入错误次数已达限制，帐户锁定10分钟"),
     INVALID_REQUEST(4100, "请求缺少某个必需参数，包含一个不支持的参数或参数值，或者格式不正确。"),
     INVALID_CLIENT(4101, "请求的client_id或client_secret参数无效。"),
     INVALID_GRANT(4102, "请求的Authorization Code、Access Token、Refresh Token等信息是无效的。"),
