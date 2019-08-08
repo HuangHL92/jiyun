@@ -18,9 +18,9 @@
 
         $('.client').click(function () {
             var clientId = $(this).data('client-id');
-
+            var redirect_uri = '';
             $.ajax({
-                url: "/oauth2.0/auth_direct",
+                url: "/auth_direct",
                 type: "POST",
                 dataType: "json",
                 async: false,
@@ -31,7 +31,7 @@
                     if (data.code == "200") {
 
                         if (data.redirect_uri != null) {
-                            window.open(data.redirect_uri, "_blank");
+                            redirect_uri = data.redirect_uri;
                         } else {
                             alert('参数错误！请联系管理员');
                         }
@@ -40,6 +40,9 @@
                     }
                 }
             });
+            if (redirect_uri != '') {
+                window.open(redirect_uri);
+            }
         })
     </script>
 </body>

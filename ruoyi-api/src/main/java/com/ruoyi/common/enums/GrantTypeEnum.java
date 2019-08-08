@@ -9,7 +9,9 @@ package com.ruoyi.common.enums;
  */
 public enum GrantTypeEnum {
     //授权码模式
-    AUTHORIZATION_CODE("authorization_code");
+    AUTHORIZATION_CODE("authorization_code"),
+    //密码模式
+    AUTHORIZATION_PASSWORD("authorization_code");
 
     private String type;
 
