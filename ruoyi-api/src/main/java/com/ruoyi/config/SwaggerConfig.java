@@ -91,8 +91,8 @@ public class SwaggerConfig
 
         // 用ApiInfoBuilder进行定制
         return new ApiInfoBuilder()
-                .title("吉运业务接口平台")
-                .description("描述：移动、大屏端接口定义和实现")
+                .title("上海市金山区教育统一身份认证接口平台")
+                .description("code认证、password认证，扫码认证")
                 .contact(new Contact(Global.getName(), null, null))
                 .version("版本号:" + Global.getVersion())
                 .build();

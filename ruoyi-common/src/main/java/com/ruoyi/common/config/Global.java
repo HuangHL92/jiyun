@@ -75,14 +75,14 @@ public class Global {
      * 获取项目版本
      */
     public static String getVersion() {
-        return StringUtils.nvl(getConfig("ruoyi.version"), "3.2.0");
+        return StringUtils.nvl(getConfig("ruoyi.version"), "1.1.0");
     }
 
     /**
      * 获取版权年份
      */
     public static String getCopyrightYear() {
-        return StringUtils.nvl(getConfig("ruoyi.copyrightYear"), "2018");
+        return StringUtils.nvl(getConfig("ruoyi.copyrightYear"), "2019");
     }
 
     /**

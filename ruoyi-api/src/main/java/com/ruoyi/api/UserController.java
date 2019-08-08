@@ -289,8 +289,8 @@ public class UserController extends ApiBaseController {
         // TODO 查询当前用户可以访问的系统
         List<AuthClientDetails> clientList = new ArrayList<>();
         AuthClientDetails client1 = new AuthClientDetails();
-        client1.setClientId("x3qwrgrO1wYdz72joZ8YyIuD");
-        client1.setClientName("Ruoyi管理后台");
+        client1.setClientId("7Ugj6XWmTDpyYp8M8njG3hqx");
+        client1.setClientName("本地测试系统");
         clientList.add(client1);
         modelMap.put("clientList", clientList);
 

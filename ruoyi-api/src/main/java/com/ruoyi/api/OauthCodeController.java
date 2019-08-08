@@ -1,6 +1,5 @@
 package com.ruoyi.api;
 
-import cn.hutool.core.util.StrUtil;
 import com.ruoyi.area.auth.domain.AuthAccessToken;
 import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.area.auth.service.IAuthAccessTokenService;
@@ -8,6 +7,7 @@ import com.ruoyi.area.auth.service.IAuthClientDetailsService;
 import com.ruoyi.area.auth.service.IAuthRefreshTokenService;
 import com.ruoyi.base.ApiBaseController;
 import com.ruoyi.common.AuthConstants;
+import com.ruoyi.common.SpringContextUtils;
 import com.ruoyi.common.enums.ExpireEnum;
 import com.ruoyi.common.enums.GrantTypeEnum;
 import com.ruoyi.common.enums.ResponseCode;
@@ -18,15 +18,17 @@ import com.ruoyi.service.PasswordService;
 import com.ruoyi.system.domain.AuthRefreshToken;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -36,13 +38,14 @@ import java.util.Map;
 
 /**
  * 基于oauth2.0相关的授权相关操作
+ *  Code方式授权认证接口
  *
  * @author tao.liang
  * @date 2019/7/24
  */
-@ApiIgnore()
+@Api(value = "/", description = "Code方式授权认证接口", tags = "code认证", hidden = true)
 @Controller
-public class OauthController extends ApiBaseController {
+public class OauthCodeController extends ApiBaseController {
 
     @Autowired
     private RedisService redisService;
@@ -56,25 +59,28 @@ public class OauthController extends ApiBaseController {
     private IAuthRefreshTokenService authRefreshTokenService;
     @Autowired
     private ISysUserService userService;
-    @Autowired
-    private PasswordService passwordService;
 
     /**
      * 获取Authorization Code
-     * @param request
+     * @param clientIdStr 客户端ID
+     * @param redirectUri 回调URL
+     * @param status status，用于防止CSRF攻击（非必填）
      * @return
      */
+    @ApiOperation(value = "1、跳转登录页面", tags = "code认证", notes = "上述操作将跳转到EIcjs OAuth2 登陆页面。\n" +
+            "如果用户登陆成功并确认同意，则将跳转到递交的 redirect_uri 并带有返回码。")
     @GetMapping("/auth")
-    public ModelAndView auth(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "response_type", value = "code", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "client_id", value = "申请的AppId", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "redirect_uri", value = "申请AppRedirectUri(返回到客户的url)", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "status，用于防止CSRF攻击（非必填）", paramType = "query")
+    })
+    public String auth(@RequestParam("client_id") String clientIdStr,
+                       @RequestParam("redirect_uri") String redirectUri,
+                       @RequestParam(value = "status", required = false) String status) {
+        HttpSession session = SpringContextUtils.getSession();
         SysUser user = (SysUser) session.getAttribute(AuthConstants.SESSION_USER);
-
-        //客户端ID
-        String clientIdStr = request.getParameter("client_id");
-        //回调URL
-        String redirectUri = request.getParameter("redirect_uri");
-        //status，用于防止CSRF攻击（非必填）
-        String status = request.getParameter("status");
 
         //生成Authorization Code
         String authorizationCode = authorizationService.createAuthorizationCode(clientIdStr, user);
@@ -84,30 +90,34 @@ public class OauthController extends ApiBaseController {
             params = params + "&status=" + status;
         }
 
-        return new ModelAndView("redirect:" + redirectUri + params);
+        return "redirect:" + redirectUri + params;
     }
 
     /**
      * 通过Authorization Code获取Access Token
-     *
-     * @param request
+     * @param grantType 授权方式
+     * @param clientIdStr 客户端ID
+     * @param clientSecret 接入的客户端的密钥
+     * @param redirectUri 回调URL
+     * @param code 前面获取的Authorization Code
      * @return
      */
+    @ApiOperation(value = "2、获取access_token", tags = "code认证", notes = "使用返回的code，获取认证服务器的 access_token")
     @PostMapping(value = "/access_token")
     @ResponseBody
-    public Map<String, Object> accessToken(HttpServletRequest request) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "grant_type", value = "authorization_code", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "client_id", value = "申请的AppId", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "client_secret", value = "申请的AppSecret", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "redirect_uri", value = "申请AppRedirectUri(返回到客户的url)", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "前一步获取到的 code", required = true, paramType = "query")
+    })
+    public Map<String, Object> access_token(@RequestParam("grant_type") String grantType,
+                                            @RequestParam("client_id") String clientIdStr,
+                                            @RequestParam("client_secret") String clientSecret,
+                                            @RequestParam("redirect_uri") String redirectUri,
+                                            @RequestParam("code") String code) {
         Map<String, Object> result = new HashMap<>(8);
-
-        //授权方式
-        String grantType = request.getParameter("grant_type");
-        //前面获取的Authorization Code
-        String code = request.getParameter("code");
-        //客户端ID
-        String clientIdStr = request.getParameter("client_id");
-        //接入的客户端的密钥
-        String clientSecret = request.getParameter("client_secret");
-        //回调URL
-        String redirectUri = request.getParameter("redirect_uri");
 
         //校验授权方式
         if (!GrantTypeEnum.AUTHORIZATION_CODE.getType().equals(grantType)) {
@@ -165,9 +175,11 @@ public class OauthController extends ApiBaseController {
      * @param request
      * @return
      */
+    @ApiOperation(value = "3、刷新access_token", tags = "code认证",
+            notes = "对于已经获得用户认证过的应用， 当用户再次访问时， 可以通过本地 session 获取其用户之前获得的 refresh_token 再次获取 access_token (如果超时，请用户重新从第一步开始认证)。")
     @PostMapping(value = "/refresh_token")
     @ResponseBody
-    public Map<String, Object> refreshToken(HttpServletRequest request) {
+    public Map<String, Object> refresh_token(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(8);
 
         //获取Refresh Token
@@ -214,92 +226,5 @@ public class OauthController extends ApiBaseController {
             generateErrorResponse(result, ResponseCode.UNKNOWN_ERROR);
             return result;
         }
-    }
-
-    /**
-     * 密码模式获取Access Token
-     *
-     * @param request
-     * @return
-     */
-    @PostMapping(value = "/auth_pw", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public Map<String, Object> authPw(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>(2);
-
-        // 用户账号
-        String username = request.getParameter("username");
-        // 用户密码
-        String password = request.getParameter("password");
-        // 客户端ID
-        String clientId = request.getParameter("client_id");
-        // 接入的客户端的密钥
-        String clientSecret = request.getParameter("client_secret");
-
-        // 1.参数验证
-        if (StrUtil.isBlank(username) || StrUtil.isBlank(password) || StrUtil.isBlank(clientId) || StrUtil.isBlank(clientSecret)) {
-            generateErrorResponse(result, ResponseCode.INVALID_REQUEST);
-            return result;
-        }
-
-        try {
-            // 2.验证账号密码
-            Map<String, Object> checkMap = passwordService.checkLogin(username, password);
-            Boolean loginResult = (Boolean) checkMap.get("result");
-            SysUser user = (SysUser) checkMap.get("user");
-            // 登录验证通过
-            if (loginResult != null && loginResult) {
-                // 3.校验请求的客户端秘钥和已保存的秘钥是否匹配
-                AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientId);
-                if (savedClientDetails == null || !savedClientDetails.getClientSecret().equals(clientSecret)) {
-                    return generateErrorResponse(ResponseCode.INVALID_CLIENT);
-                }
-                // 4.校验客户端是否支持password授权模式
-                // TODO
-                // 5.生成accessToken
-                Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime()); // 过期时间
-                String accessToken = authorizationService.createAccessToken(user, savedClientDetails, "password", expiresIn);// 生成Access Token
-                result.put("code", 200);
-                result.put("access_token", accessToken);
-                result.put("expires_in", expiresIn);
-            } else {
-                generateErrorResponse(result, ResponseCode.INVALID_USERNAME_PASSWORD);
-            }
-        } catch (Exception e) {
-            generateErrorResponse(result, ResponseCode.UNKNOWN_ERROR);
-        }
-        return result;
-
-    }
-
-    /**
-     * 主动跳转到系统
-     * @param request
-     * @return
-     */
-    @PostMapping("/auth_direct")
-    @ResponseBody
-    public Map<String, Object> authDirect(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>(2);
-
-        HttpSession session = request.getSession();
-        SysUser user = (SysUser) session.getAttribute(AuthConstants.SESSION_USER);
-
-        // 客户端ID
-        String clientId = request.getParameter("client_id");
-        AuthClientDetails authClientDetails = authClientDetailsService.selectByClientId(clientId);
-
-        // TODO 需要判断当前用户是否有该系统的访问权限
-
-        // 回调url
-        String redirectUri = authClientDetails.getRedirectUri();
-
-        //生成Authorization Code
-        String authorizationCode = authorizationService.createAuthorizationCode(clientId, user);
-
-        result.put("code", 200);
-        result.put("redirect_uri", redirectUri + "?code=" + authorizationCode);
-
-        return result;
     }
 }

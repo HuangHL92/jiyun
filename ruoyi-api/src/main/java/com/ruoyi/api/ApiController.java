@@ -9,6 +9,8 @@ import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysUserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author tao.liang
  * @date 2019/7/24
  */
-@Api(value = "/", description = "API接口")
+@Api(value = "/", description = "API接口", tags = "API接口")
 @RestController
 public class ApiController extends ApiBaseController {
     @Autowired
@@ -37,6 +39,9 @@ public class ApiController extends ApiBaseController {
     @ApiOperation("获取个人信息")
     @ValidateAccessToken
     @PostMapping(value = "/me")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "access_token", value = "code", required = true, paramType = "query")
+    })
     public String getUserInfo(@RequestParam(name="access_token") String accessToken){
         //查询数据库中的Access Token
         AuthAccessToken authAccessToken = authAccessTokenService.selectByAccessToken(accessToken);

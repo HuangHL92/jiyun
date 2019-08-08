@@ -24,8 +24,8 @@ jiyun:
   shortapi:
     url: http://api.t.sina.com.cn/short_url/shorten.json?source=3271760578&url_long=
   oauth2:
-    client-id: x3qwrgrO1wYdz72joZ8YyIuD
-    client-secret: DPTyJsBv1xjzEgv0MEjBnIVigaVUm3cr
+    client-id: 7Ugj6XWmTDpyYp8M8njG3hqx
+    client-secret: tur2rlFfywR9OOP3fB5ZbsLTnNuNabI3
     redirect-uri: http://192.168.4.35:81/oauth2/jiyun/login
     authorization-uri: http://127.0.0.1:83/auth?response_type=code&client_id={0}&redirect_uri={1}
     access-token-uri: http://127.0.0.1:83/access_token?grant_type=authorization_code&client_id={0}&client_secret={1}&redirect_uri={2}&code={3}

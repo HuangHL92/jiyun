@@ -1,9 +1,9 @@
 # 项目相关配置
 ruoyi:
   # 名称（TODO 显示在首页等位置，根据项目情况自行更换）
-  name: 吉运通用接口平台
+  name: 统一身份认证平台
   # 版本
-  version: 3.2.0
+  version: 1.1.0
   # 版权年份
   copyrightYear: 2019
   # 文件上传路径(/ruoyi/profile 项目部署所在盘符的根本目录； D:/www/ruoyi/profile 也可以配置这样的觉得路径)
