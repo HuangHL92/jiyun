@@ -20,4 +20,11 @@ public interface IAuthClientDetailsService extends IService<AuthClientDetails> {
      * @return
      */
     AuthClientDetails selectByClientId(String clientId);
+
+    /**
+     * 保存接入客户端信息
+     * @param clientDetails
+     * @return
+     */
+    boolean doSave(AuthClientDetails clientDetails);
 }

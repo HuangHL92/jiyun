@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            接入方式：
+                            <select name="scope" th:with="type=${@dict.getType('client_access_mode')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            状态：
+                            <select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            关键字：<input type="text" name="params[keyword]" placeholder="客户端ID/名称/描述信息"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset(); $.table.search()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="add()" shiro:hasPermission="auth:authClientDetails:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary btn-edit disabled" onclick="edit()"
+               shiro:hasPermission="auth:authClientDetails:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="auth:authClientDetails:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('auth:authClientDetails:editFull')}]];
+    var removeFlag = [[${@permission.hasPermi('auth:authClientDetails:remove')}]];
+    var clientAccessModes = [[${@dict.getType('client_access_mode')}]];
+
+    var prefix = ctx + "auth/authClientDetails";
+
+    function add() {
+        // open: function (title, url, width, height,callback) {
+        $.modal.open("添加接入客户端" + $.table._option.modalName, $.table._option.createUrl, 1000, $(window).height() - 50)
+    }
+
+    function edit(id) {
+        var url;
+        if ($.common.isNotEmpty(id)) {
+            url = $.table._option.updateUrl.replace("{id}", id);
+        } else {
+            var row = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+            url = $.table._option.updateUrl.replace("{id}", row);
+        }
+        $.modal.open("修改" + $.table._option.modalName, url, 1000, $(window).height() - 50);
+    }
+
+    /* 重置密钥 */
+    function refresh(id) {
+        $.modal.confirm("确认要重置该系统密钥吗？", function() {
+            $.operate.post(prefix + "/refresh", { "id": id});
+        })
+    }
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            uniqueId: "id",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            sortName: "updateTime",
+            sortOrder: "desc",
+            modalName: "接入的客户端",
+            search: false,
+            showExport: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'clientName',
+                    title: '客户端名称',
+                    sortable: true
+                },
+                {
+                    field: 'clientId',
+                    title: '客户端ID'
+                },
+                {
+                    field: 'clientSecret',
+                    title: '客户端密钥'
+                },
+                {
+                    field: 'redirectUri',
+                    title: '回调地址'
+                },
+                {
+                    field: 'scope',
+                    title: '接入方式',
+                    formatter: function(value, row, index) {
+                        var label = "";
+                        $.each(value.split(","), function (index, item) {
+                            label += $.table.selectDictLabel(clientAccessModes, item) + "&nbsp;";
+                        })
+                        return label;
+                    }
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return statusTools(row);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    width: 210,
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-xs ' + editFlag + '" href="#" onclick="edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-xs ' + editFlag + '" href="#" onclick="refresh(\'' + row.id + '\')"><i class="fa fa-refresh"></i>重置密钥</a> ');
+                        actions.push('<a class="btn btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return $.table.dropdownToggle(actions.join(''));
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /* 状态显示 */
+    function statusTools(row) {
+        if (row.status == 1) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.id + '\')"></i> ';
+        }
+    }
+
+    /* 停用 */
+    function disable(id) {
+        $.modal.confirm("确认要停用该系统吗？", function() {
+            $.operate.post(prefix + "/changeStatus", { "id": id, "status": 1 });
+        })
+    }
+
+    /* 启用 */
+    function enable(id) {
+        $.modal.confirm("确认要启用该系统吗？", function() {
+            $.operate.post(prefix + "/changeStatus", { "id": id, "status": 0 });
+        })
+    }
+</script>
+</body>
+</html>

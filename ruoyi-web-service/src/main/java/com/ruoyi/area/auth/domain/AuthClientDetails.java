@@ -7,13 +7,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
-
 /**
  * 接入的客户端表 auth_client_details
  *
  * @author jiyunsoft
- * @date 2019-07-24
+ * @date 2019-08-09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -31,7 +29,9 @@ public class AuthClientDetails extends BaseEntity {
      * 接入的客户端ID
      */
     private String clientId;
-    /**  */
+    /**
+     * 接入的客户端的名称
+     */
     private String clientName;
     /**
      * 接入的客户端的密钥
@@ -42,11 +42,15 @@ public class AuthClientDetails extends BaseEntity {
      */
     private String redirectUri;
     /**
+     * 接入方式(1：授权码；2：密码；3：扫码)
+     */
+    private String scope;
+    /**
      * 描述信息
      */
     private String description;
     /**
-     * 0表示未开通；1表示正常使用；2表示已被禁用
+     * 状态（0：正常；1：停用）
      */
     private Integer status;
 }

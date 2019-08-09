@@ -6,11 +6,11 @@ import com.ruoyi.area.auth.service.IAuthAccessTokenService;
 import com.ruoyi.area.auth.service.IAuthRefreshTokenService;
 import com.ruoyi.common.enums.ExpireEnum;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.EncryptUtils;
 import com.ruoyi.framework.redis.RedisService;
 import com.ruoyi.service.AuthorizationService;
 import com.ruoyi.system.domain.AuthRefreshToken;
 import com.ruoyi.system.domain.SysUser;
-import com.ruoyi.utils.EncryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
