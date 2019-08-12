@@ -125,6 +125,12 @@ public class OauthCodeController extends ApiBaseController {
 
         try {
             AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientIdStr);
+            //校验授权范围
+            if (!savedClientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_CODE)) {
+                generateErrorResponse(result, ResponseCode.INVALID_AUTH_SCOPE);
+                return result;
+            }
+
             //校验请求的客户端秘钥和已保存的秘钥是否匹配
             if (!(savedClientDetails != null && savedClientDetails.getClientSecret().equals(clientSecret))) {
                 generateErrorResponse(result, ResponseCode.INVALID_CLIENT);
@@ -211,6 +217,11 @@ public class OauthCodeController extends ApiBaseController {
                     AuthAccessToken authAccessToken = authAccessTokenService.getById(authRefreshToken.getTokenId());
                     //获取对应的客户端信息
                     AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(authAccessToken.getClientId());
+                    //校验授权范围
+                    if (!savedClientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_PASSWORD)) {
+                        generateErrorResponse(result, ResponseCode.INVALID_AUTH_SCOPE);
+                        return result;
+                    }
                     //获取对应的用户信息
                     SysUser user = userService.selectUserById(authAccessToken.getUserId());
 

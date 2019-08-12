@@ -1,6 +1,7 @@
 package com.ruoyi.framework.web.exception;
 
 import cn.hutool.extra.mail.MailUtil;
+import com.ruoyi.common.exception.OAuth2Exception;
 import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,17 @@ public class DefaultExceptionHandler
 
         doError(e);
         return AjaxResult.error(e.getMessage());
+    }
+
+    /**
+     * OAuth2异常
+     */
+    @ExceptionHandler(OAuth2Exception.class)
+    public AjaxResult oAuth2ExceptionException(OAuth2Exception e)
+    {
+
+        doError(e);
+        return AjaxResult.error(e.getCode(), e.getMessage());
     }
 
     /**

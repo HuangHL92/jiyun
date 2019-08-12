@@ -1,5 +1,6 @@
 package com.ruoyi.interceptor;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.area.auth.service.IAuthClientDetailsService;
@@ -55,6 +56,11 @@ public class OauthInterceptor extends HandlerInterceptorAdapter {
 
             if (!clientDetails.getRedirectUri().equals(redirectUri)) {
                 return this.generateErrorResponse(response, ResponseCode.REDIRECT_URI_MISMATCH);
+            }
+
+            //校验授权范围
+            if (StrUtil.isEmpty(clientDetails.getScope()) || !clientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_PASSWORD)) {
+                return generateErrorResponse(response, ResponseCode.INVALID_AUTH_SCOPE);
             }
 
             return true;

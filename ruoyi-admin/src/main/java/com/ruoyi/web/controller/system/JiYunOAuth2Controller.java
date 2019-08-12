@@ -4,13 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.common.exception.OAuth2Exception;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.core.config.JiYunOAuht2Config;
 import com.ruoyi.web.websocket.SocketServer;
-import me.zhyd.oauth.config.AuthConfig;
-import me.zhyd.oauth.request.AuthGiteeRequest;
-import me.zhyd.oauth.request.AuthRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -18,9 +15,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,7 +88,7 @@ public class JiYunOAuth2Controller {
                     return "error";
                 }
             } else {
-                return "error";
+                throw new OAuth2Exception(accessTokenObject.getInt("code"), accessTokenObject.getStr("msg"));
             }
         }
     }

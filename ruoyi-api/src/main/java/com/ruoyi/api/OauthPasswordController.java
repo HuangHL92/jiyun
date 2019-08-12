@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.area.auth.service.IAuthClientDetailsService;
 import com.ruoyi.base.ApiBaseController;
-import com.ruoyi.common.AuthConstants;
 import com.ruoyi.common.enums.ExpireEnum;
 import com.ruoyi.common.enums.ResponseCode;
 import com.ruoyi.common.utils.DateUtils;
@@ -20,10 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,7 +86,9 @@ public class OauthPasswordController extends ApiBaseController {
                     return generateErrorResponse(ResponseCode.INVALID_CLIENT);
                 }
                 // 4.校验客户端是否支持password授权模式
-                // TODO
+                if (!savedClientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_PASSWORD)) {
+                    return generateErrorResponse(ResponseCode.INVALID_AUTH_SCOPE);
+                }
                 // 5.生成accessToken
                 Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime()); // 过期时间
                 String accessToken = authorizationService.createAccessToken(user, savedClientDetails, "password", expiresIn);// 生成Access Token
