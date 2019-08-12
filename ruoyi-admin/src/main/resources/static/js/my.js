@@ -704,9 +704,13 @@ var LookUpUser = function (obj) {
 <!--弹窗选人控件-->
 
 // 详情超链
-function link_detail(title,id) {
+function link_detail(title,id, width, height) {
     var actions = [];
-    actions.push('<div class="layui-text"><a href="#" onclick="$.operate.detail(\'' + id + '\')">' + title + '</a></div>');
+    if (width != undefined && height != undefined) {
+        actions.push('<div class="layui-text"><a href="#" onclick="$.operate.detail(\'' + id + '\', ' + '\'' + width + '\', \'' + height + '\')">' + title + '</a></div>');
+    } else {
+        actions.push('<div class="layui-text"><a href="#" onclick="$.operate.detail(\'' + id + '\')">' + title + '</a></div>');
+    }
     return actions.join('');
 }
 

@@ -21,6 +21,13 @@ public class AuthClientDetails extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 接入方式(1：授权码；2：密码；3：扫码)
+     */
+    public static final String AUTH_SCOPE_CODE = "1";
+    public static final String AUTH_SCOPE_PASSWORD = "2";
+    public static final String AUTH_SCOPE_SCAN = "3";
+
+    /**
      * id
      */
     @TableId

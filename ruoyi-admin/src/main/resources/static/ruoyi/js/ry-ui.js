@@ -553,6 +553,46 @@
                     }
                 });
             },
+            // 弹出层指定宽度：查看页面
+            openView: function (title, url, width, height) {
+                //如果是移动端，就使用自适应大小弹窗
+                if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+                    width = 'auto';
+                    height = 'auto';
+                }
+                if ($.common.isEmpty(title)) {
+                    title = false;
+                };
+                if ($.common.isEmpty(url)) {
+                    url = "/404.html";
+                };
+                if ($.common.isEmpty(width)) {
+                    width = 800;
+                };
+                if ($.common.isEmpty(height)) {
+                    height = ($(window).height() - 50);
+                };
+                layer.open({
+                    type: 2,
+                    area: [width + 'px', height + 'px'],
+                    fix: false,
+                    //不固定
+                    maxmin: true,
+                    shade: 0.3,
+                    title: title,
+                    content: url,
+                    btn: ['关闭'],
+                    // 弹层外区域关闭
+                    shadeClose: true,
+                    cancel: function(index) {
+                        return true;
+                    },
+                    success:function (layero,index) {
+                        var body = layer.getChildFrame('body', index);
+                        layero.find(".layui-layer-btn").prepend(body.find(".toolbar-btn"));
+                    }
+                });
+            },
             // 弹出层指定参数选项
             openOptions: function (options) {
                 var _url = $.common.isEmpty(options.url) ? "/404.html" : options.url;
@@ -702,8 +742,12 @@
                     var row = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
                     url = $.table._option.detailUrl.replace("{id}", row);
                 }
-                console.log(url);
-                $.modal.openFull("查看" + $.table._option.modalName, url,800,600,true);
+                if (width != undefined && height != undefined
+                        && $.common.isNotEmpty(width) && $.common.isNotEmpty(height)) {
+                    $.modal.openView("查看" + $.table._option.modalName, url, width, height);
+                } else {
+                    $.modal.openFull("查看" + $.table._option.modalName, url, '', '', true);
+                }
 
             },
             // 删除信息

@@ -141,4 +141,14 @@ public class AuthClientDetailsController extends BaseController {
         authClientDetails.setClientSecret(clientSecret);
         return toAjax(authClientDetailsService.updateById(authClientDetails));
     }
+
+    /**
+     * 查看客户端接入管理
+     */
+    @GetMapping("/view/{id}")
+    public String view(@PathVariable("id") String id, ModelMap mmap) {
+        AuthClientDetails authClientDetails = authClientDetailsService.getById(id);
+        mmap.put("authClientDetails", authClientDetails);
+        return prefix + "/view";
+    }
 }

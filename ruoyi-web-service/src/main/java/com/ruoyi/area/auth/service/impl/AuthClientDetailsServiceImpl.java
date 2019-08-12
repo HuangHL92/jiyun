@@ -29,11 +29,9 @@ public class AuthClientDetailsServiceImpl extends ServiceImpl<AuthClientDetailsM
         query.lambda().eq(authClientDetails.getStatus() != null, AuthClientDetails::getStatus, authClientDetails.getStatus());
         // 关键字：客户端ID/客户端名称/描述信息
         String keyword = authClientDetails.getParams().isEmpty() ? null : authClientDetails.getParams().get("keyword").toString();
-        if (StrUtil.isNotBlank(keyword)) {
-            query.lambda().and(i -> i.like(AuthClientDetails::getClientId, keyword)
-                    .or().like(AuthClientDetails::getClientName, keyword)
-                    .or().like(AuthClientDetails::getDescription, keyword));
-        }
+        query.lambda().and(StrUtil.isNotBlank(keyword), i -> i.like(AuthClientDetails::getClientId, keyword)
+                .or().like(AuthClientDetails::getClientName, keyword)
+                .or().like(AuthClientDetails::getDescription, keyword));
         return list(query);
     }
 
