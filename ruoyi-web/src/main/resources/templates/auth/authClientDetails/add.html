@@ -56,8 +56,8 @@
     </form>
 </div>
 <div th:include="include::footer"></div>
-<script type="text/javascript">
-    var prefix = ctx + "auth/authClientDetails"
+<script th:inline="javascript">
+    var formAction = ctx + [[${authClientDetails.formAction}]];
     $("#form-authClientDetails-add").validate({
         rules: {
             xxxx: {
@@ -68,7 +68,15 @@
             error.appendTo(element.parent())
         }
     });
-
+    function submitHandler() {
+        if ($.validate.form()) {
+            if ($("input[name='scope']:checked").length == 0){
+                $.modal.alertError('请至少选择一个接入方式');
+                return;
+            }
+            $.operate.save(formAction, $('#form-authClientDetails-add').serialize());
+        }
+    }
 </script>
 </body>
 </html>
