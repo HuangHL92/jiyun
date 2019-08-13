@@ -28,6 +28,11 @@ public class AuthClientDetails extends BaseEntity {
     public static final String AUTH_SCOPE_SCAN = "3";
 
     /**
+     * 状态：0正常；1禁止
+     */
+    public static final String STATUS_NORMAL = "0";
+
+    /**
      * id
      */
     @TableId

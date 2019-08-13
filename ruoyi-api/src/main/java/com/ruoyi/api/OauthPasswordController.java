@@ -85,11 +85,15 @@ public class OauthPasswordController extends ApiBaseController {
                 if (savedClientDetails == null || !savedClientDetails.getClientSecret().equals(clientSecret)) {
                     return generateErrorResponse(ResponseCode.INVALID_CLIENT);
                 }
-                // 4.校验客户端是否支持password授权模式
+                // 4.校验应用是否开启
+                if (!AuthClientDetails.STATUS_NORMAL.equals(savedClientDetails.getScope())) {
+                    return generateErrorResponse(ResponseCode.CLIENT_FORBIDDEN);
+                }
+                // 5.校验客户端是否支持password授权模式
                 if (!savedClientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_PASSWORD)) {
                     return generateErrorResponse(ResponseCode.INVALID_AUTH_SCOPE);
                 }
-                // 5.生成accessToken
+                // 6.生成accessToken
                 Long expiresIn = DateUtils.dayToSecond(ExpireEnum.ACCESS_TOKEN.getTime()); // 过期时间
                 String accessToken = authorizationService.createAccessToken(user, savedClientDetails, "password", expiresIn);// 生成Access Token
                 result.put("code", 200);

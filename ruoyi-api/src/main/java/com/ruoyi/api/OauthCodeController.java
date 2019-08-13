@@ -125,6 +125,11 @@ public class OauthCodeController extends ApiBaseController {
 
         try {
             AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(clientIdStr);
+            //校验应用是否开启
+            if (!AuthClientDetails.STATUS_NORMAL.equals(savedClientDetails.getScope())) {
+                generateErrorResponse(result, ResponseCode.CLIENT_FORBIDDEN);
+                return result;
+            }
             //校验授权范围
             if (!savedClientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_CODE)) {
                 generateErrorResponse(result, ResponseCode.INVALID_AUTH_SCOPE);
@@ -217,6 +222,11 @@ public class OauthCodeController extends ApiBaseController {
                     AuthAccessToken authAccessToken = authAccessTokenService.getById(authRefreshToken.getTokenId());
                     //获取对应的客户端信息
                     AuthClientDetails savedClientDetails = authClientDetailsService.selectByClientId(authAccessToken.getClientId());
+                    //校验应用是否开启
+                    if (!AuthClientDetails.STATUS_NORMAL.equals(savedClientDetails.getScope())) {
+                        generateErrorResponse(result, ResponseCode.CLIENT_FORBIDDEN);
+                        return result;
+                    }
                     //校验授权范围
                     if (!savedClientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_PASSWORD)) {
                         generateErrorResponse(result, ResponseCode.INVALID_AUTH_SCOPE);

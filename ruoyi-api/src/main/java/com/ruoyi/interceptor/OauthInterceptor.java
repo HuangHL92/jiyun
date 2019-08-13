@@ -57,7 +57,10 @@ public class OauthInterceptor extends HandlerInterceptorAdapter {
             if (!clientDetails.getRedirectUri().equals(redirectUri)) {
                 return this.generateErrorResponse(response, ResponseCode.REDIRECT_URI_MISMATCH);
             }
-
+            //校验应用是否开启
+            if (!AuthClientDetails.STATUS_NORMAL.equals(clientDetails.getScope())) {
+                return generateErrorResponse(response, ResponseCode.CLIENT_FORBIDDEN);
+            }
             //校验授权范围
             if (StrUtil.isEmpty(clientDetails.getScope()) || !clientDetails.getScope().contains(AuthClientDetails.AUTH_SCOPE_PASSWORD)) {
                 return generateErrorResponse(response, ResponseCode.INVALID_AUTH_SCOPE);
