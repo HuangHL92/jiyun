@@ -1,11 +1,15 @@
 package com.ruoyi.area.edu.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.area.auth.domain.AuthClientDetails;
 import com.ruoyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * 标签表 edu_tag
@@ -40,5 +44,38 @@ public class Tag extends BaseEntity {
     /**
      * 排序
      */
-    private String orderNum;
+    private Integer orderNum = 0;
+
+    /**
+     * 原可访问客户端ids
+     */
+    @TableField(exist = false)
+    private String oldClientIds;
+
+    /**
+     * 可访问客户端ids
+     */
+    @TableField(exist = false)
+    private String clientIds;
+
+    /**
+     * 可访问客户端names
+     */
+    @TableField(exist = false)
+    private String clientNames;
+
+    /**
+     * 查询关键字
+     */
+    @TableField(exist = false)
+    private String keyword;
+
+    /**
+     * 辅助字段：checkbox是否没选
+     */
+    @TableField(exist = false)
+    private boolean clientNull;
+
+    @TableField(exist = false)
+    private List<AuthClientDetails> clientDetailsList;
 }

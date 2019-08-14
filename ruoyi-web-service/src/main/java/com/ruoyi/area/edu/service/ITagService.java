@@ -12,5 +12,24 @@ import java.util.List;
  * @date 2019-08-13
  */
 public interface ITagService extends IService<Tag> {
+    /**
+     * 列表查询
+     * @param tag
+     * @return
+     */
     List<Tag> selectList(Tag tag);
+
+    /**
+     * 根据id获取对象
+     * @param id
+     * @return
+     */
+    Tag selectById(String id);
+
+    /**
+     * 保存操作
+     * @param tag
+     * @return
+     */
+    void doSave(Tag tag);
 }

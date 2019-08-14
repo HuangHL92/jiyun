@@ -6,6 +6,7 @@
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
     <form class="form-horizontal m" id="form-tag-add" th:action="*{formAction}" th:object="${tag}">
         <input id="id" name="id" th:field="*{id}" type="hidden">
+        <input id="oldClientIds" name="oldClientIds" th:value="*{clientIds}" type="hidden">
         <div class="form-group">
             <label class="col-sm-3 control-label">标签类型<font color="red">*</font>：</label>
             <div class="col-sm-8">
@@ -24,15 +25,36 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">状态<font color="red">*</font>：</label>
             <div class="col-sm-8">
-                <select id="status" name="status" class="form-control m-b required" th:with="type=${@dict.getType('sys_normal_disable')}">
+                <div class="onoffswitch">
+                    <input type="checkbox" th:checked="${tag.status == '0' ? true : false}" class="onoffswitch-checkbox" id="status">
+                    <label class="onoffswitch-label" for="status">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                    <input type="hidden" name="status" th:value="${tag.status}">
+                </div>
+                <!--<select id="status" name="status" class="form-control m-b required" th:with="type=${@dict.getType('sys_normal_disable')}">
                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{status}"></option>
-                </select>
+                </select>-->
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-3 control-label">排序：</label>
             <div class="col-sm-3">
-                <input id="orderNum" name="orderNum" th:field="*{orderNum}" class="form-control digits" th:maxlength="11" type="text">
+                <input id="orderNum" name="orderNum" th:field="*{orderNum}" class="form-control digits required" th:maxlength="11" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">可访问系统：</label>
+            <div class="col-sm-8">
+                <th:block th:each="client:${clientList}">
+                    <label class="check-box">
+                        <input name="clientIds" type="checkbox" th:value="${client.clientId}" th:text="${client.clientName}"
+                               th:checked="${ #strings.isEmpty(tag.clientIds) ? false : #strings.contains(tag.clientIds, client.clientId)}">
+                    </label>
+                    <br/>
+                </th:block>
+                <input id="clientNull" name="clientNull" type="hidden" th:value="false">
             </div>
         </div>
         <div class="form-group">
@@ -45,7 +67,7 @@
 </div>
 <div th:include="include::footer"></div>
 <script th:inline="javascript">
-    var prefix = ctx + "edu/tag"
+    var formAction = ctx + [[${tag.formAction}]];
     $("#form-tag-add").validate({
         rules: {
             xxxx: {
@@ -56,6 +78,17 @@
             error.appendTo(element.parent())
         }
     });
+    function submitHandler() {
+        if ($.validate.form()) {
+            if ($("input[name='clientIds']:checked").length == 0){
+                $("#clientNull").val("true");
+            }
+
+            var status = $("#status").is(':checked') == true ? 0 : 1;
+            $("input[name='status']").val(status);
+            $.operate.save(formAction, $('#form-tag-add').serialize());
+        }
+    }
 </script>
 </body>
 </html>

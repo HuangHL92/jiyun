@@ -3,6 +3,9 @@ package com.ruoyi.area.edu.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.area.edu.domain.Tag;
 
+import java.util.List;
+
+
 /**
  * 标签 数据层
  *
@@ -11,4 +14,7 @@ import com.ruoyi.area.edu.domain.Tag;
  */
 public interface TagMapper extends BaseMapper<Tag> {
 
+    Tag selectById(String id);
+
+    List<Tag> selectList(Tag tag);
 }

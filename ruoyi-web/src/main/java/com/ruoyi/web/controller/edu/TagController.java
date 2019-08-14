@@ -1,18 +1,18 @@
 package com.ruoyi.web.controller.edu;
 
 import java.util.Arrays;
+import java.util.List;
 
+import cn.hutool.core.util.StrUtil;
+import com.ruoyi.area.auth.domain.AuthClientDetails;
+import com.ruoyi.area.auth.service.IAuthClientDetailsService;
 import com.ruoyi.area.edu.domain.Tag;
 import com.ruoyi.area.edu.service.ITagService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.framework.web.base.BaseController;
@@ -34,6 +34,17 @@ public class TagController extends BaseController {
 
     @Autowired
     private ITagService tagService;
+    @Autowired
+    private IAuthClientDetailsService authClientDetailsService;
+
+    @ModelAttribute
+    public Tag get(@RequestParam(required = false) String id) {
+        if (StrUtil.isNotBlank(id)) {
+            return tagService.selectById(id);
+        } else {
+            return new Tag();
+        }
+    }
 
     @RequiresPermissions("edu:tag:view")
     @GetMapping()
@@ -56,11 +67,15 @@ public class TagController extends BaseController {
      * 新增标签
      */
     @GetMapping("/add")
-    public String add(ModelMap mmap) {
-        Tag tag = new Tag();
+    public String add(Tag tag, ModelMap mmap) {
         //表单Action指定
         tag.setFormAction(prefix + "/add");
         mmap.put("tag", tag);
+        //接入客户端下拉框内容
+        AuthClientDetails query = new AuthClientDetails();
+        query.setStatus(Integer.valueOf(AuthClientDetails.STATUS_NORMAL));
+        List<AuthClientDetails> clientList = authClientDetailsService.selectList(query);
+        mmap.put("clientList", clientList);
         return prefix + "/add";
     }
 
@@ -72,7 +87,8 @@ public class TagController extends BaseController {
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(Tag tag) {
-        return toAjax(tagService.save(tag));
+        tagService.doSave(tag);
+        return success();
     }
 
     /**
@@ -80,11 +96,16 @@ public class TagController extends BaseController {
      */
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") String id, ModelMap mmap) {
-        Tag tag = tagService.getById(id);
+        Tag tag = tagService.selectById(id);
         //表单Action指定
         tag.setFormAction(prefix + "/edit");
-
         mmap.put("tag", tag);
+
+        //接入客户端下拉框内容
+        AuthClientDetails query = new AuthClientDetails();
+        query.setStatus(Integer.valueOf(AuthClientDetails.STATUS_NORMAL));
+        List<AuthClientDetails> clientList = authClientDetailsService.selectList(query);
+        mmap.put("clientList", clientList);
         return prefix + "/add";
     }
 
@@ -96,8 +117,19 @@ public class TagController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(Tag tag) {
+        tagService.doSave(tag);
+        return success();
+    }
 
-        return toAjax(tagService.saveOrUpdate(tag));
+    /**
+     * 新增标签
+     */
+    @RequiresPermissions("edu:tag:view")
+    @GetMapping("/view/{id}")
+    public String view(@PathVariable("id") String id, ModelMap mmap) {
+        Tag tag = tagService.selectById(id);
+        mmap.put("tag", tag);
+        return prefix + "/view";
     }
 
     /**

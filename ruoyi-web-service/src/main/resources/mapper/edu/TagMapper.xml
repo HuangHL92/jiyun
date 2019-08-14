@@ -2,4 +2,90 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.area.edu.mapper.TagMapper">
 
+    <sql id="tagColumns">
+        a.id,
+        a.type,
+        a.name,
+        a.status,
+        a.order_num,
+        GROUP_CONCAT(c.client_id) as "clientIds",
+        GROUP_CONCAT(c.client_name) as "clientNames",
+        a.create_by,
+        a.create_time,
+        a.update_by,
+        a.update_time,
+        a.remark,
+        a.del_flag
+	</sql>
+
+    <resultMap id="tagResult" type="Tag">
+        <id     property="id"     column="id"     />
+        <result property="type"   column="type"   />
+        <result property="name"   column="name"   />
+        <result property="status"  column="status"   />
+        <result property="orderNum"   column="order_num"   />
+        <result property="clientIds"   column="clientIds"   />
+        <result property="createBy"     column="create_by"      />
+        <result property="createTime"      column="create_time"       />
+        <result property="updateBy"      column="update_by"       />
+        <result property="updateTime"     column="update_time"      />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag" column="del_flag" />
+        <!--<collection property="clientDetailsList" column="id"
+                    select="selectClientList" ofType="AuthClientDetails">
+        </collection>-->
+    </resultMap>
+
+    <select id="selectList" parameterType="string" resultMap="tagResult">
+        SELECT
+          <include refid="tagColumns" />
+        FROM
+          edu_tag a
+          LEFT JOIN edu_tag_client b ON a.id = b.tag_id
+          LEFT JOIN auth_client_details c ON b.client_id = c.client_id
+        WHERE
+          1 = 1
+        <if test="type != null and type != ''">
+            AND a.type = #{type}
+        </if>
+        <if test="status != null and status != ''">
+            AND a.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+              a.name like CONCAT('%', #{keyword}, '%')
+              OR c.client_name like CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        GROUP BY
+          a.id
+    </select>
+
+    <select id="selectById" parameterType="string" resultMap="tagResult">
+        SELECT
+          <include refid="tagColumns" />
+        FROM
+          edu_tag a
+          LEFT JOIN edu_tag_client b ON a.id = b.tag_id
+          LEFT JOIN auth_client_details c ON b.client_id = c.client_id
+        WHERE
+          a.id = #{id}
+    </select>
+    
+    <resultMap id="clientResult" type="AuthClientDetails">
+        <id column="client_id" property="clientId"/>
+        <result column="client_name" property="clientName"/>
+    </resultMap>
+
+    <select id="selectClientList" parameterType="string" resultMap="clientResult">
+        SELECT
+          b.client_id,
+          b.client_name
+        FROM
+          edu_tag_client a
+          LEFT JOIN auth_client_details b ON a.client_id = b.client_id
+        WHERE
+          a.tag_id = #{id}
+    </select>
+
 </mapper>

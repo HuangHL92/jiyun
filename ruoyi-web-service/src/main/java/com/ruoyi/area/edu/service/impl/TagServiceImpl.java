@@ -4,11 +4,15 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.area.edu.domain.Tag;
+import com.ruoyi.area.edu.domain.TagClient;
 import com.ruoyi.area.edu.mapper.TagMapper;
+import com.ruoyi.area.edu.service.ITagClientService;
 import com.ruoyi.area.edu.service.ITagService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * 标签 服务层实现
@@ -18,19 +22,49 @@ import java.util.List;
  */
 @Service
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements ITagService {
+
+    @Autowired
+    private ITagClientService tagClientService;
+
     @Override
     public List<Tag> selectList(Tag tag) {
-        // 查询条件构造
-        QueryWrapper<Tag> query = new QueryWrapper<>();
-        // 1.标签类型
-        query.lambda().eq(StrUtil.isNotEmpty(tag.getType()), Tag::getType, tag.getType());
-        // 2.状态
-        query.lambda().eq(StrUtil.isNotEmpty(tag.getStatus()), Tag::getStatus, tag.getStatus());
-        // 3.关键字：标签名称/关键字
-        String keyword = tag.getParams().isEmpty() ? null : tag.getParams().get("keyword").toString();
-        query.lambda().and(StrUtil.isNotBlank(keyword), i -> i.like(Tag::getName, keyword)
-                .or().like(Tag::getRemark, keyword));
+        return baseMapper.selectList(tag);
+    }
 
-        return list(query);
+    @Override
+    public Tag selectById(String id) {
+        return baseMapper.selectById(id);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void doSave(Tag tag) {
+        // 1.标签表数据维护
+        if (StrUtil.isEmpty(tag.getId())) { // 新增
+            save(tag);
+        } else { // 修改
+            updateById(tag);
+        }
+        // 2.标签_客户端关系表维护
+        String oldClientIds = tag.getOldClientIds();
+        String clientIds = tag.getClientIds();
+        if (StrUtil.isNotEmpty(oldClientIds)) {
+            // 删除原有数据
+            tagClientService.deleteByTagId(tag.getId());
+        }
+        if (StrUtil.isNotEmpty(clientIds) && !tag.isClientNull()) {
+            // 新增数据
+            List<TagClient> tagClientList = new ArrayList<>();
+            for (String clientId : clientIds.split(",")) {
+                if (StrUtil.isEmpty(clientId))
+                    continue;
+                TagClient tagClient = new TagClient();
+                tagClient.setClientId(clientId);
+                tagClient.setTagId(tag.getId());
+                tagClientList.add(tagClient);
+            }
+            tagClientService.saveBatch(tagClientList);
+        }
     }
 }

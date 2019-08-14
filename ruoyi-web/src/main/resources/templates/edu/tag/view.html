@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <div class="form-horizontal m">
+        <input id="id" name="id" th:field="*{id}" type="hidden">
+        <input id="oldClientIds" name="oldClientIds" th:value="*{clientIds}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">标签类型<font color="red">*</font>：</label>
+            <div class="col-sm-8">
+                <label class="control-label" style="float: left" th:text="${@dict.getLabel('edu_tag_type', tag.type)}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">标签名称<font color="red">*</font>：</label>
+            <div class="col-sm-8">
+                <label class="control-label" style="float: left" th:text="${tag.name}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">状态<font color="red">*</font>：</label>
+            <div class="col-sm-8">
+                <label class="control-label" style="float: left" th:text="${@dict.getLabel('sys_normal_disable', tag.status)}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">排序：</label>
+            <div class="col-sm-3">
+                <label class="control-label" style="float: left" th:text="${tag.orderNum}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">可访问系统：</label>
+            <div class="col-sm-8" style="margin-top: 8px;">
+                <!--<label class="control-label" style="float: left" th:text="${tag.clientNames}" />-->
+                <th:block th:each="client, state:${tag.clientNames.split(',')}">
+                    <span class="label label-success">[[${client}]]</span>
+                    <br th:if="${!state.last}"/><br th:if="${!state.last}"/>
+                </th:block>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea class="form-control" readonly th:if="${tag.remark} != ''" th:text="${tag.remark}"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script th:inline="javascript">
+</script>
+</body>
+</html>
