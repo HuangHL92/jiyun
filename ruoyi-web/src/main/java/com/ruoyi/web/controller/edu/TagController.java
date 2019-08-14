@@ -60,7 +60,7 @@ public class TagController extends BaseController {
     @ResponseBody
     public TableDataInfo list(Tag tag) {
         startPage();
-        return getDataTable(tagService.selectList(tag));
+        return getDataTable(tagService.getList(tag));
     }
 
     /**

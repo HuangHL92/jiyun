@@ -16,5 +16,5 @@ public interface TagMapper extends BaseMapper<Tag> {
 
     Tag selectById(String id);
 
-    List<Tag> selectList(Tag tag);
+    List<Tag> getList(Tag tag);
 }

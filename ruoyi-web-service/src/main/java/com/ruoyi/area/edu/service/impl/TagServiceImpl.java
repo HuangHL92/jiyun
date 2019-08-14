@@ -27,8 +27,8 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements ITagS
     private ITagClientService tagClientService;
 
     @Override
-    public List<Tag> selectList(Tag tag) {
-        return baseMapper.selectList(tag);
+    public List<Tag> getList(Tag tag) {
+        return baseMapper.getList(tag);
     }
 
     @Override

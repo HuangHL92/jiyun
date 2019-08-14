@@ -17,7 +17,7 @@ public interface ITagService extends IService<Tag> {
      * @param tag
      * @return
      */
-    List<Tag> selectList(Tag tag);
+    List<Tag> getList(Tag tag);
 
     /**
      * 根据id获取对象
