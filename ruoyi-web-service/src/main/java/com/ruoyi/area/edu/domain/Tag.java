@@ -65,12 +65,6 @@ public class Tag extends BaseEntity {
     private String clientNames;
 
     /**
-     * 查询关键字
-     */
-    @TableField(exist = false)
-    private String keyword;
-
-    /**
      * 辅助字段：checkbox是否没选
      */
     @TableField(exist = false)

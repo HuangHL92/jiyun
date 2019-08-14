@@ -19,10 +19,15 @@ public class BaseEntity implements Serializable
     private static final long serialVersionUID = 1L;
 
 
-
     /** 搜索值 */
     @TableField(exist = false)
     private String searchValue;
+
+    /**
+     * 查询关键字
+     */
+    @TableField(exist = false)
+    private String keyword;
 
     /** 创建者 */
     @TableField(fill = FieldFill.INSERT)
@@ -131,6 +136,14 @@ public class BaseEntity implements Serializable
 
     public void setDelFlag(String delFlag) {
         this.delFlag = delFlag;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public Map<String, Object> getParams()
