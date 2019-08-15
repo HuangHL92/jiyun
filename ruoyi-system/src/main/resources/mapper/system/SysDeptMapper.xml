@@ -5,14 +5,15 @@
 <mapper namespace="com.ruoyi.system.mapper.SysDeptMapper">
 
 	<resultMap type="SysDept" id="SysDeptResult">
-		<id     property="deptId"        column="dept_id"     />
+		<id     property="deptId"         column="dept_id"     />
 		<result property="no"   	      column="no"   />
-		<result property="parentId"      column="parent_id"   />
-		<result property="ancestors"     column="ancestors"   />
-		<result property="deptName"      column="dept_name"   />
-		<result property="orgStructure"  column="org_structure"   />
+		<result property="parentId"       column="parent_id"   />
+		<result property="ancestors"      column="ancestors"   />
+		<result property="deptName"       column="dept_name"   />
+		<result property="orgStructure"   column="org_structure"   />
 		<result property="orderNum"  	  column="order_num"   />
 		<result property="tags"   	 	  column="tags"   />
+		<result property="tagNames"   	  column="tagNames"   />
 		<result property="leader"    	  column="leader"      />
 		<result property="phone"     	  column="phone"       />
 		<result property="email"     	  column="email"       />
@@ -27,7 +28,6 @@
 	
 	<sql id="selectDeptVo">
         select d.no, d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.tags, d.leader, d.phone, d.email, d.address, d.coordinate_x, d.coordinate_y, d.status, d.del_flag, d.create_by, d.create_time
-        from sys_dept d
     </sql>
     
 	<select id="selectRoleDeptTree" parameterType="Long" resultType="String">
@@ -40,6 +40,9 @@
 	
 	<select id="selectDeptList" parameterType="SysDept" resultMap="SysDeptResult">
         <include refid="selectDeptVo"/>
+			,group_concat(t.name) AS "tagNames"
+		from sys_dept d
+		left join edu_tag t on d.tags like concat('%', t.id, '%')
         where d.del_flag = '0'
         <if test="parentId != null and parentId != ''and parentId != &quot;0&quot;">
 			AND parent_id = #{parentId}
@@ -52,6 +55,7 @@
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
+		group by d.dept_id
 		order by d.order_num
     </select>
 	
@@ -69,6 +73,7 @@
 
     <select id="selectTopList" parameterType="SysDept" resultMap="SysDeptResult">
         <include refid="selectDeptVo"/>
+		from sys_dept d
         where d.del_flag = '0' AND parent_id = '0'
         <if test="deptName != null and deptName != ''">
             AND dept_name like concat('%', #{deptName}, '%')
@@ -84,6 +89,7 @@
 	
 	<select id="checkDeptNameUnique" resultMap="SysDeptResult">
 	    <include refid="selectDeptVo"/>
+		from sys_dept d
 		where dept_name=#{deptName} and parent_id = #{parentId}
 	</select>
 
@@ -143,7 +149,7 @@
  			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
  			<if test="orgStructure != null and orgStructure != ''">org_structure = #{orgStructure},</if>
  			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
- 			<if test="tags != null and tags != ''">tags = #{tags},</if>
+ 			<if test="tags != null">tags = #{tags},</if>
  			<if test="leader != null">leader = #{leader},</if>
  			<if test="phone != null">phone = #{phone},</if>
  			<if test="email != null">email = #{email},</if>

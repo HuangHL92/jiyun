@@ -37,6 +37,9 @@ public class SysDept extends BaseEntity
     /** 标签 */
     private String tags;
 
+    /** 标签名称 */
+    private String tagNames;
+
     /** 负责人 */
     private String leader;
 
@@ -153,6 +156,14 @@ public class SysDept extends BaseEntity
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public String getTagNames() {
+        return tagNames;
+    }
+
+    public void setTagNames(String tagNames) {
+        this.tagNames = tagNames;
     }
 
     public String getLeader()
