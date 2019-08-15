@@ -32,10 +32,10 @@
                 </div>
 
                 <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
-                    <a class="btn btn-success" onclick="$.operate.add(100)" shiro:hasPermission="system:dept:add">
+                    <a class="btn btn-success" onclick="$.operate.addFull(100)" shiro:hasPermission="system:dept:add">
                         <i class="fa fa-plus"></i> 新增
                     </a>
-                    <a class="btn btn-primary" onclick="$.operate.editTree()" shiro:hasPermission="system:dept:edit">
+                    <a class="btn btn-primary" onclick="$.operate.editTreeFull()" shiro:hasPermission="system:dept:edit">
                         <i class="fa fa-edit"></i> 修改
                     </a>
                     <a class="btn btn-info" id="expandAllBtn">
@@ -118,9 +118,9 @@
 
                         if (row.parentId != 0) {
                             var actions = [];
-                            actions.push('<a class="' + editFlag + '" href="#" onclick="$.operate.edit(\'' + row.deptId + '\')"><i class="fa fa-edit"></i>编辑</a>');
+                            actions.push('<a class="' + editFlag + '" href="#" onclick="$.operate.editFull(\'' + row.deptId + '\')"><i class="fa fa-edit"></i>编辑</a>');
                             actions.push('<a class="' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.deptId + '\')"><i class="fa fa-trash"></i>删除</a>');
-                            actions.push('<a class="' + addFlag + '" href="#" onclick="$.operate.add(\'' + row.deptId + '\')"><i class="fa fa-plus"></i>添加下级部门</a>');
+                            actions.push('<a class="' + addFlag + '" href="#" onclick="$.operate.addFull(\'' + row.deptId + '\')"><i class="fa fa-plus"></i>添加下级部门</a>');
                             return $.table.dropdownToggle(actions.join(''));
                         } else {
                             return "";

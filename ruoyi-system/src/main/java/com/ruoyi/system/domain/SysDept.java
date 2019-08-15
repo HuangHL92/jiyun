@@ -34,6 +34,9 @@ public class SysDept extends BaseEntity
     /** 显示顺序 */
     private String orderNum;
 
+    /** 标签 */
+    private String tags;
+
     /** 负责人 */
     private String leader;
 
@@ -142,6 +145,14 @@ public class SysDept extends BaseEntity
     public void setOrderNum(String orderNum)
     {
         this.orderNum = orderNum;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getLeader()

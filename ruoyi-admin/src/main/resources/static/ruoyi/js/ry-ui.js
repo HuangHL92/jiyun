@@ -808,6 +808,16 @@
                 var url = $.table._option.updateUrl.replace("{id}", row[$.table._option.uniqueId]);
                 $.modal.open("修改" + $.table._option.modalName, url);
             },
+            // 工具栏表格树修改
+            editTreeFull: function() {
+                var row = $('#bootstrap-tree-table').bootstrapTreeTable('getSelections')[0];
+                if ($.common.isEmpty(row)) {
+                    $.modal.alertWarning("请至少选择一条记录");
+                    return;
+                }
+                var url = $.table._option.updateUrl.replace("{id}", row[$.table._option.uniqueId]);
+                $.modal.openFull("修改" + $.table._option.modalName, url);
+            },
             // 添加信息 全屏
             addFull: function(id) {
                 var url = $.common.isEmpty(id) ? $.table._option.createUrl : $.table._option.createUrl.replace("{id}", id);

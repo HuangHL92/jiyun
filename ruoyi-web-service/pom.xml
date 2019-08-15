@@ -12,10 +12,11 @@
     <artifactId>ruoyi-web-service</artifactId>
 
     <dependencies>
-        <!--通用模块-->
+
+        <!-- 系统模块-->
         <dependency>
             <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common</artifactId>
+            <artifactId>ruoyi-system</artifactId>
             <version>${ruoyi.version}</version>
         </dependency>
     </dependencies>

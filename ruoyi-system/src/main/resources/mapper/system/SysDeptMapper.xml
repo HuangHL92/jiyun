@@ -5,27 +5,28 @@
 <mapper namespace="com.ruoyi.system.mapper.SysDeptMapper">
 
 	<resultMap type="SysDept" id="SysDeptResult">
-		<id     property="deptId"     column="dept_id"     />
-		<result property="no"   column="no"   />
-		<result property="parentId"   column="parent_id"   />
-		<result property="ancestors"  column="ancestors"   />
-		<result property="deptName"   column="dept_name"   />
-		<result property="orgStructure"   column="org_structure"   />
-		<result property="orderNum"   column="order_num"   />
-		<result property="leader"     column="leader"      />
-		<result property="phone"      column="phone"       />
-		<result property="email"      column="email"       />
-		<result property="status"     column="status"      />
-		<result property="delFlag"    column="del_flag"    />
-		<result property="parentName" column="parent_name" />
-		<result property="createBy"   column="create_by"   />
-		<result property="createTime" column="create_time" />
-		<result property="updateBy"   column="update_by"   />
-		<result property="updateTime" column="update_time" />
+		<id     property="deptId"        column="dept_id"     />
+		<result property="no"   	      column="no"   />
+		<result property="parentId"      column="parent_id"   />
+		<result property="ancestors"     column="ancestors"   />
+		<result property="deptName"      column="dept_name"   />
+		<result property="orgStructure"  column="org_structure"   />
+		<result property="orderNum"  	  column="order_num"   />
+		<result property="tags"   	 	  column="tags"   />
+		<result property="leader"    	  column="leader"      />
+		<result property="phone"     	  column="phone"       />
+		<result property="email"     	  column="email"       />
+		<result property="status"    	  column="status"      />
+		<result property="delFlag"   	  column="del_flag"    />
+		<result property="parentName"	  column="parent_name" />
+		<result property="createBy"  	  column="create_by"   />
+		<result property="createTime"	  column="create_time" />
+		<result property="updateBy"  	  column="update_by"   />
+		<result property="updateTime"	  column="update_time" />
 	</resultMap>
 	
 	<sql id="selectDeptVo">
-        select d.no, d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.address, d.coordinate_x, d.coordinate_y, d.status, d.del_flag, d.create_by, d.create_time
+        select d.no, d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.tags, d.leader, d.phone, d.email, d.address, d.coordinate_x, d.coordinate_y, d.status, d.del_flag, d.create_by, d.create_time
         from sys_dept d
     </sql>
     
@@ -87,7 +88,7 @@
 	</select>
 
 	<select id="selectDeptById" parameterType="String" resultMap="SysDeptResult">
-		select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.org_structure, d.order_num, d.leader, d.phone, d.email, d.address, d.coordinate_x, d.coordinate_y, d.status,
+		select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.org_structure, d.order_num, d.tags, d.leader, d.phone, d.email, d.address, d.coordinate_x, d.coordinate_y, d.status,
 			(select dept_name from sys_dept where dept_id = d.parent_id) parent_name
 		from sys_dept d
 		where d.dept_id = #{deptId}
@@ -102,6 +103,7 @@
  			<if test="ancestors != null and ancestors != ''">ancestors,</if>
 			<if test="orgStructure != null and orgStructure != ''">org_structure,</if>
  			<if test="orderNum != null and orderNum != ''">order_num,</if>
+ 			<if test="tags != null and tags != ''">tags,</if>
  			<if test="leader != null and leader != ''">leader,</if>
  			<if test="phone != null and phone != ''">phone,</if>
  			<if test="email != null and email != ''">email,</if>
@@ -119,6 +121,7 @@
  			<if test="ancestors != null and ancestors != ''">#{ancestors},</if>
 			<if test="orgStructure != null and orgStructure != ''">#{orgStructure},</if>
  			<if test="orderNum != null and orderNum != ''">#{orderNum},</if>
+ 			<if test="tags != null and tags != ''">#{tags},</if>
  			<if test="leader != null and leader != ''">#{leader},</if>
  			<if test="phone != null and phone != ''">#{phone},</if>
  			<if test="email != null and email != ''">#{email},</if>
@@ -140,6 +143,7 @@
  			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
  			<if test="orgStructure != null and orgStructure != ''">org_structure = #{orgStructure},</if>
  			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
+ 			<if test="tags != null and tags != ''">tags = #{tags},</if>
  			<if test="leader != null">leader = #{leader},</if>
  			<if test="phone != null">phone = #{phone},</if>
  			<if test="email != null">email = #{email},</if>
