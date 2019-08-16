@@ -42,7 +42,7 @@
         <include refid="selectDeptVo"/>
 			,group_concat(t.name) AS "tagNames"
 		from sys_dept d
-		left join edu_tag t on d.tags like concat('%', t.id, '%')
+		left join edu_tag t on d.tags like concat('%', t.id, '%') and t.status = '0'
         where d.del_flag = '0'
         <if test="parentId != null and parentId != ''and parentId != &quot;0&quot;">
 			AND parent_id = #{parentId}

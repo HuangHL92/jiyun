@@ -43,6 +43,7 @@ public class WebTagService {
                     if (StrUtil.isNotEmpty(dictLabel)) {
                         QueryWrapper<Tag> query = new QueryWrapper();
                         query.lambda().eq(Tag::getType, tagType);
+                        query.lambda().eq(Tag::getStatus, 0);
                         result.put(dictLabel, tagService.list(query));
                     }
                 }

@@ -41,7 +41,7 @@
 				<label class="col-sm-3 control-label">标签：</label>
 				<div class="col-sm-8">
 					<select id="tagsSelect" class="form-control select2-hidden-accessible" multiple="">
-						<optgroup  th:each="item, stat:${@tag.getTagList('bq1', 'bq2')}" th:label="${stat.current.key}">
+						<optgroup  th:each="item, stat:${@tag.getTagList('jglx', 'bq2')}" th:label="${stat.current.key}">
 							<option th:each="tag:${stat.current.value}" th:value="${tag.id}" th:text="${tag.name}"></option>
 						</optgroup>
 					</select>
