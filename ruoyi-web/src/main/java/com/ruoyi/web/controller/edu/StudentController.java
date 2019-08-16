@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.hutool.core.util.StrUtil;
+import com.ruoyi.area.edu.domain.Tag;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.SysDept;
+import com.ruoyi.system.service.ISysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
@@ -19,8 +21,6 @@ import com.ruoyi.framework.web.base.BaseController;
 import com.ruoyi.common.page.TableDataInfo;
 import com.ruoyi.common.base.AjaxResult;
 import com.ruoyi.common.support.Convert;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 学生 信息操作处理
@@ -35,8 +35,8 @@ public class StudentController extends BaseController {
 
     @Autowired
     private IStudentService studentService;
-
-
+    @Autowired
+    private ISysDeptService deptService;
 
     @ModelAttribute
     public Student get(@RequestParam(required = false) String id) {
@@ -49,7 +49,9 @@ public class StudentController extends BaseController {
 
     @RequiresPermissions("edu:student:view")
     @GetMapping()
-    public String student() {
+    public String student(ModelMap mmap) {
+        //初始化
+        init(mmap);
         return prefix + "/list";
     }
 
@@ -73,6 +75,10 @@ public class StudentController extends BaseController {
         //表单Action指定
         student.setFormAction(prefix + "/add");
         mmap.put("student", student);
+        //账号状态：默认正常
+        student.setStatus("0");
+        //初始化
+        init(mmap);
         return prefix + "/add";
     }
 
@@ -83,7 +89,7 @@ public class StudentController extends BaseController {
     @Log(title = "学生管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(Student student, HttpServletRequest request, Model model) {
+    public AjaxResult addSave(Student student) {
         // TODO 此处关联操作用户表
         student.setUserId("123456");
         return toAjax(studentService.save(student));
@@ -97,9 +103,9 @@ public class StudentController extends BaseController {
         Student student = studentService.getById(id);
         //表单Action指定
         student.setFormAction(prefix + "/edit");
-        //主键加密（配合editSave方法使用）- 如果需防止数据ID泄露，请放开，否则请删除此处代码
-        //student.setId(pk_encrypt(student.getId()));
 
+        //初始化
+        init(mmap);
         mmap.put("student", student);
         return prefix + "/add";
     }
@@ -112,9 +118,6 @@ public class StudentController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(Student student) {
-
-        //主键解密（配合edit方法使用，请确认edit方法中加密了）- 如果需防止数据ID泄露，请放开，否则请删除此处代码
-        //student.setId(pk_decrypt(student.getId()));
 
         return toAjax(studentService.saveOrUpdate(student));
     }
@@ -152,5 +155,15 @@ public class StudentController extends BaseController {
         ExcelUtil<Student> util = new ExcelUtil<Student>(Student.class);
         return util.exportExcel(list, "student");
 
+    }
+
+    /**
+     * 初始化
+     * @param mmap
+     */
+    private void init(ModelMap mmap) {
+        //学校下拉框内容
+        List<SysDept> schoolList = deptService.selectListByTagCode(Tag.TAG_CODE_JGLX_XX);
+        mmap.put("schoolList", schoolList);
     }
 }

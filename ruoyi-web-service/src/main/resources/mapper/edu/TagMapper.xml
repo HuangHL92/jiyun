@@ -38,7 +38,7 @@
         </collection>-->
     </resultMap>
 
-    <select id="getList" parameterType="string" resultMap="tagResult">
+    <select id="getList" parameterType="Tag" resultMap="tagResult">
         SELECT
           <include refid="tagColumns" />
         FROM

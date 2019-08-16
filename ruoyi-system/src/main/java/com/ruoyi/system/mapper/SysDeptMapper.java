@@ -108,4 +108,11 @@ public interface SysDeptMapper
      * @return 部门信息集合
      */
     public List<SysDept> selectTopList(SysDept dept);
+
+    /**
+     * 根据标签code获取机构列表
+     * @param tagCode
+     * @return
+     */
+    List<SysDept> selectListByTagCode(String tagCode);
 }

@@ -45,6 +45,11 @@ public class Student extends BaseEntity {
      */
     private String deptId;
     /**
+     * 学校名称
+     */
+    @TableField(exist = false)
+    private String deptName;
+    /**
      * 年级
      */
     private String grade;
@@ -55,7 +60,7 @@ public class Student extends BaseEntity {
     /**
      * 帐号状态（0正常 1停用）
      */
-    private String status = "0";
+    private String status;
     /**
      * 标签
      */

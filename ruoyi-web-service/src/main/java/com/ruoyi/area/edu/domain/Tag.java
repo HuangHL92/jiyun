@@ -25,6 +25,11 @@ public class Tag extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 标签编号：机构类型-学校
+     */
+    public static final String TAG_CODE_JGLX_XX = "jglx_xx";
+
+    /**
      * id
      */
     @TableId

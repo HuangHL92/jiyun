@@ -298,4 +298,9 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.selectTopList(dept);
     }
 
+    @Override
+    public List<SysDept> selectListByTagCode(String tagCode) {
+        return deptMapper.selectListByTagCode(tagCode);
+    }
+
 }
