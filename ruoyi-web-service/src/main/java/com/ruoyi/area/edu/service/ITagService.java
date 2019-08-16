@@ -32,4 +32,11 @@ public interface ITagService extends IService<Tag> {
      * @return
      */
     void doSave(Tag tag);
+
+    /**
+     * 校验编码
+     * @param tag
+     * @return
+     */
+    String checkCodeUnique(Tag tag);
 }

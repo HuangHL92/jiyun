@@ -34,6 +34,10 @@ public class Tag extends BaseEntity {
      */
     private String type;
     /**
+     * 标签编码
+     */
+    private String code;
+    /**
      * 标签名称
      */
     private String name;

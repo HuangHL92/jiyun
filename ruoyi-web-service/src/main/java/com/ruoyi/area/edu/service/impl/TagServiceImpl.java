@@ -67,4 +67,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements ITagS
             tagClientService.saveBatch(tagClientList);
         }
     }
+
+    @Override
+    public String checkCodeUnique(Tag tag) {
+        QueryWrapper<Tag> query = new QueryWrapper<>();
+        query.lambda().ne(StrUtil.isNotEmpty(tag.getId()), Tag::getId, tag.getId());
+        query.lambda().eq(Tag::getCode, tag.getCode());
+        return count(query) > 0 ? "1" : "0";
+    }
 }

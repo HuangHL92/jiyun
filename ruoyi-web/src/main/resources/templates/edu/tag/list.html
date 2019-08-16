@@ -26,7 +26,7 @@
 								</select>
 							</li>
 							<li>
-								关键字：<input type="text" name="keyword" placeholder="标签名称/可访问系统"/>
+								关键字：<input type="text" name="keyword" placeholder="标签编号/名称/可访问系统"/>
 							</li>
 							<li>
 								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -86,9 +86,14 @@
                     }
 				},
 				{
-					field : 'name', 
+					field : 'code',
+					title : '标签编号',
+                    width : '10%'
+				},
+				{
+					field : 'name',
 					title : '标签名称',
-                    width : '15%',
+                    width : '10%',
                     formatter:function (value, row, index) {
                         return link_detail(value, row.id, 800, $(window).height() - 50);
                     }
@@ -96,7 +101,7 @@
 				{
 					field : 'status', 
 					title : '状态',
-                    width : '10%',
+                    width : '8%',
                     formatter: function (value, row, index) {
                         return statusTools(row);
                     }
@@ -104,7 +109,7 @@
 				{
 					field : 'orderNum', 
 					title : '排序',
-                    width : '15%',
+                    width : '10%',
                     formatter: function (value, row, index) {
                         var actions = [];
                         actions.push('<input type="text" onblur="updateOrderAjax(\'' + row.id + '\',this)" value="' + value + '"  class="form-control" style="position: relative; text-align: center;width: 80px;padding: 1px 1px;" />');

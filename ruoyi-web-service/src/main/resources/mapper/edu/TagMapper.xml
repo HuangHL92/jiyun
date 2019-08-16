@@ -5,6 +5,7 @@
     <sql id="tagColumns">
         a.id,
         a.type,
+        a.code,
         a.name,
         a.status,
         a.order_num,
@@ -21,6 +22,7 @@
     <resultMap id="tagResult" type="Tag">
         <id     property="id"     column="id"     />
         <result property="type"   column="type"   />
+        <result property="code"   column="code"   />
         <result property="name"   column="name"   />
         <result property="status"  column="status"   />
         <result property="orderNum"   column="order_num"   />
@@ -54,6 +56,7 @@
         <if test="keyword != null and keyword != ''">
             AND (
               a.name like CONCAT('%', #{keyword}, '%')
+              OR a.code like CONCAT('%', #{keyword}, '%')
               OR c.client_name like CONCAT('%', #{keyword}, '%')
             )
         </if>

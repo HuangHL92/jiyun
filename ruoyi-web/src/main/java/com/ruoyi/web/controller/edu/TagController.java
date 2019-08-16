@@ -171,4 +171,15 @@ public class TagController extends BaseController {
     public AjaxResult changeStatus(Tag tag) {
         return toAjax(tagService.updateById(tag));
     }
+
+
+    /**
+     * 校验编码
+     */
+    @PostMapping("/checkCodeUnique")
+    @ResponseBody
+    public String checkLoginNameUnique(Tag tag)
+    {
+        return tagService.checkCodeUnique(tag);
+    }
 }
