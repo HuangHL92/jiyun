@@ -8,9 +8,11 @@ set port=8081
 set pid=-1
 for /f "tokens=1-5" %%a in ('netstat -ano ^| find ":%port%"') do (
  if !pid! neq %%e (
-     set pid=%%e
-     echo !pid!
-     taskkill /f /pid !pid!
+    if %%e neq 0 (
+       set pid=%%e
+       echo !pid!
+       taskkill /f /pid !pid!
+    )
  )
 )
 pause
