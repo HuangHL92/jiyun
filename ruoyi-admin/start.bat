@@ -10,4 +10,3 @@ cd ../ruoyi-admin/target
 ::java -jar %JAVA_OPTS% tysfrzpt-admin.jar
 
 start javaw -jar -Dspring.profiles.active=prod tysfrzpt-admin.jar
-exit
