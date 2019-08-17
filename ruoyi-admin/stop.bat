@@ -5,13 +5,12 @@ echo.
 
 setlocal enabledelayedexpansion
 set port=8081
+set pid=-1
 for /f "tokens=1-5" %%a in ('netstat -ano ^| find ":%port%"') do (
- if "%%e%" == "" (
-     set pid=%%d
- ) else (
+ if !pid! neq %%e (
      set pid=%%e
+     echo !pid!
+     taskkill /f /pid !pid!
  )
- echo !pid!
- taskkill /f /pid !pid!
 )
 pause
