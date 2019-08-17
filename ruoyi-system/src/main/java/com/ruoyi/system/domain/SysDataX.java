@@ -145,6 +145,4 @@ public class SysDataX extends BaseEntity {
     private Integer channel = 5;
     @TableField(exist = false)
     private String oldFileName;
-    @TableField(exist = false)
-    private String keyword;
 }
