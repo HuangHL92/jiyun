@@ -9,9 +9,11 @@ set pid=-1
 for /f "tokens=1-5" %%a in ('netstat -ano ^| find ":%port%"') do (
  if !pid! neq %%e (
     if %%e neq 0 (
-       set pid=%%e
-       echo !pid!
-       taskkill /f /pid !pid!
+        if %%d eq 'LISTENING' (
+           set pid=%%e
+           echo !pid!
+           taskkill /f /pid !pid!
+        )
     )
  )
 )
@@ -21,9 +23,11 @@ set pid=-1
 for /f "tokens=1-5" %%a in ('netstat -ano ^| find ":%port%"') do (
  if !pid! neq %%e (
     if %%e neq 0 (
-       set pid=%%e
-       echo !pid!
-       taskkill /f /pid !pid!
+        if %%d eq 'LISTENING' (
+           set pid=%%e
+           echo !pid!
+           taskkill /f /pid !pid!
+        )
     )
  )
 )
