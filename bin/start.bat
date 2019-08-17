@@ -11,4 +11,3 @@ cd %~dp0
 set BUILD_ID=dontKillMe
 start javaw -jar -Dspring.profiles.active=prod ../ruoyi-admin/target/tysfrzpt-admin.jar
 start javaw -jar -Dspring.profiles.active=prod ../ruoyi-api/target/tysfrzpt-api.jar
-echo ========== [统一身份认证平台] 启动项目结束 ==========
