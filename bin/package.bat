@@ -1,6 +1,6 @@
 @echo off
 echo.
-echo [统一身份认证平台] 打包Web工程，生成war/jar包文件。
+echo ==========[统一身份认证平台] 打包Web工程，生成war/jar包文件==========
 echo.
 
 %~d0

@@ -1,6 +1,6 @@
 @echo off
 echo.
-echo [JiYun] ·
+echo ==========[统一身份认证平台] 启动项目==========
 echo.
 
 cd %~dp0
