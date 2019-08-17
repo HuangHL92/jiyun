@@ -1,6 +1,6 @@
 @echo off
 echo.
-echo ========== [缁熶竴韬唤璁よ瘉骞冲彴] 鍏抽棴涔嬪墠椤圭洰 ==========
+echo ========== [统一身份认证平台] 关闭之前项目 ==========
 echo.
 
 setlocal enabledelayedexpansion
