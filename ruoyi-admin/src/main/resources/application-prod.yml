@@ -1,7 +1,7 @@
 # 开发环境配置
 server:
   # 服务端口 （TODO 根据项目情况自行更换）
-  port: 8080
+  port: 8081
   servlet:
     # 项目contextPath
     context-path: /
@@ -26,11 +26,11 @@ jiyun:
   oauth2:
     client-id: x3qwrgrO1wYdz72joZ8YyIuD
     client-secret: DPTyJsBv1xjzEgv0MEjBnIVigaVUm3cr
-    redirect-uri: http://192.172.18.242:81/oauth2/jiyun/login
-    authorization-uri: http://192.172.18.207:82/auth?response_type=code&client_id={0}&redirect_uri={1}
-    access-token-uri: http://192.172.18.207:82/access_token?grant_type=authorization_code&client_id={0}&client_secret={1}&redirect_uri={2}&code={3}
-    refresh-token-uri: http://192.172.18.207:82/refresh_token?grant_type=refresh_token&client_id={0}&client_secret={1}&redirect_uri={2}&refresh_token={3}
-    user-info-uri: http://192.172.18.207:82/me?access_token={0}
+    redirect-uri: http://192.172.18.206:8081/oauth2/jiyun/login
+    authorization-uri: http://192.172.18.206:8082/auth?response_type=code&client_id={0}&redirect_uri={1}
+    access-token-uri: http://192.172.18.206:8082/access_token?grant_type=authorization_code&client_id={0}&client_secret={1}&redirect_uri={2}&code={3}
+    refresh-token-uri: http://192.172.18.206:8082/refresh_token?grant_type=refresh_token&client_id={0}&client_secret={1}&redirect_uri={2}&refresh_token={3}
+    user-info-uri: http://192.172.18.206:8082/me?access_token={0}
 
 # 微信公众号配置
 wx:
