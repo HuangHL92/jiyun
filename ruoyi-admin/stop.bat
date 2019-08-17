@@ -11,4 +11,4 @@ for /f "tokens=1-5" %%i in ('netstat -ano^|findstr ":%port%"') do (
     ) || echo PID:%%m 未运行
 )
 
-pause
+exit
