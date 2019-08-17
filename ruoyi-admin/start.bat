@@ -11,4 +11,6 @@ cd ../ruoyi-admin/target
 
 set BUILD_ID=dontKillMe
 start javaw -jar -Dspring.profiles.active=prod tysfrzpt-admin.jar
+cd ../ruoyi-api/target
+start javaw -jar -Dspring.profiles.active=prod tysfrzpt-api.jar
 echo ========== [统一身份认证平台] 启动项目结束 ==========
