@@ -53,15 +53,14 @@
         <if test="status != null and status != ''">
             AND a.status = #{status}
         </if>
-        <if test="keyword != null and keyword != ''">
-            AND (
-              a.name like CONCAT('%', #{keyword}, '%')
-              OR a.code like CONCAT('%', #{keyword}, '%')
-              OR c.client_name like CONCAT('%', #{keyword}, '%')
-            )
-        </if>
         GROUP BY
           a.id
+        <if test="keyword != null and keyword != ''">
+        HAVING
+            a.name like CONCAT('%', #{keyword}, '%')
+            OR a.code like CONCAT('%', #{keyword}, '%')
+            OR clientNames like CONCAT('%', #{keyword}, '%')
+        </if>
     </select>
 
     <select id="selectById" parameterType="string" resultMap="tagResult">
