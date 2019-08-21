@@ -182,7 +182,7 @@ management:
       exposure:
         include: "*"
   server:
-    port: 10111
+    port: 9002
     servlet:
       context-path: /
     ssl:

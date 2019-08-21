@@ -1,7 +1,7 @@
 # 开发环境配置
 server:
   # 服务端口 （TODO 根据项目情况自行更换）
-  port: 83
+  port: 9001
   servlet:
     # 项目contextPath
     context-path: /
