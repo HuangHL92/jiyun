@@ -716,8 +716,9 @@
                     type: type,
                     dataType: dataType,
                     data: data,
-                    beforeSend: function () {
+                    beforeSend: function (xhr) {
                         $.modal.loading("正在处理中，请稍后...");
+                        xhr.setRequestHeader(headerName, token);
                     },
                     success: function(result) {
                         $.operate.ajaxSuccess(result);
@@ -841,9 +842,10 @@
                     type: "post",
                     dataType: "json",
                     data: data,
-                    beforeSend: function () {
+                    beforeSend: function (xhr) {
                         $.modal.loading("正在处理中，请稍后...");
                         $.modal.disable();
+                        xhr.setRequestHeader(headerName, token);
                     },
                     success: function(result) {
                         $.operate.successCallback(result);
@@ -897,9 +899,10 @@
                     type: "get",
                     dataType: "json",
                     data: data,
-                    beforeSend: function () {
+                    beforeSend: function (xhr) {
                         $.modal.loading("正在处理中，请稍后...");
                         $.modal.disable();
+                        xhr.setRequestHeader(headerName, token);
                     },
                     success: function(result) {
                         $.modal.closeLoading();

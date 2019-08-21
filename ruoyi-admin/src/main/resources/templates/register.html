@@ -74,7 +74,11 @@
     </div>
 </div>
 
-<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<script th:inline="javascript">
+    var ctx = [[@{/}]]; var captchaType = [[${captchaType}]];
+    var headerName = [[${_csrf.headerName}]];
+    var token = [[${_csrf.token}]];
+</script>
 <!-- 全局js -->
 <script  th:src="@{/js/jquery.min.js}"></script>
 <!-- 验证插件 -->
@@ -94,9 +98,10 @@
             type: "post",
             dataType: "json",
             data: formobj.serialize(),
-            beforeSend: function () {
+            beforeSend: function (xhr) {
                 $.modal.loading("正在处理中，请稍后...");
                 $.modal.disable();
+                xhr.setRequestHeader(headerName, token);
             },
             success: function(r) {
 

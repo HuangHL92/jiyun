@@ -28,6 +28,9 @@ function login() {
             "validateCode" : validateCode,
             "rememberMe": rememberMe
         },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        },
         success: function(r) {
             if (r.code == 0) {
                 location.href = ctx + 'index';
