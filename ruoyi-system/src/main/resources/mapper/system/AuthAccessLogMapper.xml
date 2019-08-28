@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AuthAccessLogMapper">
+
+    <select id="selectList" parameterType="AuthAccessLog" resultType="com.ruoyi.system.domain.AuthAccessLog">
+        select h.id,h.client_id,h.login_name,h.ip_addr,h.status,h.login_time,h.create_by,h.create_time,h.update_by
+        ,h.update_time,h.remark,h.del_flag,z.client_name as clientName
+        from auth_access_log h,
+            auth_client_details z
+        where
+            h.client_id=z.client_id
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and date_format(h.login_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and date_format(h.login_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+        </if>
+        <if test="status != null">
+            and h.status = #{status}
+        </if>
+        <if test="params != null and params.keyword !=null and params.keyword != ''">
+           and (z.client_name like concat('%',#{params.keyword},'%')
+            or h.login_name like concat('%',#{params.keyword},'%')
+            or h.ip_addr like concat('%',#{params.keyword},'%'))
+        </if>
+            order by h.login_time DESC;
+    </select>
+</mapper>
