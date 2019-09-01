@@ -8,14 +8,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.YamlUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 全局配置类
  *
  * @author ruoyi
  */
+@Component
 public class Global {
     private static final Logger log = LoggerFactory.getLogger(Global.class);
+
+    private static String profile;
+
+    @Value("${spring.profiles.active:dev}")
+    public void setProfile(String param) {
+        this.profile= param;
+    }
 
     private static String NAME = "application.yml";
 
@@ -56,6 +66,10 @@ public class Global {
             try {
                 yamlMap = YamlUtil.loadYaml(NAME);
                 value = String.valueOf(YamlUtil.getProperty(yamlMap, key));
+                if(StringUtils.isEmpty(value) || "null".equals(value)) {
+                    yamlMap = YamlUtil.loadYaml("application-" + profile + ".yml");
+                    value = String.valueOf(YamlUtil.getProperty(yamlMap, key));
+                }
                 map.put(key, value != null ? value : StringUtils.EMPTY);
             } catch (FileNotFoundException e) {
                 log.error("获取全局配置异常 {}", key);
