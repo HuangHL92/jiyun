@@ -116,9 +116,10 @@
                     checkbox: true
                 },
                     {
+                        field : 'id',
                         title: "序号",
                         formatter: function (value, row, index) {
-                            return $.table.serialNumber(index);
+                            return index + 1;
                         }
                     },
                     {

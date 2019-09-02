@@ -82,12 +82,13 @@
         <if test="deptId != null and deptId != '' and deptId != &quot;0&quot;">
             AND (
               e.dept_id = #{deptId}
-              OR e.dept_id IN (
-                SELECT dept_id FROM sys_dept WHERE FIND_IN_SET(#{deptId}, ancestors)
-              )
+              OR e.dept_id IN ( SELECT dept_id FROM sys_dept WHERE FIND_IN_SET(#{deptId}, ancestors) )
+              OR (#{deptId} = '100' AND e.dept_id = '-1' )
             )
         </if>
-        ORDER BY e.eno
+        ORDER BY
+          e.order_num,
+          CONVERT(e.name USING gbk)
     </select>
     
     <select id="mySelectById" parameterType="string" resultMap="EduEmployeeResult">
