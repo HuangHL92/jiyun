@@ -384,6 +384,7 @@ public class SysUserController extends BaseController
             AtomicInteger retryCount = cacheUtils.getLoginRecordCache().get(user.getLoginName());
             if(retryCount!=null) {
                 retryCount.set(0);
+                cacheUtils.getLoginRecordCache().put(user.getLoginName(), retryCount);
             }
         }
 
