@@ -1,8 +1,10 @@
 package com.ruoyi.area.edu.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.base.BaseEntity;
+import com.ruoyi.system.domain.SysDept;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -21,6 +23,13 @@ import java.util.Date;
 @TableName("edu_employee")
 public class Employee extends BaseEntity {
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 人员状态
+     */
+    public static final String EMPLOYEE_STATUS_NORMAL = "0";
+    public static final String EMPLOYEE_STATUS_DISABLED = "1";
+    public static final String EMPLOYEE_STATUS_OUT = "2";
 
     /**
      * id
@@ -43,10 +52,18 @@ public class Employee extends BaseEntity {
      * 单位id
      */
     private String deptId;
+
+    @TableField(exist = false)
+    private SysDept dept;
+
     /**
      * 职务id
      */
     private String postId;
+
+    @TableField(exist = false)
+    private Tag post;
+
     /**
      * 标签
      */
@@ -56,7 +73,7 @@ public class Employee extends BaseEntity {
      */
     private String mobile;
     /**
-     * 帐号状态（0正常 1停用 2转出）
+     * 账号状态（0正常 1停用 2转出）
      */
     private String status;
     /**

@@ -13,4 +13,6 @@ import java.util.List;
  */
 public interface IEmployeeService extends IService<Employee> {
     List<Employee> selectList(Employee employee);
+
+    Employee selectById(String id);
 }

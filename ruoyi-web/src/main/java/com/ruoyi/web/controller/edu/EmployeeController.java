@@ -3,7 +3,6 @@ package com.ruoyi.web.controller.edu;
 import java.util.Arrays;
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +89,8 @@ public class EmployeeController extends BaseController {
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(Employee employee, HttpServletRequest request, Model model) {
+        // TODO 关联用户表
+        employee.setUserId("1");
         return toAjax(employeeService.save(employee));
     }
 
@@ -98,7 +99,7 @@ public class EmployeeController extends BaseController {
      */
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") String id, ModelMap mmap) {
-        Employee employee = employeeService.getById(id);
+        Employee employee = employeeService.selectById(id);
         //表单Action指定
         employee.setFormAction(prefix + "/edit");
 
@@ -114,6 +115,26 @@ public class EmployeeController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(Employee employee) {
+        // TODO 关联用户表
+        return toAjax(employeeService.saveOrUpdate(employee));
+    }
+
+    /**
+     * 拖拽人员保存
+     */
+    @RequiresPermissions("edu:employee:edit")
+    @Log(title = "人员", businessType = BusinessType.UPDATE)
+    @PostMapping("/dragEdit")
+    @ResponseBody
+    public AjaxResult dragEdit(Employee employee) {
+        // TODO 关联用户表
+        // 如果deptId是-1（待分配），则人员状态为转出
+        if ("-1".equals(employee.getDeptId())) {
+            employee.setStatus(Employee.EMPLOYEE_STATUS_OUT);
+        } else {
+            // TODO 此处是默认什么状态
+            employee.setStatus(Employee.EMPLOYEE_STATUS_DISABLED);
+        }
         return toAjax(employeeService.saveOrUpdate(employee));
     }
 
@@ -125,7 +146,45 @@ public class EmployeeController extends BaseController {
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
+        // TODO 关联用户表
         return toAjax(employeeService.removeByIds(Arrays.asList(Convert.toStrArray(ids))));
     }
 
+
+    /**
+     * 人员状态修改
+     */
+    @Log(title = "人员", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("edu:employee:edit")
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeStatus(Employee employee) {
+        if (Employee.EMPLOYEE_STATUS_OUT.equals(employee.getStatus())) {
+            employee.setDeptId("-1");
+        }
+        // TODO 关联用户表
+        return toAjax(employeeService.updateById(employee));
+    }
+
+    /**
+     * 更新显示顺序（Ajax）
+     */
+    @Log(title = "人员", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("edu:employee:edit")
+    @PostMapping("/updateOrder")
+    @ResponseBody
+    public AjaxResult updateOrder(String id, String orderNum) {
+        // TODO 关联用户表
+        try {
+            Employee employee = employeeService.getById(id);
+            if (employee != null) {
+                employee.setOrderNum(Integer.valueOf(orderNum));
+                employeeService.updateById(employee);
+            }
+        } catch (Exception ex) {
+            return AjaxResult.error("更新失败！");
+        }
+
+        return AjaxResult.success();
+    }
 }

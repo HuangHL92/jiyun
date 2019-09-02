@@ -972,14 +972,14 @@ html #layuicss-layer {
     text-decoration: underline
 }
 
-.ztree li a.curSelectedNode {
+/*.ztree li a.curSelectedNode {
     padding-top: 0;
     background-color: #FFE6B0;
     color: #000;
     height: 16px;
     border: 1px #FFB951 solid;
     opacity: .8
-}
+}*/
 
 .ztree li a.curSelectedNode_Edit {
     padding-top: 0;
@@ -1617,7 +1617,7 @@ body .ztree li span.button.ico_close, body .ztree li span.button.ico_docu {
     vertical-align: -3px
 }
 
-body .ztree li a.curSelectedNode {
+#ztreeArea .ztree li a.curSelectedNode {
     background: 0 0;
     border: none;
     padding-top: inherit;

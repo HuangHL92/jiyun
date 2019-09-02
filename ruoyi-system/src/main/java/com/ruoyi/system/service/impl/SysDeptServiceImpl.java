@@ -46,10 +46,23 @@ public class SysDeptServiceImpl implements ISysDeptService
      */
     @Override
     @DataScope(tableAlias = "d")
-    public List<Map<String, Object>> selectDeptTree(SysDept dept)
+    public List<Map<String, Object>> selectDeptTree(SysDept dept, String todo)
     {
         List<Map<String, Object>> trees = new ArrayList<Map<String, Object>>();
         List<SysDept> deptList = deptMapper.selectDeptList(dept);
+        if (StringUtils.isNotEmpty(todo)) {
+            // 模拟出[待分配人员]
+            SysDept todoDept = new SysDept();
+            todoDept.setDeptId("-1");
+            todoDept.setParentId("100");
+            todoDept.setAncestors("0,100");
+            todoDept.setDeptName("待分配人员");
+            todoDept.setOrgStructure("待分配人员");
+            todoDept.setStatus(UserConstants.DEPT_NORMAL);
+            todoDept.setDelFlag("0");
+            deptList.add(todoDept);
+        }
+
         trees = getTrees(deptList, false, null);
         return trees;
     }

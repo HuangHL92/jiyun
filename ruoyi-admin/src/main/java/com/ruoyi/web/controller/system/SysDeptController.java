@@ -155,9 +155,9 @@ public class SysDeptController extends BaseController
      */
     @GetMapping("/treeData")
     @ResponseBody
-    public List<Map<String, Object>> treeData()
+    public List<Map<String, Object>> treeData(String todo)
     {
-        List<Map<String, Object>> tree = deptService.selectDeptTree(new SysDept());
+        List<Map<String, Object>> tree = deptService.selectDeptTree(new SysDept(), todo);
         return tree;
     }
 
@@ -190,7 +190,7 @@ public class SysDeptController extends BaseController
         robj.put("msg","success");
         //TODO 取得用户，此处可以优化（1.放入缓存 2.数据库读取sql优化）
         //TODO 理想方案是前端直接读JSON文件
-        List<Map<String, Object>> tree = deptService.selectDeptTree(new SysDept());
+        List<Map<String, Object>> tree = deptService.selectDeptTree(new SysDept(), null);
         JSONArray rList = new JSONArray();
         for (Map<String, Object> u: tree) {
             JSONObject o = new JSONObject();

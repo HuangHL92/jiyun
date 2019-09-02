@@ -82,6 +82,9 @@
                     paginationLoop: options.paginationLoop,             // 循环翻页（*）
                     responseHandler: $.table.responseHandler,           // 在加载服务器发送来的数据之前处理函数
                     onLoadSuccess: $.table.onLoadSuccess,               // 当所有数据被加载时触发处理函数
+                    onReorderRow: options.onReorderRow,
+                    onReorderRowsDrag:options.onReorderRowsDrag,
+                    onReorderRowsDrop:options.onReorderRowsDrop
                 });
             },
             // 查询条件
@@ -964,7 +967,23 @@
                     },
                     check: options.check,
                     view: options.view,
-                    data: options.data
+                    data: options.data,
+                    callback: {
+                        onClick: options.onClick,
+                        onDrop:options.onDrop,
+                        onMouseDown:options.onMouseDown,
+                        onMouseUp:options.onMouseUp
+                    },
+                    /*edit:{
+                        enable:true,
+                        showRemoveBtn: false,
+                        showRenameBtn: false,
+                        drag:{
+                            prev:true,
+                            next:true,
+                            inner:true,
+                        }
+                    }*/
                 };
                 $.get(options.url, function(data) {
                     var treeId = $("#treeId").val();

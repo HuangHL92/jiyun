@@ -27,7 +27,7 @@ public interface ISysDeptService
      * @param dept 部门信息
      * @return 所有部门信息
      */
-    public List<Map<String, Object>> selectDeptTree(SysDept dept);
+    public List<Map<String, Object>> selectDeptTree(SysDept dept, String todo);
 
     /**
      * 根据角色ID查询菜单

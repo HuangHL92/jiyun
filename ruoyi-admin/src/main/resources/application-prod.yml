@@ -19,7 +19,7 @@ jiyun:
     mailto: fei.yu@51e.com.cn   #（TODO 用于接收异常通知等信息的邮件地址，根据项目情况自行更换）
     isopen: false #是否开启邮件通知
   websocket:
-    url: ws://localhost:81/socketServer #（TODO websocket服务地址，根据项目情况自行更换）
+    url: ws://localhost:9000/socketServer #（TODO websocket服务地址，根据项目情况自行更换）
   #shorturl地址
   shortapi:
     url: http://api.t.sina.com.cn/short_url/shorten.json?source=3271760578&url_long=

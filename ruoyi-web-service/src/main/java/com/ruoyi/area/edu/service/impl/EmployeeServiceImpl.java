@@ -19,9 +19,11 @@ import java.util.List;
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements IEmployeeService {
     @Override
     public List<Employee> selectList(Employee employee) {
-        QueryWrapper<Employee> query = new QueryWrapper<>();
-        // 查询条件
+        return baseMapper.selectList(employee);
+    }
 
-        return list(query);
+    @Override
+    public Employee selectById(String id) {
+        return baseMapper.mySelectById(id);
     }
 }

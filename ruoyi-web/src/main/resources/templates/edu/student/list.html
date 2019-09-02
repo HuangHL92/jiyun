@@ -21,7 +21,7 @@
 								年级：<input type="text" name="grade"/>
 							</li>
 							<li>
-								帐号状态：
+								账号状态：
 								<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
 									<option value="">所有</option>
 									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
@@ -117,7 +117,7 @@
 				},
 				{
 					field : 'status', 
-					title : '帐号状态',
+					title : '账号状态',
                     width: '10%',
                     formatter: function (value, row, index) {
                         return statusTools(row);
@@ -149,7 +149,7 @@
             } else {
                 return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.id + '\')"></i> ';
             }
-        }
+        }u
 
         /* 停用 */
         function disable(id) {
