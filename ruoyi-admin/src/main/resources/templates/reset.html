@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>密码重置</title>
+    <meta name="keywords" th:content="${@config.SystemName()}">
+    <meta name="description" th:content="${@config.SystemName()}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,minimum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link th:href="@{/ruoyi/reset/css/style.css}" rel="stylesheet"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/ruoyi/reset/js/flexible.js}"></script>
+    <!--前端加密JS-->
+    <script th:src="@{/js/crypto.js}"></script>
+</head>
+
+<body>
+    <div class="container reset-container">
+        <form id="resetForm" class="pass-reset" method="post">
+            <input th:type="hidden" th:name="key" th:value="${key}"/>
+            <input th:type="hidden" th:name="pwd" />
+            <div class="password-tips-groups">
+                <div class="alert-warnings">检测到您的密码存在安全风险，请重置</div>
+            </div>
+            <div class="input-area">
+                <div class="input-outer">
+                    <!--<input id="username" name="username" class="old_password" type="text" th:value="${username}" placeholder="请输入用户名">-->
+                    <div class="username">[[${username}]]</div>
+                    <input th:type="hidden" th:name="username" th:value="${username}"/>
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-outer">
+                    <input id="password" name="password" class="old_password" type="password" placeholder="请输入原密码">
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-outer">
+                    <input id="newPassword" name="newPassword" class="new_password passwordComplexity" type="password" placeholder="请输入新密码">
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-outer">
+                    <input id="reNewPassword" name="reNewPassword" class="new_password" type="password" placeholder="请再次输入新密码">
+                </div>
+                <div class="password-tips-groups">
+                    <!--<div class="password-tips-ok">不能包括空格</div>-->
+                    <!--<div class="password-tips-warning">不能包括空格</div>-->
+                    <!--<div class="password-tips-warning">长度为6-16个字符</div>-->
+                    <!--<div class="password-tips-warning" id="errorInsertPoint">必须包含字母、数字、符号中至少2种</div>-->
+                    <!--<div class="password-tips-error">两次输入不一致</div>-->
+                    <div class="password-tips-warning" id="errorInsertPoint">[[${@config.passwordMessage()}]]</div>
+                </div>
+            </div>
+            <div class="input-area clear">
+                <div class="input-outer">
+                    <button id="submitBtn" class="submit" data-loading="正在验证登录，请稍后...">确认重置</button>
+                </div>
+                <div class="input-outer">
+                    <button id="gobackBtn" class="reset" type="button" >稍后处理</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        var ctx = [[@{/}]];var captchaType = [[${captchaType}]];
+        // 密码校验正则表达式1
+        var passwordRegex = [[${@config.passwordRegex()}]];
+        var passwordMessage = [[${@config.passwordMessage()}]];
+    </script>
+    <!-- 全局js -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <!-- 验证插件 -->
+    <script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+    <script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+    <script th:src="@{/ajax/libs/validate/jquery.validate.extend.js}"></script>
+    <script th:src="@{/ruoyi/js/ry-ui.js?v=3.2.0}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+    <script th:src="@{/ruoyi/reset.js}"></script>
+</body>
+
+</html>

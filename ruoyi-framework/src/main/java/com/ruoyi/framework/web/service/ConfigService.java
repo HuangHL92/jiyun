@@ -58,4 +58,20 @@ public class ConfigService
     {
         return Global.getWebSocketAddress();
     }
+
+    /**
+     * 获取用户密码校验正则
+     * @return
+     */
+    public String passwordRegex() {
+        return Global.getPasswordRegex();
+    }
+
+    /**
+     * 获取用户密码校验错误消息
+     * @return
+     */
+    public String passwordMessage() {
+        return Global.getPasswordMessage();
+    }
 }

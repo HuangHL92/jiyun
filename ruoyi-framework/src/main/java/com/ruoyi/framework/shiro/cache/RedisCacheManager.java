@@ -1,5 +1,7 @@
 package com.ruoyi.framework.shiro.cache;
 
+import com.ruoyi.common.config.Global;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.redis.RedisManager;
 import com.ruoyi.framework.util.CacheUtils;
@@ -37,10 +39,11 @@ public class RedisCacheManager implements CacheManager
         {
             synchronized (this)
             {
-                // 登录记录缓存：10分钟
+                // 登录记录缓存：默认10分钟
                 if (CacheUtils.LOGIN_RECORD_CACHE.equals(name))
                 {
-                    cache = new RedisCache<>(name, 600, redisManager);
+                    String lockTime = StringUtils.nvl(Global.getConfig("user.password.lockTime"), "10");
+                    cache = new RedisCache<>(name, Integer.valueOf(lockTime) * 60, redisManager);
                 }
                 // session缓存：30分钟
                 else if (CacheUtils.SHIRO_ACTIVE_SESSION_CACHE.equals(name)) {

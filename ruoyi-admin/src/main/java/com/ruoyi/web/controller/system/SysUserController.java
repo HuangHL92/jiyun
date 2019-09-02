@@ -4,10 +4,12 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.base.AjaxResult;
+import com.ruoyi.common.config.Global;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.page.TableDataInfo;
 import com.ruoyi.common.support.Convert;
+import com.ruoyi.common.utils.PwdCheckUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.shiro.service.SysPasswordService;
@@ -19,6 +21,7 @@ import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysPostService;
 import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 用户信息
@@ -199,6 +203,14 @@ public class SysUserController extends BaseController
     @ResponseBody
     public AjaxResult resetPwdSave(SysUser user)
     {
+        // 特殊字符解码
+        user.setPassword(StringEscapeUtils.unescapeHtml(user.getPassword()));
+        // 判断密码复杂度：防止绕过前台的jquery-validation验证
+        boolean passwordCheck = PwdCheckUtil.checkPasswordComplexity(user.getPassword());
+        if (!passwordCheck) {
+            return error(Global.getPasswordMessage());
+        }
+
         user.setSalt(ShiroUtils.randomSalt());
         user.setPassword(passwordService.encryptPassword(user.getLoginName(), user.getPassword(), user.getSalt()));
         // 清空用户缓存
@@ -356,6 +368,26 @@ public class SysUserController extends BaseController
         return AjaxResult.success();
     }
 
+    /**
+     * 用户解锁
+     * @param userId
+     * @return
+     */
+    @RequiresPermissions("system:user:unlock")
+    @Log(title = "用户解锁", businessType = BusinessType.UPDATE)
+    @PostMapping("/unlock")
+    @ResponseBody
+    public AjaxResult unlock(String userId)
+    {
+        SysUser user = userService.selectUserById(userId);
+        if(user !=null) {
+            AtomicInteger retryCount = cacheUtils.getLoginRecordCache().get(user.getLoginName());
+            if(retryCount!=null) {
+                retryCount.set(0);
+            }
+        }
 
+        return AjaxResult.success();
+    }
 
 }

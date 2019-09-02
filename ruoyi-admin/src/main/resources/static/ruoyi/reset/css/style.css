@@ -1,0 +1,82 @@
+@charset "UTF-8";
+/* initial */
+body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+*:not(input, textarea) { -webkit-touch-callout: none; /* 长按屏幕时会禁止设备弹出列表按钮 */ -webkit-user-select: none; /*之所以放在这里是因为如果放到body中会导致个别Android机型（Google  Nexus，Android 4.2.2）输入框无法输入 */ }
+
+select { -webkit-appearance: none; /*用来改变按钮和其他控件的外观,加上这个以后，select的高度就可以改变了。所以，当然也可以用于其他浏览器控件中*/ }
+
+:focus { outline: 0; -webkit-tap-highlight-color: transparent; }
+
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td { margin: 0; padding: 0; }
+
+body, button, input, select, textarea { font: 12px 'Microsoft YaHei'; }
+
+h1, h2, h3, h4, h5, h6, i { font-size: 100%; font-style: normal; }
+
+button, input, select, textarea { font-size: 100%; -webkit-appearance: none; border-radius: 0; }
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+textarea { resize: none; -webkit-appearance: none; }
+
+small { font-size: 12px; }
+
+ul, ol, li { list-style: none; }
+
+a { text-decoration: none; color: black; }
+
+.left { float: left; }
+
+.right { float: right; }
+
+.clear:after { content: "."; height: 0; clear: both; display: block; visibility: hidden; }
+
+.ell1 { display: block; word-wrap: normal; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+
+.ell2 { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
+.ell3 { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
+* { -webkit-transition: all .2s; transition: all .2s; }
+
+html { height: 100%; width: 100%; }
+
+body { margin: 0; padding: 0; height: 100%; }
+
+.reset-container { width: 100%; height: 100%; position: relative; overflow: hidden; display: table; }
+
+.pass-reset { margin: auto .5rem; display: table-cell; vertical-align: middle; }
+
+.input-area { margin-top: 12px; padding: 0 12px; }
+
+.password-tips-groups { max-width: 438px; margin: auto; }
+
+.password-tips-groups .password-tips-ok, .password-tips-groups .password-tips-error, .password-tips-groups .password-tips-warning { padding: 0 0 0 24px; font-size: 14px; line-height: 18px; height: 18px; overflow: hidden; margin: 8px 0 8px; }
+
+.password-tips-groups .password-tips-ok { background: url(../images/green.png) no-repeat 2px center; }
+
+.password-tips-groups .password-tips-error { background: url(../images/error.png) no-repeat 2px center; color: #ff5b5b; }
+
+.password-tips-groups .password-tips-warning { background: url(../images/info.png) no-repeat 2px center; }
+
+.password-tips-groups .alert-warnings { font-size: 22px; padding: 12px 24px; border: 1px solid transparent; border-radius: 4px; color: #1a1a1a; text-align: center; }
+
+.input-outer { width: 100%; max-width: 438px; margin: auto; }
+
+.input-outer input, .input-outer .username { width: 100%; border: 1px #aaa solid; border-radius: 4px; background: 0 0; text-align: left; font-size: 20px; height: 50px; line-height: 50px; padding: 0 20px; -webkit-box-sizing: border-box; box-sizing: border-box; color: #1a1a1a; }
+
+.input-outer .username { background-color: #eeeeee; }
+
+.input-outer .submit, .input-outer .reset { display: block; border: 1px #3083ff solid; border-radius: 4px; -webkit-box-shadow: 0 5px 8px 0 rgba(24, 95, 255, 0.1); box-shadow: 0 5px 8px 0 rgba(24, 95, 255, 0.1); text-align: center; font-weight: lighter; height: 50px; font-size: 24px; width: 195px; margin: 6px 12px; float: left; -webkit-box-sizing: border-box; box-sizing: border-box; cursor: pointer; }
+
+@media screen and (max-width: 462px) { .input-outer .submit, .input-outer .reset { width: 100%; margin: 6px auto; } }
+
+.input-outer .submit { background-color: #3487ff; background-image: -webkit-gradient(linear, left bottom, left top, from(#398bff), to(#3083ff)); background-image: -webkit-linear-gradient(bottom, #398bff, #3083ff); background-image: linear-gradient(0deg, #398bff, #3083ff); color: #fff; }
+
+.input-outer .submit:hover { background-color: #3580eb; background-image: -webkit-gradient(linear, left bottom, left top, from(#3580eb), to(#2c79eb)); background-image: -webkit-linear-gradient(bottom, #3580eb, #2c79eb); background-image: linear-gradient(0deg, #3580eb, #2c79eb); }
+
+.input-outer .reset { background-color: #ffffff; color: #3487ff; }
+
+.input-outer .reset:hover { background-color: #3580eb; color: #ffffff; background-image: -webkit-gradient(linear, left bottom, left top, from(#3580eb), to(#2c79eb)); background-image: -webkit-linear-gradient(bottom, #3580eb, #2c79eb); background-image: linear-gradient(0deg, #3580eb, #2c79eb); }
+/*# sourceMappingURL=style.css.map */

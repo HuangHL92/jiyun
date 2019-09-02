@@ -1,5 +1,7 @@
 package com.ruoyi.web.controller.system;
 
+import com.ruoyi.common.utils.PwdCheckUtil;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +87,18 @@ public class SysProfileController extends BaseController
     @ResponseBody
     public AjaxResult resetPwd(String oldPassword, String newPassword)
     {
+        // 特殊字符解码
+        oldPassword = StringEscapeUtils.unescapeHtml(oldPassword);
+        newPassword = StringEscapeUtils.unescapeHtml(newPassword);
         SysUser user = getSysUser();
         if (StringUtils.isNotEmpty(newPassword) && passwordService.matches(user, oldPassword))
         {
+            // 判断密码复杂度：防止绕过前台的jquery-validation验证
+            boolean passwordCheck = PwdCheckUtil.checkPasswordComplexity(newPassword);
+            if (!passwordCheck) {
+                return error(Global.getPasswordMessage());
+            }
+
             user.setSalt(ShiroUtils.randomSalt());
             user.setPassword(passwordService.encryptPassword(user.getLoginName(), newPassword, user.getSalt()));
             if (userService.resetUserPwd(user) > 0)

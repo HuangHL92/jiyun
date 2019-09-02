@@ -3,10 +3,15 @@ package com.ruoyi.web.controller.system;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.core.util.RandomUtil;
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.config.Global;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.*;
+import com.ruoyi.framework.shiro.service.SysLoginService;
 import com.ruoyi.framework.shiro.service.SysPasswordService;
 import com.ruoyi.framework.shiro.web.filter.captcha.CaptchaValidateFilter;
+import com.ruoyi.framework.util.CacheUtils;
 import com.ruoyi.framework.util.JsonFileUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysUser;
@@ -21,10 +26,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.ruoyi.common.base.AjaxResult;
-import com.ruoyi.common.utils.ServletUtils;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.base.BaseController;
 
 /**
@@ -45,8 +49,14 @@ public class SysLoginController extends BaseController
     @Autowired
     private SysPasswordService passwordService;
 
+    @Autowired
+    private SysLoginService loginService;
+
+    @Autowired
+    private CacheUtils cacheUtils;
+
     @GetMapping("/login")
-    public String login(HttpServletRequest request, HttpServletResponse response)
+    public String login(HttpServletRequest request, HttpServletResponse response, ModelMap mmap)
     {
         // 如果是Ajax请求，返回Json字符串。
         if (ServletUtils.isAjaxRequest(request))
@@ -54,17 +64,22 @@ public class SysLoginController extends BaseController
             return ServletUtils.renderString(response, "{\"code\":\"1\",\"msg\":\"未登录或登录超时。请重新登录\"}");
         }
 
+        mmap.addAttribute("key", RandomUtil.randomString(16));
+
         return "login";
     }
 
     @PostMapping("/login")
     @ResponseBody
-    public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe)
+    public AjaxResult ajaxLogin(String username, String pwd, Boolean rememberMe, String key)
     {
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
         Subject subject = SecurityUtils.getSubject();
         try
         {
+            String password  = AesUtils.decrypt(pwd,key);
+
+            UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+
             subject.login(token);
 
             //socket消息通知
@@ -81,7 +96,15 @@ public class SysLoginController extends BaseController
             {
                 msg = e.getMessage();
             }
+
+            // TODO 判断错误是否为密码强度问题，由于无法根据异常类型，暂时用msg内容判断
+            if (MessageUtils.message("user.password.simple").equals(msg)) {
+                return error(4001, msg);
+            }
             return error(msg);
+        }
+        catch (Exception ex){
+            return error(ex.getMessage());
         }
     }
 
@@ -147,6 +170,53 @@ public class SysLoginController extends BaseController
         return success();
     }
 
+    /**
+     * 用户修改密码
+     */
+    @GetMapping("/reset")
+    public String changePwd(String username, ModelMap mmap) {
+        mmap.put("username", username);
+        // 密码加密key
+        mmap.addAttribute("key", RandomUtil.randomString(16));
+        return "reset";
+    }
 
+
+    /**
+     * 用户修改密码操作
+     * @param username
+     * @param password
+     * @param newPassword
+     * @param key
+     * @return
+     */
+    @PostMapping("/reset")
+    @ResponseBody
+    public AjaxResult doReset(@RequestParam(name = "username") String username,
+                              @RequestParam(name = "password") String password,
+                              @RequestParam(name = "newPassword") String newPassword,
+                              @RequestParam(name = "key") String key) {
+        // 1.密码和新密码解码
+        password = AesUtils.decrypt(password, key);
+        newPassword = AesUtils.decrypt(newPassword, key);
+
+        // 2.校验新密码是否符合要求
+        if (!PwdCheckUtil.checkPasswordComplexity(newPassword)) {
+            return error(Global.getPasswordMessage());
+        }
+        try {
+            // 3.校验账号密码是否正确
+            SysUser user = loginService.login(username, password);
+            // 4.修改用户密码
+            user.setSalt(ShiroUtils.randomSalt());
+            user.setPassword(passwordService.encryptPassword(user.getLoginName(), newPassword, user.getSalt()));userService.resetUserPwd(user);
+            userService.resetUserPwd(user);
+            // 5.清空用户缓存
+            cacheUtils.getUserCache().remove(user.getLoginName());
+        } catch (Exception e) {
+            return error(e.getMessage());
+        }
+        return success("操作成功，是否立即登录？");
+    }
 
 }

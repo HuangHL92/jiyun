@@ -64,7 +64,7 @@ public class PasswordServiceImpl implements PasswordService {
             retryCount = new AtomicInteger(0);
             redisService.setWithExpire(retryCountLoginName, retryCount, 10, TimeUnit.MINUTES);
         }
-        if (retryCount.incrementAndGet() > maxRetryCount)
+        if (retryCount.incrementAndGet() >= maxRetryCount)
         {
             // AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGIN_FAIL, MessageUtils.message("user.password.retry.limit.exceed", maxRetryCount)));
             // throw new UserPasswordRetryLimitExceedException(maxRetryCount);

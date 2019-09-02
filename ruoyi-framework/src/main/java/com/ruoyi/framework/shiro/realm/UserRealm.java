@@ -6,6 +6,7 @@ import java.util.Set;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.JedisUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.PwdCheckUtil;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.service.ISysUserService;
@@ -148,6 +149,14 @@ public class UserRealm extends AuthorizingRealm
             log.info("对用户[" + username + "]进行登录验证..验证未通过{}", e.getMessage());
             throw new AuthenticationException(e.getMessage(), e);
         }
+
+        // 校验密码强度
+        boolean complexity = PwdCheckUtil.checkPasswordComplexity(password);
+        if (!complexity) {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.simple")));
+            throw new AuthenticationException(MessageUtils.message("user.password.simple"));
+        }
+
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user.getLoginName(), password, getName());
 
         return info;

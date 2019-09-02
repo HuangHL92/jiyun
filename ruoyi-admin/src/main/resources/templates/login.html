@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <link th:href="@{/ruoyi/login/1/css/login.css}" rel="stylesheet"/>
     <script th:src="@{/js/jquery.min.js}"></script>
+    <!--前端加密JS-->
+    <script th:src="@{/js/crypto.js}"></script>
 
     <script type="text/javascript">
         $(function(){
@@ -46,6 +48,8 @@
                         <img th:src="@{/ruoyi/login/1/img/user.png}">
                     </em>
                     <form id="signupForm" method="post">
+                        <input th:type="hidden" th:name="key" th:value="${key}"/>
+                        <input th:type="hidden" th:name="pwd" />
                         <p class="name"><i></i><input type="text" name="username"  class="userName" placeholder="请输入用户名"></p>
                         <p class="password"><i></i><input type="password" name="password" class="pwd" placeholder="请输入密码"></p>
 

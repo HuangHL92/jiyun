@@ -94,6 +94,7 @@
 		var editFlag = [[${@permission.hasPermi('system:user:edit')}]];
 		var removeFlag = [[${@permission.hasPermi('system:user:remove')}]];
 		var resetPwdFlag = [[${@permission.hasPermi('system:user:resetPwd')}]];
+        var unlockFlag = [[${@permission.hasPermi('system:user:unlock')}]];
 		var prefix = ctx + "system/user";
 
 
@@ -211,6 +212,7 @@
 		                actions.push('<a class="btn btn-xs ' + editFlag + '" href="#" onclick="$.operate.edit(\'' + row.userId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
 		                actions.push('<a class="btn btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.userId + '\')"><i class="fa fa-remove"></i>删除</a> ');
 		                actions.push('<a class="btn btn-xs ' + resetPwdFlag + '" href="#" onclick="resetPwd(\'' + row.userId + '\')"><i class="fa fa-key"></i>重置</a>');
+                        actions.push('<a class="btn btn-xs ' + unlockFlag + '" href="#" onclick="unlock(\'' + row.userId + '\')"><i class="fa fa-unlock"></i>解锁</a>');
 		                return $.table.dropdownToggle(actions.join(''));
 		            }
 		        }]
@@ -287,6 +289,12 @@
 		    var url = prefix + '/resetPwd/' + userId;
 		    $.modal.open("重置密码", url, '800', '300');
 		}
+
+        /* 用户管理-账号解锁 */
+        function unlock(userId) {
+
+            $.operate.post(prefix + "/unlock", { "userId": userId});
+        }
 		
 		/* 用户状态显示 */
 		function statusTools(row) {

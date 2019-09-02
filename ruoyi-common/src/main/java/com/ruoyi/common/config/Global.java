@@ -198,4 +198,18 @@ public class Global {
     public static String getWebSocketAddress() {
         return StringUtils.nvl(getConfig("jiyun.websocket.url"), "");
     }
+
+    /**
+     * 获取用户密码校验正则
+     */
+    public static String getPasswordRegex() {
+        return StringUtils.nvl(getConfig("user.password.regex"), "");
+    }
+
+    /**
+     * 获取用户密码校验正则错误消息
+     */
+    public static String getPasswordMessage() {
+        return StringUtils.nvl(getConfig("user.password.message"), "");
+    }
 }

@@ -13,9 +13,11 @@ function submitAction(formobj,callback) {
         url : ctx + formobj.attr("action"),
         data : formobj.serialize(),
         async : false,
-        beforeSend: function () {
+        beforeSend: function (xhr) {
             $.modal.loading("正在处理中，请稍后...");
             $.modal.disable();
+            // 防止CSRF攻击
+            xhr.setRequestHeader(headerName, token);
         },
         error : function(request) {
             $.modal.alertError("系统错误");
@@ -196,6 +198,7 @@ var UploadFile = function (input) {
         ,multiple:multi//是否允许多文件
         ,input:input//隐藏域
         ,backType:input.data("backType")||'path'//返回类型 attachmentNo还是路径
+        ,exts: input.data("exts")|| 'jpg|png|gif|doc|docx|txt|xls|xlsx|pdf'        //可传输文件的后缀
     }
     that.config = $.extend({}, that.config, option)
     if(that.config.multiple&&"image"!==that.config.accept){
@@ -257,6 +260,7 @@ UploadFile.prototype.init = function () {
                 ,url: ctx+'common/upload/uploadFile'
                 ,accept: config.accept
                 ,multiple: config.multiple
+                ,exts: config.exts        //可传输文件的后缀
                 ,data:data
                 ,choose: function(obj){
                     var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列

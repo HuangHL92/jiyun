@@ -83,6 +83,9 @@
 			// csrf token增加
 			xhr.setRequestHeader(headerName, token);
 		}
+		// 密码校验正则表达式
+		var passwordRegex = [[${@config.passwordRegex()}]];
+		var passwordMessage = [[${@config.passwordMessage()}]];
 	</script>
     <!--平台私有JS-->
     <script th:src="@{/js/my.js}"></script>

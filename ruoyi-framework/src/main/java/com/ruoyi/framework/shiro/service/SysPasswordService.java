@@ -3,6 +3,9 @@ package com.ruoyi.framework.shiro.service;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 
+import com.ruoyi.common.config.Global;
+import com.ruoyi.common.exception.user.UserPasswordRetryLimitCountException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.CacheUtils;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
@@ -54,17 +57,18 @@ public class SysPasswordService
             retryCount = new AtomicInteger(0);
             cacheUtils.getLoginRecordCache().put(loginName, retryCount);
         }
-        if (retryCount.incrementAndGet() > Integer.valueOf(maxRetryCount).intValue())
+        if (retryCount.incrementAndGet() >= Integer.valueOf(maxRetryCount).intValue())
         {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGIN_FAIL, MessageUtils.message("user.password.retry.limit.exceed", maxRetryCount)));
-            throw new UserPasswordRetryLimitExceedException(Integer.valueOf(maxRetryCount).intValue());
+            throw new UserPasswordRetryLimitExceedException(Integer.valueOf(maxRetryCount).intValue(), StringUtils.nvl(Global.getConfig("user.password.lockTime"), "10"));
         }
 
         if (!matches(user, password))
         {
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGIN_FAIL, MessageUtils.message("user.password.retry.limit.count", retryCount)));
+            int retryRemainCount = Integer.valueOf(maxRetryCount) - retryCount.intValue();
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGIN_FAIL, MessageUtils.message("user.password.retry.limit.count", retryCount, retryRemainCount)));
             cacheUtils.getLoginRecordCache().put(loginName, retryCount);
-            throw new UserPasswordNotMatchException();
+            throw new UserPasswordRetryLimitCountException(retryCount.intValue(), retryRemainCount);
         }
         else
         {

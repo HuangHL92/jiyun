@@ -57,6 +57,11 @@ $(document).ready(function(){
 			 return false;
 		}
 		});
+    //密码复杂度校验
+    jQuery.validator.addMethod("passwordComplexity",function(value,element){
+        var reg = new RegExp(passwordRegex);
+        return this.optional(element) || (reg.test(value));
+    }, passwordMessage);
 	//校验基础信息表单
 	$("#basicInfoForm").validate({
 		errorElement:'span',
