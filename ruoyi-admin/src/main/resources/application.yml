@@ -129,6 +129,7 @@ shiro:
       ,/captcha/captchaImage** anon
       ,/logout logout
       ,/login anon#captchaValidate
+      ,/reset anon#captchaValidate
       ,/api/** anon
       ,/screen/** anon
       ,/pad/** anon

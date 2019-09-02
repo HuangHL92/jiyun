@@ -65,6 +65,8 @@
 
     <script th:inline="javascript">
         var ctx = [[@{/}]];var captchaType = [[${captchaType}]];
+        var headerName = [[${_csrf.headerName}]];
+        var token = [[${_csrf.token}]];
         // 密码校验正则表达式1
         var passwordRegex = [[${@config.passwordRegex()}]];
         var passwordMessage = [[${@config.passwordMessage()}]];

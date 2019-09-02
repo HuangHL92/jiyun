@@ -28,6 +28,9 @@ function reset() {
             "newPassword": encrypt($key, newPassword),
             "key": key
         },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        },
         success: function(r) {
             $.modal.closeLoading();
             if (r.code == 0) {
