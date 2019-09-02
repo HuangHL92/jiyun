@@ -91,9 +91,7 @@ public class StudentController extends BaseController {
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(Student student) {
-        // TODO 此处关联操作用户表
-        student.setUserId("123456");
-        return toAjax(studentService.save(student));
+        return studentService.doSave(student);
     }
 
     /**
@@ -119,8 +117,7 @@ public class StudentController extends BaseController {
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(Student student) {
-
-        return toAjax(studentService.saveOrUpdate(student));
+        return studentService.doSave(student);
     }
 
     /**
@@ -131,6 +128,7 @@ public class StudentController extends BaseController {
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
+        // TODO
         return toAjax(studentService.removeByIds(Arrays.asList(Convert.toStrArray(ids))));
     }
 
@@ -142,6 +140,7 @@ public class StudentController extends BaseController {
     @PostMapping("/changeStatus")
     @ResponseBody
     public AjaxResult changeStatus(Student student) {
+        // TODO
         return toAjax(studentService.updateById(student));
     }
 
@@ -163,8 +162,7 @@ public class StudentController extends BaseController {
     @RequiresPermissions("edu:student:import")
     @PostMapping("/importData")
     @ResponseBody
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
-    {
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelUtil<Student> util = new ExcelUtil<>(Student.class);
         List<Student> studentList = util.importExcel(file.getInputStream());
         String message = studentService.importData(studentList, updateSupport);
@@ -174,14 +172,24 @@ public class StudentController extends BaseController {
     @RequiresPermissions("edu:student:import")
     @GetMapping("/importTemplate")
     @ResponseBody
-    public AjaxResult importTemplate()
-    {
+    public AjaxResult importTemplate() {
         ExcelUtil<Student> util = new ExcelUtil<>(Student.class);
         return util.importTemplateExcel("学生管理数据");
     }
 
+
+    /**
+     * 校验学号是否唯一
+     */
+    @PostMapping("/checkSnoUnique")
+    @ResponseBody
+    public String checkSnoUnique(Student student) {
+        return studentService.checkSnoUnique(student);
+    }
+
     /**
      * 初始化
+     *
      * @param mmap
      */
     private void init(ModelMap mmap) {

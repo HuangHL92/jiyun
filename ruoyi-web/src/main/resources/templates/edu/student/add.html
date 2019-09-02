@@ -67,9 +67,29 @@
 
     $("#form-student-add").validate({
         rules: {
-            xxxx: {
-                required: true,
-            },
+            sno: {
+                remote: {
+                    url: ctx + "edu/student/checkSnoUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        id: function() {
+                            return $.common.trim($("#id").val());
+                        },
+                        sno: function() {
+                            return $.common.trim($("#sno").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            }
+        },
+        messages: {
+            sno: {
+                remote: "学号已存在"
+            }
         },
         errorPlacement: function (error, element) {
             error.appendTo(element.parent())

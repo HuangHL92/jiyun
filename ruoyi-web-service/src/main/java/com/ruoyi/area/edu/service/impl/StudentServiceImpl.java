@@ -3,6 +3,7 @@ package com.ruoyi.area.edu.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.area.edu.domain.Tag;
+import com.ruoyi.common.base.AjaxResult;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.Md5Utils;
 import com.ruoyi.common.utils.StringUtils;
@@ -147,14 +148,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         SysUser user;
         String password = configService.selectConfigByKey("sys.user.initPassword");
         // 查询出[学生]角色
-        Long studentRoleId = null;
-        List<SysRole> roles = roleService.selectRoleAll();
-        for (SysRole role : roles) {
-            if (role.getRoleKey().equals("student")) {
-                studentRoleId = role.getRoleId();
-            }
-        }
-        Long[] roleIds = new Long[]{ studentRoleId };
+        Long[] roleIds = studentRoleIds();
         for (int index = 0; index < studentList.size(); index++) {
             try {
                 student = studentList.get(index);
@@ -162,27 +156,13 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
                 target = getBySno(student.getSno());
                 if (target == null) {
                     // 插入用户数据
-                    user = new SysUser();
-                    user.setLoginName(student.getSno()); // 登录名称
-                    user.setDeptId(student.getDeptId()); // 单位/部门
-                    user.setUserName(student.getName()); // 用户名称
-                    user.setStatus(student.getStatus()); // 状态
-                    user.setPassword(Md5Utils.hash(user.getLoginName() + password)); // 密码
-                    user.setRoleIds(roleIds); // 角色
-                    userService.insertUser(user);
-
+                    user = insertUser(student, password, roleIds);
                     // 插入学生数据
                     student.setUserId(user.getUserId()); // 用户id
                     save(student);
                 } else {
                     // 更新用户数据
-                    user = userService.selectUserById(target.getUserId());
-                    user.setLoginName(student.getSno()); // 登录名称
-                    user.setDeptId(student.getDeptId()); // 单位/部门
-                    user.setUserName(student.getName()); // 用户名称
-                    user.setStatus(student.getStatus()); // 状态
-                    userService.updateUser(user);
-
+                    updateUser(target.getUserId(), student);
                     // 更新学生数据
                     student.setId(target.getId());
                     updateById(student);
@@ -213,5 +193,91 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         QueryWrapper<Student> query = new QueryWrapper();
         query.lambda().eq(Student::getSno, sno);
         return getOne(query);
+    }
+
+    @Override
+    public String checkSnoUnique(Student student) {
+        QueryWrapper<Student> query = new QueryWrapper<>();
+        query.lambda().ne(StrUtil.isNotEmpty(student.getId()), Student::getId, student.getId());
+        query.lambda().eq(Student::getSno, student.getSno());
+        return count(query) > 0 ? "1" : "0";
+    }
+
+    @Override
+    public AjaxResult doSave(Student student) {
+        // 校验学号是否唯一
+        if ("1".equals(checkSnoUnique(student))) {
+            return AjaxResult.error("学号已存在");
+        }
+        // 学生&用户数据保存
+        if (StrUtil.isEmpty(student.getId())) {
+            String password = configService.selectConfigByKey("sys.user.initPassword");
+            // 查询出[学生]角色
+            Long[] roleIds = studentRoleIds();
+            // 插入用户数据
+            SysUser user = insertUser(student, password, roleIds);
+            // 插入学生数据
+            student.setUserId(user.getUserId()); // 用户id
+            save(student);
+        } else {
+            Student target = getById(student.getId());
+            // 更新用户数据
+            updateUser(target.getUserId(), student);
+            // 更新学生数据
+            student.setId(target.getId());
+            updateById(student);
+        }
+        return AjaxResult.success();
+    }
+
+    /**
+     * 用户数据插入
+     * @param student
+     * @param password
+     * @param roleIds
+     * @return
+     */
+    private SysUser insertUser(Student student, String password, Long[] roleIds) {
+
+        SysUser user = new SysUser();
+        user.setLoginName(student.getSno()); // 登录名称
+        user.setDeptId(student.getDeptId()); // 单位/部门
+        user.setUserName(student.getName()); // 用户名称
+        user.setStatus(student.getStatus()); // 状态
+        user.setPassword(Md5Utils.hash(user.getLoginName() + password)); // 密码
+        user.setRoleIds(roleIds); // 角色
+        userService.insertUser(user);
+        return user;
+    }
+
+    /**
+     * 更新用户数据
+     * @param userId
+     * @param student
+     */
+    private void updateUser(String userId, Student student) {
+
+        SysUser user = userService.selectUserById(userId);
+        user.setLoginName(student.getSno()); // 登录名称
+        user.setDeptId(student.getDeptId()); // 单位/部门
+        user.setUserName(student.getName()); // 用户名称
+        user.setStatus(student.getStatus()); // 状态
+        userService.updateUser(user);
+    }
+
+    /**
+     * 获取学生角色id
+     * @return
+     */
+    private Long[] studentRoleIds() {
+        Long studentRoleId = null;
+        List<SysRole> roles = roleService.selectRoleAll();
+        for (SysRole role : roles) {
+            if (role.getRoleKey().equals("student")) {
+                studentRoleId = role.getRoleId();
+            }
+        }
+        Long[] roleIds = new Long[]{ studentRoleId };
+        return roleIds;
     }
 }

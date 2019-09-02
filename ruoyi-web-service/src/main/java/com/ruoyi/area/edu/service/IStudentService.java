@@ -2,6 +2,7 @@ package com.ruoyi.area.edu.service;
 
 import com.ruoyi.area.edu.domain.Student;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.common.base.AjaxResult;
 
 import java.util.List;
 
@@ -28,4 +29,17 @@ public interface IStudentService extends IService<Student> {
      * @return
      */
     Student getBySno(String sno);
+
+    /**
+     * 校验学号是否唯一
+     * @param student
+     * @return
+     */
+    String checkSnoUnique(Student student);
+
+    /**
+     * 学生保存操作
+     * @param student
+     */
+    AjaxResult doSave(Student student);
 }
