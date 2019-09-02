@@ -13,4 +13,19 @@ import java.util.List;
  */
 public interface IStudentService extends IService<Student> {
     List<Student> selectList(Student student);
+
+    /**
+     * 导入
+     * @param studentList
+     * @param updateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @return
+     */
+    String importData(List<Student> studentList, boolean updateSupport);
+
+    /**
+     * 根据学号查询学生
+     * @param sno
+     * @return
+     */
+    Student getBySno(String sno);
 }

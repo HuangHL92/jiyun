@@ -21,6 +21,7 @@ import com.ruoyi.framework.web.base.BaseController;
 import com.ruoyi.common.page.TableDataInfo;
 import com.ruoyi.common.base.AjaxResult;
 import com.ruoyi.common.support.Convert;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 学生 信息操作处理
@@ -147,6 +148,7 @@ public class StudentController extends BaseController {
     /**
      * 导出学生列表
      */
+    @Log(title = "学生管理", businessType = BusinessType.EXPORT)
     @RequiresPermissions("edu:student:export")
     @PostMapping("/export")
     @ResponseBody
@@ -155,6 +157,27 @@ public class StudentController extends BaseController {
         ExcelUtil<Student> util = new ExcelUtil<Student>(Student.class);
         return util.exportExcel(list, "student");
 
+    }
+
+    @Log(title = "学生管理", businessType = BusinessType.IMPORT)
+    @RequiresPermissions("edu:student:import")
+    @PostMapping("/importData")
+    @ResponseBody
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<Student> util = new ExcelUtil<>(Student.class);
+        List<Student> studentList = util.importExcel(file.getInputStream());
+        String message = studentService.importData(studentList, updateSupport);
+        return success(message);
+    }
+
+    @RequiresPermissions("edu:student:import")
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult importTemplate()
+    {
+        ExcelUtil<Student> util = new ExcelUtil<>(Student.class);
+        return util.importTemplateExcel("学生管理数据");
     }
 
     /**

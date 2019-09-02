@@ -49,7 +49,7 @@
 				<a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()" shiro:hasPermission="edu:student:remove">
 					<i class="fa fa-remove"></i> 删除
 				</a>
-				<a class="btn btn-info" onclick="$.modal.msgWarning('开发中，敬请期待');" shiro:hasPermission="edu:student:export">
+				<a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="edu:student:import">
 						<i class="fa fa-download"></i> 导入
 				 </a>
 				<a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="edu:student:export">
@@ -74,6 +74,8 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
 				exportUrl: prefix + "/export",
+                importUrl: prefix + "/importData",
+                importTemplateUrl: prefix + "/importTemplate",
                 modalName: "学生",
 				search: false,
 		        showExport: true,
@@ -149,7 +151,7 @@
             } else {
                 return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.id + '\')"></i> ';
             }
-        }u
+        }
 
         /* 停用 */
         function disable(id) {
@@ -166,4 +168,16 @@
         }
     </script>
 </body>
+<form id="importForm" enctype="multipart/form-data" class="mt20 mb10" style="display: none;">
+	<div class="col-xs-offset-1">
+		<input type="file" id="file" name="file"/>
+		<div class="mt10 pt5">
+			<input type="checkbox" id="updateSupport" name="updateSupport" title="如果学生已经存在，更新这条数据。"> 是否更新已经存在的学生数据
+			&nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+		</div>
+		<font color="red" class="pull-left mt10">
+			提示：仅允许导入“xls”或“xlsx”格式文件！
+		</font>
+	</div>
+</form>
 </html>

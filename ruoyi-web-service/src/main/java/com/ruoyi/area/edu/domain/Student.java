@@ -3,6 +3,7 @@ package com.ruoyi.area.edu.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,14 +36,17 @@ public class Student extends BaseEntity {
     /**
      * 学号
      */
+    @Excel(name = "学号", prompt = "必填")
     private String sno;
     /**
      * 姓名
      */
+    @Excel(name = "姓名")
     private String name;
     /**
      * 学校id
      */
+    @Excel(name = "学校")
     private String deptId;
     /**
      * 学校名称
@@ -52,14 +56,17 @@ public class Student extends BaseEntity {
     /**
      * 年级
      */
+    @Excel(name = "年级")
     private String grade;
 
     /** 班级 */
     @TableField(value = "class")
+    @Excel(name = "班级")
     private Integer classStr;
     /**
      * 账号状态（0正常 1停用）
      */
+    @Excel(name = "账号状态",readConverterExp = "0=正常,1=停用",combo = {"正常","停用"})
     private String status;
     /**
      * 标签
