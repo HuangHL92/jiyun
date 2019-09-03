@@ -2,15 +2,21 @@ package com.ruoyi.web.controller.edu;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cn.hutool.core.util.StrUtil;
 import com.ruoyi.area.edu.domain.Tag;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.CacheUtils;
+import com.ruoyi.framework.util.JsonFileUtils;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.service.ISysDeptService;
+import com.ruoyi.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
@@ -38,6 +44,10 @@ public class StudentController extends BaseController {
     private IStudentService studentService;
     @Autowired
     private ISysDeptService deptService;
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private CacheUtils cacheUtils;
 
     @ModelAttribute
     public Student get(@RequestParam(required = false) String id) {
@@ -127,9 +137,24 @@ public class StudentController extends BaseController {
     @Log(title = "学生管理", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult remove(String ids) {
-        // TODO
-        return toAjax(studentService.removeByIds(Arrays.asList(Convert.toStrArray(ids))));
+        String[] studentIds = Convert.toStrArray(ids);
+        // 查询对应的学生数据
+        List<Student> studentList = (List<Student>) studentService.listByIds(Arrays.asList(studentIds));
+        // 删除学生数据
+        studentService.removeByIds(Arrays.asList(studentIds));
+        // 删除关联用户数据
+        for (Student student : studentList) {
+            cacheUtils.getUserCache().remove(userService.selectUserById(student.getUserId()).getLoginName());
+        }
+        // 清空用户认证权限缓存
+        ShiroUtils.clearCachedAuthorizationInfo();
+        // 删除组织结构json文件
+        JsonFileUtils.deleteOrgJsonFile();
+        List<String> userList=  studentList.stream().map(Student::getUserId).collect(Collectors.toList());
+        userService.deleteUserByIds(userList.stream().collect(Collectors.joining(",")));
+        return success();
     }
 
     /**
@@ -140,8 +165,7 @@ public class StudentController extends BaseController {
     @PostMapping("/changeStatus")
     @ResponseBody
     public AjaxResult changeStatus(Student student) {
-        // TODO
-        return toAjax(studentService.updateById(student));
+        return studentService.doSave(student);
     }
 
     /**
