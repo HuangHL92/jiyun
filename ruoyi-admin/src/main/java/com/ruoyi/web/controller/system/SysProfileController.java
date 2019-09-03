@@ -66,6 +66,7 @@ public class SysProfileController extends BaseController
     @ResponseBody
     public boolean checkPassword(String password)
     {
+        password = StringEscapeUtils.unescapeHtml(password);
         SysUser user = getSysUser();
         if (passwordService.matches(user, password))
         {
