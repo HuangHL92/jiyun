@@ -1,8 +1,10 @@
 package com.ruoyi.web.controller.edu;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,16 +128,26 @@ public class EmployeeController extends BaseController {
     @Log(title = "人员", businessType = BusinessType.UPDATE)
     @PostMapping("/dragEdit")
     @ResponseBody
-    public AjaxResult dragEdit(Employee employee) {
-        // TODO 关联用户表
-        // 如果deptId是-1（待分配），则人员状态为转出
-        if ("-1".equals(employee.getDeptId())) {
-            employee.setStatus(Employee.EMPLOYEE_STATUS_OUT);
-        } else {
-            // TODO 此处是默认什么状态
-            employee.setStatus(Employee.EMPLOYEE_STATUS_DISABLED);
+    public AjaxResult dragEdit(String ids, String deptId) {
+        if (StrUtil.isBlank(ids) || StrUtil.isBlank(deptId)) {
+            return error("参数错误");
         }
-        return toAjax(employeeService.saveOrUpdate(employee));
+        // TODO 关联用户表
+        List<Employee> employeeList = new ArrayList<>();
+        for (String id : ids.split(",")) {
+            Employee employee = new Employee();
+            employee.setId(id);
+            employee.setDeptId(deptId);
+            // 如果deptId是-1（待分配），则人员状态为转出
+            if ("-1".equals(deptId)) {
+                employee.setStatus(Employee.EMPLOYEE_STATUS_OUT);
+            } else {
+                // TODO 此处是默认什么状态
+                employee.setStatus(Employee.EMPLOYEE_STATUS_DISABLED);
+            }
+            employeeList.add(employee);
+        }
+        return toAjax(employeeService.updateBatchById(employeeList));
     }
 
     /**
